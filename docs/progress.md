@@ -8,7 +8,7 @@
 |---|---|---|
 | 0 — Setup | ✅ Xong | Unity 6000.3.24f1, URP, git + GitHub, Unity MCP, Cinemachine 3.1.7, Input System |
 | 1 — Chốt thiết kế | ✅ Xong phần chính | Combat, nhánh sính lễ, arena đã chốt trong GDD |
-| 2 — Asset pipeline | 🟡 Đang làm | 2 nhân vật + Đinh Ba xong; còn animation combat |
+| 2 — Asset pipeline | 🟡 Đang làm | | 2 nhân vật + Kiếm (Great Sword); còn animation combat |
 | 3 — Lập trình core | 🟡 Đang làm | Mốc 1 (di chuyển, camera, stamina, dodge) xong |
 | 4 → 9 | ⬜ Chưa bắt đầu | |
 
@@ -21,16 +21,18 @@
 | Prefab dùng khi chơi | `Assets/Prefabs/Player/Player_SonTinh.prefab` | `Assets/Prefabs/Player/Player_ThuyTinh.prefab` |
 | Model (chỉ phần hình) | `Assets/Prefabs/Characters/SonTinh.prefab` | `Assets/Prefabs/Characters/ThuyTinh.prefab` |
 | Chiều cao | 1.9m tới đỉnh đầu (vương miện nhô thêm) | 1.9m tới đỉnh đầu |
-| Vũ khí | Tay không (võ + VFX đất đá khi đánh) | Đinh Ba 2m, cầm 2 tay |
+| Vũ khí | Tay không (võ + VFX đất đá khi đánh) | Đại kiếm (Great Sword), cầm 2 tay |
 | Animation hiện có | Idle / Walk / Run (tay không) | Great Sword Idle / Walk / Run (cầm vũ khí 2 tay) |
 | Tốc độ đi / chạy | 2.01 / 6.66 m/s | 1.13 / 4.80 m/s |
 
-- Thủy Tinh chạy chậm hơn Sơn Tinh ~27% vì animation cầm vũ khí nặng có bước chân ngắn hơn. Tốc độ code phải khớp tốc độ bước chân của animation, nếu không chân sẽ bị trượt. Bù lại, Đinh Ba cho tầm với xa hơn. Nếu muốn 2 nhân vật chạy nhanh bằng nhau thì chỉnh lại được.
+- Thủy Tinh chạy chậm hơn Sơn Tinh ~27% vì animation cầm vũ khí nặng có bước chân ngắn hơn. Tốc độ code phải khớp tốc độ bước chân của animation, nếu không chân sẽ bị trượt. Bù lại, Đại kiếm cho vùng chém rộng và lực đánh mạnh hơn. Nếu muốn 2 nhân vật chạy nhanh bằng nhau thì chỉnh lại được.
 - File gốc (chưa import) nằm trong `ArtSource/` (Concept, Meshy, Mixamo), không nằm trong `Assets/`.
 
 ### Vũ khí
 
-- **Đinh Ba**: `Assets/Prefabs/Weapons/DinhBa.prefab`, gắn vào xương `mixamorig:RightHand` của Thủy Tinh (đã nằm sẵn trong prefab Player_ThuyTinh).
+- ### Vũ khí
+
+- **Kiếm (Great Sword)**: Object `Sword` (Mesh_2 / Material `vbd_Sword`), gắn vào xương `mixamorig:RightHand` của Thủy Tinh (đã nằm sẵn trong prefab Player_ThuyTinh).
 
 ## 3. Code đã xong (`Assets/Scripts/`)
 
@@ -61,7 +63,7 @@ Scene hiện đang đặt **Thủy Tinh**. Muốn test Sơn Tinh thì thay objec
 - **Di chuyển bằng code, không dùng root motion**: dodge cần quãng đường/i-frame chính xác, lock-on cần đi ngang. Animation Mixamo là thư viện chung nên root motion không đem lại lợi thế gì. Có thể bật root motion riêng cho 1–2 đòn đặc biệt sau này.
 - **Animator chỉ để "diễn"**: state machine C# quyết định mọi thứ và gọi `CrossFadeInFixedTime` theo tên state. Dùng chung 1 controller `Assets/Animations/Shared/AC_Humanoid_Base.controller`, mỗi nhân vật đổi clip qua Override Controller (`AOC_ThuyTinh`).
 - **Blend tree theo tham số `LocomotionBlend`** (0 = Idle, 1 = Walk, 2 = Run). Mỗi prefab tự khai báo `walkSpeed` / `runSpeed` khớp animation của mình, nên 2 nhân vật có tốc độ khác nhau vẫn dùng chung controller mà không trượt chân.
-- **Vũ khí bất đối xứng**: Sơn Tinh tay không, Thủy Tinh cầm Đinh Ba.
+- **Vũ khí bất đối xứng**: Sơn Tinh tay không, Thủy Tinh dùng Đại kiếm (Great Sword).
 - **Mỗi nhân vật có bản sao bộ phím riêng** (`PlayerInputReader` tự nhân bản `PlayerControls` khi khởi tạo). Nếu dùng chung 1 file, xoá hoặc tắt 1 nhân vật (hồi sinh, chọn nhân vật, chuyển scene) sẽ tắt phím của tất cả.
 
 ## 6. Quy trình tạo asset (làm lại cho asset mới)
@@ -76,7 +78,7 @@ Scene hiện đang đặt **Thủy Tinh**. Muốn test Sơn Tinh thì thay objec
 ## 7. Vấn đề đã biết
 
 - Dodge đang mượn tạm animation Run (nhìn như lướt nhanh), cần tải animation lăn/né thật.
-- Thủy Tinh khi chạy vác Đinh Ba qua vai, cán hơi cạ vào vai/tóc (cán dài hơn thanh kiếm gốc của animation).
+- Thủy Tinh khi chạy vác kiếm qua vai, cần căn chỉnh góc xoay/vị trí lưỡi kiếm để tránh clip xuyên vào vai/tóc nhân vật.
 - Thủy Tinh khi đứng/đi cầm 2 tay: tay trái đặt gần cán nhưng không khít 100% (chưa làm IK 2 tay).
 - File phím mẫu `Assets/InputSystem_Actions.inputactions` của template vẫn đang được đặt làm "project-wide actions" trong Project Settings. Game không dùng tới, vô hại, có thể gỡ khi dọn project.
 - **Cần chốt**: GDD ghi dùng HDRP nhưng project đang chạy **URP**. Đề xuất giữ URP (nhẹ, đủ đẹp cho phong cách stylized; đổi sang HDRP phải chuyển lại toàn bộ material).
