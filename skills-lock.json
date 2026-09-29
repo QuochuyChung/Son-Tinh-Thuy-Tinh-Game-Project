@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "skills": {
+    "blender-animation": {
+      "source": "roble3/cc-blender-skill",
+      "sourceType": "github",
+      "skillPath": "plugin/skills/blender-animation/SKILL.md",
+      "computedHash": "befb62885e360993c854b97cf13a9a34e14acf7f4ccf80d21ae8d7acb201a722"
+    },
+    "blender-export": {
+      "source": "roble3/cc-blender-skill",
+      "sourceType": "github",
+      "skillPath": "plugin/skills/blender-export/SKILL.md",
+      "computedHash": "3bfdf90b3622ccae33fc612831274e93757ea8569ef572d3a2919f0c1878c99e"
+    },
+    "blender-modeling": {
+      "source": "roble3/cc-blender-skill",
+      "sourceType": "github",
+      "skillPath": "plugin/skills/blender-modeling/SKILL.md",
+      "computedHash": "40a38c1f34dd4de147f3a7fd2b33e911fd2482747177a5afae4497f1031f63df"
+    },
+    "environment-art": {
+      "source": "omer-metin/skills-for-antigravity",
+      "sourceType": "github",
+      "skillPath": "skills/environment-art/SKILL.md",
+      "computedHash": "137562f191d8363d3e248fa9fbd1c445733331f1f3067ca58bb8806f5c7cdfef"
+    },
+    "game-feel": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/game-feel/SKILL.md",
+      "computedHash": "03b9da7e669419e69dfeea8abe0a542e051b2ea1ef8e18cd8a39cb32855416b3"
+    },
+    "game-ui-ux": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/disciplines/game-ui-ux/SKILL.md",
+      "computedHash": "4aeb677be89029728154d40bb1d98e07d809f019ff8cd0e9188fb4a1f9d51255"
+    },
+    "meshy-3d-generation": {
+      "source": "meshy-dev/meshy-3d-agent",
+      "sourceType": "github",
+      "skillPath": "skills/meshy-3d-generation/SKILL.md",
+      "computedHash": "15e88a5ddf6f4d4b7e0e154d200fa761f025524973a0e53d45c767bd383ba055"
+    },
+    "unity-animation": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/unity/unity-animation/SKILL.md",
+      "computedHash": "6ed37e90206e5534f2bc1e3c5a5176cfdf0a4b1b2ccfbf0a935d618122a15721"
+    },
+    "unity-cli": {
+      "source": "unity-technologies/skills",
+      "sourceType": "github",
+      "skillPath": "skills/unity-cli/SKILL.md",
+      "computedHash": "c873e64c30836852d5f08a3df866a004bf3ed95df2443752add4733818010407"
+    },
+    "unity-csharp-scripting": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/unity/unity-csharp-scripting/SKILL.md",
+      "computedHash": "050e5798e44ffe1fbd62126db21370977de156a2bb2ff6eeff6a6088cee42920"
+    },
+    "unity-input-system": {
+      "source": "gamedev-skills/awesome-gamedev-agent-skills",
+      "sourceType": "github",
+      "skillPath": "skills/unity/unity-input-system/SKILL.md",
+      "computedHash": "18cc67db34f8cfc0595208fb0ae46d39a9376add722b2efbc709554df753a4f9"
+    },
+    "unity-urp-hdrp": {
+      "source": "mrcalderon3d/everything-game-dev-code",
+      "sourceType": "github",
+      "skillPath": "skills/unity/unity-urp-hdrp/SKILL.md",
+      "computedHash": "44c733a4dbd7f0ddf3cc3b5e07e46d8565f5572da58d096b07241cc67f911ecf"
+    }
+  }
+}
