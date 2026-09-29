@@ -19,6 +19,7 @@ namespace SonTinhThuyTinh.Player.States
             SkillDefinition skill = player.Skills != null ? player.Skills.LastCast : null;
             duration = skill != null ? skill.castDuration : FallbackDuration;
             player.HaltLocomotion();
+            if (skill != null && player.Skills != null) player.Skills.Execute(skill, player.transform);
         }
 
         public void Tick(float deltaTime)

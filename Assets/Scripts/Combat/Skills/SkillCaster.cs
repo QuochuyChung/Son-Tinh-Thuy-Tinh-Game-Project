@@ -34,6 +34,15 @@ namespace SonTinhThuyTinh.Combat.Skills
             return true;
         }
 
+        public void Execute(SkillDefinition skill, Transform caster)
+        {
+            if (skill == null || skill.prefab == null || caster == null) return;
+            GameObject instance = Object.Instantiate(skill.prefab);
+            SkillEffect effect = instance.GetComponent<SkillEffect>();
+            if (effect != null) effect.Play(new SkillContext(caster, skill));
+            else Object.Destroy(instance);
+        }
+
         public float CooldownRemaining(SkillSlot slot)
         {
             if (slot == SkillSlot.None || IgnoreCooldowns) return 0f;

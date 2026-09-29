@@ -29,5 +29,11 @@ namespace SonTinhThuyTinh.Combat.Skills
 
         [Tooltip("VFX/geometry root spawned on cast — assigned once skill content lands (C6/C7).")]
         public GameObject prefab;
+
+        [Tooltip("AoE radius in metres (Đạp Núi ground ripple).")]
+        [Min(0f)] public float radius = 4f;
+
+        [Tooltip("Max dash distance in metres for dash skills.")]
+        [Min(0f)] public float dashDistance = 8f;
     }
 }

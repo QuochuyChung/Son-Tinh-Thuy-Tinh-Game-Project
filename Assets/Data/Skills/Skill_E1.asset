@@ -17,4 +17,6 @@ MonoBehaviour:
   cooldown: 8
   castDuration: 0.6
   damageMultiplier: 1
-  prefab: {fileID: 0}
+  prefab: {fileID: 1744395276897644570, guid: 06e9b88870135d348b1edf41370f1341, type: 3}
+  radius: 4
+  dashDistance: 8
