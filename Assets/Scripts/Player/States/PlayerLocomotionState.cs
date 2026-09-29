@@ -1,3 +1,4 @@
+using SonTinhThuyTinh.Combat.Skills;
 using SonTinhThuyTinh.Core;
 using UnityEngine;
 
@@ -15,6 +16,13 @@ namespace SonTinhThuyTinh.Player.States
 
         public void Tick(float deltaTime)
         {
+            SkillSlot skill = player.InputReader.ConsumeSkill();
+            if (skill != SkillSlot.None && player.Skills != null && player.Skills.TryCast(skill))
+            {
+                player.ChangeState(player.CastState);
+                return;
+            }
+
             if (player.InputReader.ConsumeDodge() && player.Stamina.TryConsume(player.Dodge.staminaCost))
             {
                 player.ChangeState(player.DodgeState);

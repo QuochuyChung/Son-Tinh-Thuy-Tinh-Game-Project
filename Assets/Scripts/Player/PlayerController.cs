@@ -1,4 +1,5 @@
 using SonTinhThuyTinh.Combat;
+using SonTinhThuyTinh.Combat.Skills;
 using SonTinhThuyTinh.Core;
 using SonTinhThuyTinh.Player.States;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace SonTinhThuyTinh.Player
         [SerializeField] PlayerInputReader input;
         [SerializeField] Animator animator;
         [SerializeField] Stamina stamina;
+        [SerializeField] SkillCaster skills;
         [Tooltip("Movement is relative to this camera. Defaults to Camera.main.")]
         [SerializeField] Transform cameraTransform;
 
@@ -38,20 +40,24 @@ namespace SonTinhThuyTinh.Player
         public Animator Animator => animator;
         public Stamina Stamina => stamina;
         public DodgeSettings Dodge => dodge;
+        public SkillCaster Skills => skills;
         public float CurrentSpeed { get; private set; }
         public bool IsInvulnerable { get; set; }
         public string CurrentStateName => stateMachine.Current?.GetType().Name ?? "None";
 
         public PlayerLocomotionState LocomotionState { get; private set; }
         public PlayerDodgeState DodgeState { get; private set; }
+        public PlayerCastState CastState { get; private set; }
 
         void Awake()
         {
             body = GetComponent<CharacterController>();
             if (cameraTransform == null) cameraTransform = Camera.main.transform;
+            if (skills == null) skills = GetComponent<SkillCaster>();
 
             LocomotionState = new PlayerLocomotionState(this);
             DodgeState = new PlayerDodgeState(this);
+            CastState = new PlayerCastState(this);
         }
 
         void Start() => stateMachine.ChangeState(LocomotionState);
@@ -86,6 +92,12 @@ namespace SonTinhThuyTinh.Player
         {
             CurrentSpeed = runSpeed * CameraRelative(input.Move).magnitude;
             animator.SetFloat(LocomotionBlendParam, LocomotionBlend(CurrentSpeed));
+        }
+
+        public void HaltLocomotion()
+        {
+            CurrentSpeed = 0f;
+            animator.SetFloat(LocomotionBlendParam, 0f);
         }
 
         // Blend tree thresholds are Idle 0 / Walk 1 / Run 2, so one shared controller works for characters whose clips move at different speeds.
