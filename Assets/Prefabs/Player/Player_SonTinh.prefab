@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: 3158032658237045630}
   - component: {fileID: 9176130151006239417}
   - component: {fileID: 8660803594350561352}
+  - component: {fileID: 8243714584150594544}
   m_Layer: 0
   m_Name: Player_SonTinh
   m_TagString: Untagged
@@ -138,6 +139,8 @@ MonoBehaviour:
   input: {fileID: 3158032658237045630}
   animator: {fileID: 5452162895647399340}
   stamina: {fileID: 9176130151006239417}
+  health: {fileID: 8243714584150594544}
+  cameraTarget: {fileID: 5553189815450662509}
   cameraTransform: {fileID: 0}
   walkSpeed: 2.007
   runSpeed: 6.655
@@ -174,6 +177,19 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+--- !u!114 &8243714584150594544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4653189492081580265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7bafa886d25d8b438b0909de7e335e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.Health
+  max: 100
 --- !u!1001 &9136588076136944658
 PrefabInstance:
   m_ObjectHideFlags: 0

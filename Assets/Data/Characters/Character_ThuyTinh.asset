@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bf07ed00955e844784eaf32cd206013, type: 3}
+  m_Name: Character_ThuyTinh
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Characters.CharacterDefinition
+  id: 1
+  displayName: "Th\u1EE7y Tinh"
+  epithet: "Th\u1EA7n n\u01B0\u1EDBc mi\u1EC1n bi\u1EC3n c\u1EA3"
+  description: "Ch\xFAa t\u1EC3 s\xF4ng bi\u1EC3n, g\u1ECDi gi\xF3 l\xE0 gi\xF3 t\u1EDBi,
+    h\xF4 m\u01B0a l\xE0 m\u01B0a v\u1EC1. Vung \u0111\u1EA1i ki\u1EBFm t\u1EA7m
+    xa, \u0111\xF2n \u0111\xE1nh n\u1EB7ng v\xE0 r\u1ED9ng, nh\u01B0ng b\u01B0\u1EDBc
+    ch\xE2n ch\u1EADm h\u01A1n."
+  playerPrefab: {fileID: 1759369875237003756, guid: eb09d615c366164489dc821667536f54, type: 3}
+  giftBranchScene: Sandbox_Combat

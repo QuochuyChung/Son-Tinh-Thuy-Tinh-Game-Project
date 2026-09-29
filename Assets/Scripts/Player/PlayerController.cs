@@ -13,6 +13,9 @@ namespace SonTinhThuyTinh.Player
         [SerializeField] PlayerInputReader input;
         [SerializeField] Animator animator;
         [SerializeField] Stamina stamina;
+        [SerializeField] Health health;
+        [Tooltip("Point the follow camera orbits around (about head height).")]
+        [SerializeField] Transform cameraTarget;
         [Tooltip("Movement is relative to this camera. Defaults to Camera.main.")]
         [SerializeField] Transform cameraTransform;
 
@@ -37,9 +40,15 @@ namespace SonTinhThuyTinh.Player
         public PlayerInputReader InputReader => input;
         public Animator Animator => animator;
         public Stamina Stamina => stamina;
+        public Health Health => health;
+        public Transform CameraTarget => cameraTarget;
         public DodgeSettings Dodge => dodge;
         public float CurrentSpeed { get; private set; }
-        public bool IsInvulnerable { get; set; }
+        public bool IsInvulnerable
+        {
+            get => health.IsInvulnerable;
+            set => health.IsInvulnerable = value;
+        }
         public string CurrentStateName => stateMachine.Current?.GetType().Name ?? "None";
 
         public PlayerLocomotionState LocomotionState { get; private set; }

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bf07ed00955e844784eaf32cd206013, type: 3}
+  m_Name: Character_SonTinh
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Characters.CharacterDefinition
+  id: 0
+  displayName: "S\u01A1n Tinh"
+  epithet: "Th\u1EA7n n\xFAi T\u1EA3n Vi\xEAn"
+  description: "Ch\xFAa t\u1EC3 mi\u1EC1n non cao. Tay kh\xF4ng m\xE0 v\u1EEFng nh\u01B0
+    n\xFAi, m\u1ED7i c\xFA \u0111\xE1nh l\xE0m \u0111\u1EA5t \u0111\xE1 rung chuy\u1EC3n.
+    Ch\u1EA1y nhanh, xoay x\u1EDF linh ho\u1EA1t."
+  playerPrefab: {fileID: 8660803594350561352, guid: 8c648a906b3e4b64994f34fefa0bb656, type: 3}
+  giftBranchScene: Sandbox_Combat

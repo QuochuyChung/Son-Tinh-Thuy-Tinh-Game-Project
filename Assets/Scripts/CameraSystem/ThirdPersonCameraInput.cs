@@ -23,9 +23,12 @@ namespace SonTinhThuyTinh.CameraSystem
 
         void OnDisable() => SetCursorLocked(false);
 
+        public void Bind(PlayerInputReader reader) => input = reader;
+
         void Update()
         {
             UpdateCursorLock();
+            if (input == null) return;
 
             bool fromMouse = input.LookFromMouse;
             if (fromMouse && Cursor.lockState != CursorLockMode.Locked) return;
