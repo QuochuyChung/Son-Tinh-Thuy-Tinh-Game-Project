@@ -49,6 +49,27 @@ namespace SonTinhThuyTinh.Combat
             return count;
         }
 
+        public static int Fan(in AttackHit hit, float radius, float halfAngleDegrees, List<IAttackReceiver> results = null)
+        {
+            Collider[] cols = Physics.OverlapSphere(hit.origin, radius, ~0, QueryTriggerInteraction.Ignore);
+            int count = 0;
+            HashSet<IAttackReceiver> consumed = null;
+            foreach (Collider col in cols)
+            {
+                Vector3 to = col.bounds.center - hit.origin;
+                to.y = 0f;
+                if (to.sqrMagnitude < 0.0001f) to = hit.direction;
+                if (Vector3.Angle(hit.direction, to) > halfAngleDegrees) continue;
+                IAttackReceiver receiver = Consume(hit, col);
+                if (receiver == null) continue;
+                if (consumed == null) consumed = new HashSet<IAttackReceiver>();
+                if (!consumed.Add(receiver)) continue;
+                count++;
+                results?.Add(receiver);
+            }
+            return count;
+        }
+
         static IAttackReceiver Consume(in AttackHit hit, Collider collider)
         {
             if (collider == null) return null;

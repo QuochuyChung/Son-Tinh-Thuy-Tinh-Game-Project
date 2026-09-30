@@ -188,8 +188,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 584e5f392c9a44146ad18f7ad2fb6f6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.Skills.SkillCaster
-  e1: {fileID: 11400000, guid: 6af3ebbc865c6714b80c5e75fa7cabe3, type: 2}
-  e2: {fileID: 11400000, guid: 11850c5366df1b340ae2e7fddfad0f1c, type: 2}
+  e1: {fileID: 11400000, guid: 0988375c1af2c014cace43778399ee30, type: 2}
+  e2: {fileID: 11400000, guid: d949b90891a8a7949a7a0c9b2da13451, type: 2}
   ult: {fileID: 11400000, guid: 366c2fdf61916344caf482fb89d5d4e5, type: 2}
 --- !u!1001 &5367538997982917262
 PrefabInstance:
