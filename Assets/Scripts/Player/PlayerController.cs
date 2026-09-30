@@ -1,4 +1,5 @@
 using SonTinhThuyTinh.Combat;
+using SonTinhThuyTinh.Combat.Environment;
 using SonTinhThuyTinh.Combat.Skills;
 using SonTinhThuyTinh.Core;
 using SonTinhThuyTinh.Player.States;
@@ -32,6 +33,10 @@ namespace SonTinhThuyTinh.Player
         [Header("Dodge")]
         [SerializeField] DodgeSettings dodge = new();
 
+        [Header("Environment")]
+        [Tooltip("Which side of the env axis this character fights for (speed/stamina mods).")]
+        [SerializeField] EnvFaction faction = EnvFaction.SonTinh;
+
         CharacterController body;
         readonly StateMachine stateMachine = new();
         float verticalVelocity;
@@ -41,6 +46,7 @@ namespace SonTinhThuyTinh.Player
         public Stamina Stamina => stamina;
         public DodgeSettings Dodge => dodge;
         public SkillCaster Skills => skills;
+        public EnvFaction Faction => faction;
         public float CurrentSpeed { get; private set; }
         public bool IsInvulnerable { get; set; }
         public string CurrentStateName => stateMachine.Current?.GetType().Name ?? "None";
@@ -62,7 +68,16 @@ namespace SonTinhThuyTinh.Player
 
         void Start() => stateMachine.ChangeState(LocomotionState);
 
-        void Update() => stateMachine.Tick(Time.deltaTime);
+        void Update()
+        {
+            stateMachine.Tick(Time.deltaTime);
+            if (stamina != null)
+            {
+                stamina.RegenMultiplier = EnvironmentDirector.Instance != null
+                    ? EnvironmentDirector.Instance.GetStaminaRegenMultiplier(faction)
+                    : 1f;
+            }
+        }
 
         public void ChangeState(IState next) => stateMachine.ChangeState(next);
 
@@ -76,7 +91,7 @@ namespace SonTinhThuyTinh.Player
         public void Locomote(Vector2 moveInput, float deltaTime)
         {
             Vector3 direction = CameraRelative(moveInput);
-            float targetSpeed = runSpeed * direction.magnitude;
+            float targetSpeed = runSpeed * EnvSpeedMultiplier * direction.magnitude;
             float rate = targetSpeed > CurrentSpeed ? acceleration : deceleration;
             CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, targetSpeed, rate * deltaTime);
 
@@ -90,7 +105,7 @@ namespace SonTinhThuyTinh.Player
 
         public void MatchSpeedToInput()
         {
-            CurrentSpeed = runSpeed * CameraRelative(input.Move).magnitude;
+            CurrentSpeed = runSpeed * EnvSpeedMultiplier * CameraRelative(input.Move).magnitude;
             animator.SetFloat(LocomotionBlendParam, LocomotionBlend(CurrentSpeed));
         }
 
@@ -99,6 +114,11 @@ namespace SonTinhThuyTinh.Player
             CurrentSpeed = 0f;
             animator.SetFloat(LocomotionBlendParam, 0f);
         }
+
+        float EnvSpeedMultiplier =>
+            EnvironmentDirector.Instance != null
+                ? EnvironmentDirector.Instance.GetSpeedMultiplier(faction)
+                : 1f;
 
         // Blend tree thresholds are Idle 0 / Walk 1 / Run 2, so one shared controller works for characters whose clips move at different speeds.
         float LocomotionBlend(float speed) =>

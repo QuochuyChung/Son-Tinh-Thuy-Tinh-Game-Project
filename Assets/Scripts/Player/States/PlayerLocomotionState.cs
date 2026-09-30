@@ -1,3 +1,4 @@
+using SonTinhThuyTinh.Combat.Environment;
 using SonTinhThuyTinh.Combat.Skills;
 using SonTinhThuyTinh.Core;
 using UnityEngine;
@@ -19,6 +20,8 @@ namespace SonTinhThuyTinh.Player.States
             SkillSlot skill = player.InputReader.ConsumeSkill();
             if (skill != SkillSlot.None && player.Skills != null && player.Skills.TryCast(skill))
             {
+                if (skill == SkillSlot.Ult && EnvironmentDirector.Instance != null)
+                    EnvironmentDirector.Instance.RegisterUlt();
                 player.ChangeState(player.CastState);
                 return;
             }

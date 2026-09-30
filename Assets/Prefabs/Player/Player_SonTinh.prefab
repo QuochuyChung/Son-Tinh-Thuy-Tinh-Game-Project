@@ -176,6 +176,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+  faction: 0
 --- !u!114 &1932283731026104823
 MonoBehaviour:
   m_ObjectHideFlags: 0
