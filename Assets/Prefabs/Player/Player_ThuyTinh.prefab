@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 1759953973099548628}
   - component: {fileID: 1759369875237003756}
   - component: {fileID: 4402922736884940675}
+  - component: {fileID: 2067017091927657858}
   m_Layer: 0
   m_Name: Player_ThuyTinh
   m_TagString: Untagged
@@ -192,6 +193,19 @@ MonoBehaviour:
   e1: {fileID: 11400000, guid: 0988375c1af2c014cace43778399ee30, type: 2}
   e2: {fileID: 11400000, guid: d949b90891a8a7949a7a0c9b2da13451, type: 2}
   ult: {fileID: 11400000, guid: 366c2fdf61916344caf482fb89d5d4e5, type: 2}
+--- !u!114 &2067017091927657858
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6613870163872532821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3bfa0e0e77ca2904ea41e37b2628a72f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Player.PlayerHealth
+  maxHp: 100
 --- !u!1001 &5367538997982917262
 PrefabInstance:
   m_ObjectHideFlags: 0

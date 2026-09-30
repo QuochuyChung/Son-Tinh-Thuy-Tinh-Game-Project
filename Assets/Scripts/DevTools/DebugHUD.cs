@@ -1,3 +1,4 @@
+using SonTinhThuyTinh.Combat.Boss;
 using SonTinhThuyTinh.Combat.Environment;
 using SonTinhThuyTinh.Combat.Skills;
 using SonTinhThuyTinh.Player;
@@ -10,6 +11,7 @@ namespace SonTinhThuyTinh.DevTools
         [SerializeField] PlayerController player;
 
         GUIStyle style;
+        PlayerHealth playerHealth;
 
         void OnGUI()
         {
@@ -19,7 +21,7 @@ namespace SonTinhThuyTinh.DevTools
             var stamina = player.Stamina;
             string exhausted = stamina.IsExhausted ? " (KIỆT SỨC)" : "";
 
-            GUILayout.BeginArea(new Rect(16, 16, 460, 300), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(16, 16, 470, 400), GUI.skin.box);
             GUILayout.Label($"State: {player.CurrentStateName}", style);
             GUILayout.Label($"Speed: {player.CurrentSpeed:F2} m/s", style);
             GUILayout.Label($"Stamina: {stamina.Current:F0}/{stamina.Max:F0}{exhausted}", style);
@@ -49,6 +51,36 @@ namespace SonTinhThuyTinh.DevTools
                     $"F {skills.CooldownRemaining(SkillSlot.Ult):F1}s",
                     style);
                 skills.IgnoreCooldowns = GUILayout.Toggle(skills.IgnoreCooldowns, "Bơm CD (bỏ cooldown)", style);
+            }
+
+            var boss = BossHealth.Instance;
+            if (boss != null)
+            {
+                string ex = boss.IsExhausted ? " (CẠN KIỆT)" : "";
+                GUILayout.Label(
+                    $"Boss: {boss.Hp:F0}/{boss.MaxHp:F0}  đoạn {boss.CurrentSegment}/{boss.Segments}{ex}",
+                    style);
+            }
+
+            if (playerHealth == null) playerHealth = FindFirstObjectByType<PlayerHealth>();
+            if (playerHealth != null)
+                GUILayout.Label($"Player HP: {playerHealth.Hp:F0}/{playerHealth.MaxHp:F0}", style);
+
+            var battle = BattleFlow.Instance;
+            if (battle != null)
+            {
+                string timer = battle.ReclaimActive ? $"  đếm ngược {battle.ReclaimRemaining:F1}s" : "";
+                string end = battle.EndReason.Length > 0 ? $"  [{battle.EndReason}]" : "";
+                GUILayout.Label($"Battle: {battle.State}{timer}{end}", style);
+                GUILayout.BeginHorizontal();
+                GUI.enabled = boss != null;
+                if (GUILayout.Button("Boss -25%", GUILayout.Height(26)))
+                    boss.ApplyDamage(boss.MaxHp * 0.25f);
+                GUI.enabled = playerHealth != null;
+                if (GUILayout.Button("Player -20", GUILayout.Height(26)))
+                    playerHealth.ApplyDamage(20f);
+                GUI.enabled = true;
+                GUILayout.EndHorizontal();
             }
             GUILayout.EndArea();
         }
