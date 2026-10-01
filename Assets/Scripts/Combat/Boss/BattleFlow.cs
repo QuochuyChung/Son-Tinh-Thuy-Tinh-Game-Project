@@ -97,12 +97,27 @@ namespace SonTinhThuyTinh.Combat.Boss
             if (State != BattleState.Fighting) return;
             State = BattleState.Exhausted;
             StopReclaim("boss cạn kiệt");
+            if (FinisherPrompt.Instance != null)
+            {
+                Debug.Log("[BattleFlow] Boss cạn kiệt — chờ FinisherPrompt kết liễu");
+                return;
+            }
             winAt = finisherPlaceholderSeconds > 0f ? Time.time + finisherPlaceholderSeconds : -2f;
             Debug.Log("[BattleFlow] Boss cạn kiệt — finisher placeholder");
             if (winAt == -2f) End(BattleState.Won, "finisher placeholder");
         }
 
-        void OnPlayerDied() => End(BattleState.Lost, "hết HP người chơi");
+        void OnPlayerDied()
+        {
+            if (State == BattleState.Exhausted)
+            {
+                Debug.Log("[BattleFlow] Người chơi ngã nhưng boss đã cạn kiệt — bỏ qua");
+                return;
+            }
+            End(BattleState.Lost, "hết HP người chơi");
+        }
+
+        public void CompleteFinisher(string reason) => End(BattleState.Won, reason);
 
         void End(BattleState state, string reason)
         {
