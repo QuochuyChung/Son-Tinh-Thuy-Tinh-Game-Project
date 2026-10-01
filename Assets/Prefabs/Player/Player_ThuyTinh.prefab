@@ -194,7 +194,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.Skills.SkillCaster
   e1: {fileID: 11400000, guid: 0988375c1af2c014cace43778399ee30, type: 2}
   e2: {fileID: 11400000, guid: d949b90891a8a7949a7a0c9b2da13451, type: 2}
-  ult: {fileID: 11400000, guid: 366c2fdf61916344caf482fb89d5d4e5, type: 2}
+  ult: {fileID: 11400000, guid: 8dc7778275435f441b5669c5bee86e9e, type: 2}
 --- !u!114 &2067017091927657858
 MonoBehaviour:
   m_ObjectHideFlags: 0
