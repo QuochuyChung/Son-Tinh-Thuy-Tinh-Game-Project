@@ -15,47 +15,50 @@ namespace SonTinhThuyTinh.DevTools
 
         void OnGUI()
         {
-            if (player == null) return;
             style ??= new GUIStyle(GUI.skin.label) { fontSize = 18 };
 
-            var stamina = player.Stamina;
-            string exhausted = stamina.IsExhausted ? " (KIỆT SỨC)" : "";
-
             GUILayout.BeginArea(new Rect(16, 16, 470, 470), GUI.skin.box);
-            GUILayout.Label($"State: {player.CurrentStateName}", style);
-            GUILayout.Label($"Speed: {player.CurrentSpeed:F2} m/s", style);
-            GUILayout.Label($"Stamina: {stamina.Current:F0}/{stamina.Max:F0}{exhausted}", style);
-            GUILayout.Label($"I-frame: {(player.IsInvulnerable ? "ON" : "off")}", style);
 
-            var ult = UltMeter.Instance;
-            if (ult != null)
+            if (player != null)
             {
-                string full = ult.IsFull ? "  (ĐẦY)" : "";
-                GUILayout.Label($"Thần Lực: {ult.Value:F0}/{ult.Max:F0}{full}", style);
-                GUILayout.BeginHorizontal();
-                if (GUILayout.Button("+25 Thần Lực", GUILayout.Height(26))) ult.Add(25f);
-                GUI.enabled = !ult.IsFull;
-                if (GUILayout.Button("Bơm đầy", GUILayout.Height(26))) ult.Fill();
-                GUI.enabled = true;
-                GUILayout.EndHorizontal();
-            }
+                var stamina = player.Stamina;
+                string exhausted = stamina.IsExhausted ? " (KIỆT SỨC)" : "";
+                GUILayout.Label($"State: {player.CurrentStateName}", style);
+                GUILayout.Label($"Speed: {player.CurrentSpeed:F2} m/s", style);
+                GUILayout.Label($"Stamina: {stamina.Current:F0}/{stamina.Max:F0}{exhausted}", style);
+                GUILayout.Label($"I-frame: {(player.IsInvulnerable ? "ON" : "off")}", style);
 
-            var dodgeDetector = PerfectDodgeDetector.Instance;
-            if (dodgeDetector != null)
-            {
-                string window = dodgeDetector.IsInPerfectWindow ? "  [CỬA SỔ HOÀN HẢO]" : "";
-                string timing = dodgeDetector.IsDodging ? dodgeDetector.DodgeElapsed.ToString("F2") + "s" : "off";
-                GUILayout.Label($"Né: {timing}{window}", style);
+                var ult = UltMeter.Instance;
+                if (ult != null)
+                {
+                    string full = ult.IsFull ? "  (ĐẦY)" : "";
+                    GUILayout.Label($"Thần Lực: {ult.Value:F0}/{ult.Max:F0}{full}", style);
+                    GUILayout.BeginHorizontal();
+                    if (GUILayout.Button("+25 Thần Lực", GUILayout.Height(26))) ult.Add(25f);
+                    GUI.enabled = !ult.IsFull;
+                    if (GUILayout.Button("Bơm đầy", GUILayout.Height(26))) ult.Fill();
+                    GUI.enabled = true;
+                    GUILayout.EndHorizontal();
+                }
+
+                var dodgeDetector = PerfectDodgeDetector.Instance;
+                if (dodgeDetector != null)
+                {
+                    string window = dodgeDetector.IsInPerfectWindow ? "  [CỬA SỔ HOÀN HẢO]" : "";
+                    string timing = dodgeDetector.IsDodging ? dodgeDetector.DodgeElapsed.ToString("F2") + "s" : "off";
+                    GUILayout.Label($"Né: {timing}{window}", style);
+                }
             }
 
             var env = EnvironmentDirector.Instance;
             if (env != null)
             {
+                EnvFaction faction = player != null ? player.Faction : env.PlayerFaction;
                 string side = env.Level > 0 ? "Đất" : env.Level < 0 ? "Nước" : "Trung lập";
                 int chainCount = env.Chain != null ? env.Chain.Count : 0;
                 GUILayout.Label(
                     $"Env: {env.Level:+0;-0;0} ({side})  chuỗi {chainCount}/{ComboChainTracker.HitsPerStep}  " +
-                    $"speed ×{env.GetSpeedMultiplier(player.Faction):F2}  stam ×{env.GetStaminaRegenMultiplier(player.Faction):F2}",
+                    $"speed ×{env.GetSpeedMultiplier(faction):F2}  stam ×{env.GetStaminaRegenMultiplier(faction):F2}",
                     style);
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button("-1 bậc", GUILayout.Height(26))) env.AdjustLevel(-1);
@@ -63,15 +66,18 @@ namespace SonTinhThuyTinh.DevTools
                 GUILayout.EndHorizontal();
             }
 
-            var skills = player.Skills;
-            if (skills != null)
+            if (player != null)
             {
-                GUILayout.Label(
-                    $"CD: E {skills.CooldownRemaining(SkillSlot.E1):F1}s  " +
-                    $"R {skills.CooldownRemaining(SkillSlot.E2):F1}s  " +
-                    $"F {skills.CooldownRemaining(SkillSlot.Ult):F1}s",
-                    style);
-                skills.IgnoreCooldowns = GUILayout.Toggle(skills.IgnoreCooldowns, "Bơm CD (bỏ cooldown)", style);
+                var skills = player.Skills;
+                if (skills != null)
+                {
+                    GUILayout.Label(
+                        $"CD: E {skills.CooldownRemaining(SkillSlot.E1):F1}s  " +
+                        $"R {skills.CooldownRemaining(SkillSlot.E2):F1}s  " +
+                        $"F {skills.CooldownRemaining(SkillSlot.Ult):F1}s",
+                        style);
+                    skills.IgnoreCooldowns = GUILayout.Toggle(skills.IgnoreCooldowns, "Bơm CD (bỏ cooldown)", style);
+                }
             }
 
             var boss = BossHealth.Instance;
