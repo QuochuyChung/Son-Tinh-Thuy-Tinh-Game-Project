@@ -9,6 +9,7 @@ namespace SonTinhThuyTinh.Combat
         public float damage;
         public bool isHeavy;
         public bool causesKnockdown;
+        public float stunSeconds;
         public Vector3 origin;
         public Vector3 direction;
         public GameObject source;

@@ -28,6 +28,7 @@ namespace SonTinhThuyTinh.Combat.Skills
             SkillDefinition skill = Get(slot);
             if (skill == null) return false;
             if (!IgnoreCooldowns && Time.time < readyAt[(int)slot]) return false;
+            if (slot == SkillSlot.Ult && UltMeter.Instance != null && !UltMeter.Instance.TryConsumeFull()) return false;
 
             if (skill.cooldown > 0f) readyAt[(int)slot] = Time.time + skill.cooldown;
             LastCast = skill;
