@@ -2,6 +2,7 @@ using System;
 using SonTinhThuyTinh.Combat;
 using SonTinhThuyTinh.Combat.Boss;
 using SonTinhThuyTinh.Combat.Environment;
+using SonTinhThuyTinh.Combat.Skills;
 using UnityEngine;
 
 namespace SonTinhThuyTinh.Player
@@ -32,8 +33,17 @@ namespace SonTinhThuyTinh.Player
         public bool ApplyDamage(float damage)
         {
             if (damage <= 0f || IsDead) return true;
-            if (controller != null && controller.IsInvulnerable) return true;
             if (BattleFlow.Instance != null && BattleFlow.Instance.State != BattleState.Fighting) return true;
+
+            PerfectDodgeDetector dodge = PerfectDodgeDetector.Instance;
+            if (dodge != null && dodge.IsInPerfectWindow)
+            {
+                dodge.ConsumePerfectDodged();
+                UltMeter.Instance?.RegisterPerfectDodge();
+                return true;
+            }
+
+            if (controller != null && controller.IsInvulnerable) return true;
 
             Hp = Mathf.Max(0f, Hp - damage);
             EnvironmentDirector.Instance?.RegisterPlayerHit();

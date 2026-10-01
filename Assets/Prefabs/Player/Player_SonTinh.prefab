@@ -46,6 +46,8 @@ GameObject:
   - component: {fileID: 8660803594350561352}
   - component: {fileID: 1932283731026104823}
   - component: {fileID: 8464104445890404543}
+  - component: {fileID: 8422372604404759931}
+  - component: {fileID: 1815150168706469790}
   m_Layer: 0
   m_Name: Player_SonTinh
   m_TagString: Untagged
@@ -206,6 +208,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Player.PlayerHealth
   maxHp: 100
+--- !u!114 &8422372604404759931
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4653189492081580265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 859fc882d7ae7ae469adafad6fe71a3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.Skills.UltMeter
+  max: 100
+  lightHitGain: 3
+  heavyHitGain: 8
+  perfectDodgeGain: 12
+--- !u!114 &1815150168706469790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4653189492081580265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 540a9cd47229d874b835871fbb71c84c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.Skills.PerfectDodgeDetector
+  perfectWindow: 0.3
+  ghostDuration: 0.35
+  hitstopSeconds: 0.25
+  hitstopTimeScale: 0.05
+  ghostPrefab: {fileID: 9097111344592583044, guid: 176445746ff843e4189c529cbc1ac378, type: 3}
 --- !u!1001 &9136588076136944658
 PrefabInstance:
   m_ObjectHideFlags: 0

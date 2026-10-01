@@ -21,11 +21,32 @@ namespace SonTinhThuyTinh.DevTools
             var stamina = player.Stamina;
             string exhausted = stamina.IsExhausted ? " (KIỆT SỨC)" : "";
 
-            GUILayout.BeginArea(new Rect(16, 16, 470, 400), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(16, 16, 470, 470), GUI.skin.box);
             GUILayout.Label($"State: {player.CurrentStateName}", style);
             GUILayout.Label($"Speed: {player.CurrentSpeed:F2} m/s", style);
             GUILayout.Label($"Stamina: {stamina.Current:F0}/{stamina.Max:F0}{exhausted}", style);
             GUILayout.Label($"I-frame: {(player.IsInvulnerable ? "ON" : "off")}", style);
+
+            var ult = UltMeter.Instance;
+            if (ult != null)
+            {
+                string full = ult.IsFull ? "  (ĐẦY)" : "";
+                GUILayout.Label($"Thần Lực: {ult.Value:F0}/{ult.Max:F0}{full}", style);
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button("+25 Thần Lực", GUILayout.Height(26))) ult.Add(25f);
+                GUI.enabled = !ult.IsFull;
+                if (GUILayout.Button("Bơm đầy", GUILayout.Height(26))) ult.Fill();
+                GUI.enabled = true;
+                GUILayout.EndHorizontal();
+            }
+
+            var dodgeDetector = PerfectDodgeDetector.Instance;
+            if (dodgeDetector != null)
+            {
+                string window = dodgeDetector.IsInPerfectWindow ? "  [CỬA SỔ HOÀN HẢO]" : "";
+                string timing = dodgeDetector.IsDodging ? dodgeDetector.DodgeElapsed.ToString("F2") + "s" : "off";
+                GUILayout.Label($"Né: {timing}{window}", style);
+            }
 
             var env = EnvironmentDirector.Instance;
             if (env != null)
