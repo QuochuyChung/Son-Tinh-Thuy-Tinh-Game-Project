@@ -1,4 +1,5 @@
 using System.Collections;
+using SonTinhThuyTinh.Arena;
 using SonTinhThuyTinh.Combat.Boss;
 using SonTinhThuyTinh.Combat.Environment;
 using SonTinhThuyTinh.Combat.Skills;
@@ -250,6 +251,8 @@ namespace SonTinhThuyTinh.Combat.AI
             if (env != null) speed *= env.GetSpeedMultiplier(bossFaction);
             Vector3 next = transform.position + toPlayer.normalized * (speed * Time.deltaTime);
             next.y = transform.position.y;
+            ArenaBoundary boundary = ArenaBoundary.Instance;
+            if (boundary != null) next = boundary.ClampPosition(next);
             transform.position = next;
         }
 
