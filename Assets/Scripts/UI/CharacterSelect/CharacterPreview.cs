@@ -10,7 +10,7 @@ namespace SonTinhThuyTinh.UI.CharacterSelect
         [SerializeField] float highlightedIntensity = 60f;
         [SerializeField] float dimmedIntensity = 6f;
         [Tooltip("Degrees the character turns away from the camera while not highlighted.")]
-        [SerializeField] float dimmedYaw = 30f;
+        [SerializeField] float dimmedYaw = 10f;
         [SerializeField] float blendSpeed = 6f;
 
         Transform model;

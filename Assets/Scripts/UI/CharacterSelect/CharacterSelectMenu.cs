@@ -1,13 +1,15 @@
 using System;
 using SonTinhThuyTinh.Characters;
 using SonTinhThuyTinh.Flow;
-using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace SonTinhThuyTinh.UI.CharacterSelect
 {
+    // Split-screen character select: the highlighted side is the player (P1), the other one becomes the final opponent (CPU).
+    // Left / right (arrows, A / D, stick) or the mouse move the highlight, Enter / click / A confirms, Esc / B goes back.
     public class CharacterSelectMenu : MonoBehaviour
     {
         [Serializable]
@@ -15,31 +17,51 @@ namespace SonTinhThuyTinh.UI.CharacterSelect
         {
             public CharacterDefinition character;
             public Button button;
-            public TMP_Text label;
+            public CharacterSelectPanel panel;
             public CharacterPreview preview;
         }
 
         [SerializeField] Option[] options;
-        [SerializeField] TMP_Text descriptionText;
 
+        InputAction back;
         Option highlighted;
         bool confirmed;
+
+        void Awake()
+        {
+            back = new InputAction("Back", InputActionType.Button);
+            back.AddBinding("<Keyboard>/escape");
+            back.AddBinding("<Gamepad>/buttonEast");
+        }
+
+        void OnEnable() => back.Enable();
+
+        void OnDisable() => back.Disable();
+
+        void OnDestroy() => back.Dispose();
 
         void Start()
         {
             foreach (Option option in options)
             {
-                option.label.text = $"{option.character.DisplayName}\n<size=55%>{option.character.Epithet}</size>";
+                option.panel.Setup(option.character);
                 option.preview.Show(option.character);
                 option.button.onClick.AddListener(() => Confirm(option));
             }
 
             EventSystem.current.SetSelectedGameObject(options[0].button.gameObject);
-            Highlight(options[0]);
+            Highlight(options[0], instant: true);
         }
 
         void Update()
         {
+            if (back.WasPressedThisFrame() && !confirmed && !SceneLoader.IsLoading)
+            {
+                confirmed = true;
+                SceneLoader.Load(SceneNames.MainMenu);
+                return;
+            }
+
             GameObject selected = EventSystem.current.currentSelectedGameObject;
 
             // Clicking empty space clears the selection; restore it so keyboard/gamepad navigation keeps working.
@@ -54,12 +76,14 @@ namespace SonTinhThuyTinh.UI.CharacterSelect
                     Highlight(option);
         }
 
-        void Highlight(Option option)
+        void Highlight(Option option, bool instant = false)
         {
             highlighted = option;
             foreach (Option other in options)
+            {
                 other.preview.SetHighlighted(other == option);
-            descriptionText.text = option.character.Description;
+                other.panel.SetHighlighted(other == option, instant);
+            }
         }
 
         void Confirm(Option option)

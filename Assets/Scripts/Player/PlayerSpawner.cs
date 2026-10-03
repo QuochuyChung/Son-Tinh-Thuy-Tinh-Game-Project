@@ -31,7 +31,7 @@ namespace SonTinhThuyTinh.Player
 
             followCamera.Target.TrackingTarget = Player.CameraTarget;
             cameraInput.Bind(Player.InputReader);
-            if (gameplayHud != null) gameplayHud.Bind(Player);
+            if (gameplayHud != null) gameplayHud.Bind(Player, character);
             if (debugHud != null) debugHud.Bind(Player);
         }
 

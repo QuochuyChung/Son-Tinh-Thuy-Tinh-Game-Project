@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: AOC_ThuyTinh_v2
+  m_Controller: {fileID: 9100000, guid: b067adfeffdc5fe458ba62d0cf213e65, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 552e6c0d8b2851e488789d96666b2bfc, type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 78e63caa0f169754bae9be9adc297306, type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 55c9a576414f7c645bdda16d8bd7345e, type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: 3b6b4ac390b1b9f4a957630ed9476b73, type: 3}
+  - m_OriginalClip: {fileID: -203655887218126122, guid: 0e31b045bcfa6b64ca13f6d9ee4b5396, type: 3}
+    m_OverrideClip: {fileID: -203655887218126122, guid: d199f5cebc5ac0f4a962642add922ef0, type: 3}
+  - m_OriginalClip: {fileID: 7400000, guid: 7717f2c6de0ea604f905e7358ceab9eb, type: 2}
+    m_OverrideClip: {fileID: -203655887218126122, guid: db8a5d933290db242bb8920adbfb5bb1, type: 3}

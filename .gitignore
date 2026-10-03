@@ -63,3 +63,8 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Generated solution file (new Visual Studio .slnx format) and Python bytecode from tools/
+*.slnx
+__pycache__/
+*.pyc

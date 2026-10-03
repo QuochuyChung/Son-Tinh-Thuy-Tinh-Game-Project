@@ -12,6 +12,10 @@ namespace SonTinhThuyTinh.Characters
         [SerializeField] string epithet;
         [TextArea(3, 6)]
         [SerializeField] string description;
+        [Tooltip("Three short lines shown as the skill rows on the character select screen. Placeholders taken from the legend until the combat moves exist.")]
+        [SerializeField] string[] signatureMoves;
+        [Tooltip("Face shown in the gameplay HUD medallion. Rendered from the in-game model (Assets/Art/UI/Portraits).")]
+        [SerializeField] Sprite portrait;
         [SerializeField] PlayerController playerPrefab;
         [Tooltip("Scene loaded after picking this character: their own gift (sính lễ) branch map.")]
         [SerializeField] string giftBranchScene = SceneNames.Sandbox;
@@ -20,6 +24,8 @@ namespace SonTinhThuyTinh.Characters
         public string DisplayName => displayName;
         public string Epithet => epithet;
         public string Description => description;
+        public System.Collections.Generic.IReadOnlyList<string> SignatureMoves => signatureMoves;
+        public Sprite Portrait => portrait;
         public PlayerController PlayerPrefab => playerPrefab;
         public string GiftBranchScene => giftBranchScene;
     }

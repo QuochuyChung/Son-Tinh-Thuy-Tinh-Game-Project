@@ -14,9 +14,12 @@ namespace SonTinhThuyTinh.Player
         InputAction move;
         InputAction look;
         InputAction dodge;
+        InputAction sprint;
         float dodgePressedAt = float.NegativeInfinity;
 
         public Vector2 Move => move.ReadValue<Vector2>();
+        // Held, not pressed: Shift (or left stick click) while moving makes the character sprint.
+        public bool SprintHeld => sprint.IsPressed();
         public Vector2 Look => look.ReadValue<Vector2>();
         public bool LookFromMouse => look.activeControl?.device is Pointer;
 
@@ -28,6 +31,7 @@ namespace SonTinhThuyTinh.Player
             move = map.FindAction("Move", throwIfNotFound: true);
             look = map.FindAction("Look", throwIfNotFound: true);
             dodge = map.FindAction("Dodge", throwIfNotFound: true);
+            sprint = map.FindAction("Sprint", throwIfNotFound: true);
         }
 
         void OnEnable()

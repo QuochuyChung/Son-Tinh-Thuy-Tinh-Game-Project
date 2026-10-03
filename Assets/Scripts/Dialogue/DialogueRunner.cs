@@ -17,7 +17,7 @@ namespace SonTinhThuyTinh.Dialogue
         [SerializeField] TMP_Text speakerText;
         [SerializeField] TMP_Text bodyText;
         [SerializeField] GameObject continueIndicator;
-        [Tooltip("Optional. Shows DialogueLine.illustration full screen.")]
+        [Tooltip("Optional. Shows DialogueLine.illustration full screen. With an Aspect Ratio Fitter (Envelope Parent) on the same object the picture covers the whole screen at any window shape, cropping the edges instead of leaving black bars.")]
         [SerializeField] Image illustration;
         [SerializeField] float charactersPerSecond = 40f;
         [SerializeField] bool allowSkip = true;
@@ -124,6 +124,8 @@ namespace SonTinhThuyTinh.Dialogue
             {
                 illustration.sprite = line.illustration;
                 illustration.enabled = true;
+                if (illustration.TryGetComponent(out AspectRatioFitter fitter))
+                    fitter.aspectRatio = line.illustration.rect.width / line.illustration.rect.height;
             }
 
             revealed = 0f;

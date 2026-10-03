@@ -24,6 +24,8 @@ namespace SonTinhThuyTinh.Player
         [SerializeField] float walkSpeed = 2f;
         [Tooltip("Natural root speed (m/s) of this character's Run clip at its current scale. Also the top movement speed.")]
         [SerializeField] float runSpeed = 6.6f;
+        [Tooltip("Natural root speed (m/s) of this character's Sprint clip at its current scale. Reached while Sprint (Shift) is held and the character is moving; otherwise the top speed is Run Speed.")]
+        [SerializeField] float sprintSpeed = 9f;
         [SerializeField] float acceleration = 12f;
         [SerializeField] float deceleration = 16f;
         [Tooltip("Degrees per second.")]
@@ -79,7 +81,7 @@ namespace SonTinhThuyTinh.Player
         public void Locomote(Vector2 moveInput, float deltaTime)
         {
             Vector3 direction = CameraRelative(moveInput);
-            float targetSpeed = runSpeed * direction.magnitude;
+            float targetSpeed = TopSpeed(moveInput) * direction.magnitude;
             float rate = targetSpeed > CurrentSpeed ? acceleration : deceleration;
             CurrentSpeed = Mathf.MoveTowards(CurrentSpeed, targetSpeed, rate * deltaTime);
 
@@ -93,13 +95,20 @@ namespace SonTinhThuyTinh.Player
 
         public void MatchSpeedToInput()
         {
-            CurrentSpeed = runSpeed * CameraRelative(input.Move).magnitude;
+            CurrentSpeed = TopSpeed(input.Move) * CameraRelative(input.Move).magnitude;
             animator.SetFloat(LocomotionBlendParam, LocomotionBlend(CurrentSpeed));
         }
 
-        // Blend tree thresholds are Idle 0 / Walk 1 / Run 2, so one shared controller works for characters whose clips move at different speeds.
-        float LocomotionBlend(float speed) =>
-            speed <= walkSpeed ? speed / walkSpeed : 1f + (speed - walkSpeed) / (runSpeed - walkSpeed);
+        // Run is the normal top speed; holding Sprint while really moving (not a light stick tilt) raises it to the sprint clip's speed.
+        float TopSpeed(Vector2 moveInput) => input.SprintHeld && moveInput.sqrMagnitude > 0.25f ? sprintSpeed : runSpeed;
+
+        // Blend tree thresholds are Idle 0 / Walk 1 / Run 2 / Sprint 3, so one shared controller works for characters whose clips move at different speeds.
+        float LocomotionBlend(float speed)
+        {
+            if (speed <= walkSpeed) return speed / walkSpeed;
+            if (speed <= runSpeed) return 1f + (speed - walkSpeed) / (runSpeed - walkSpeed);
+            return 2f + Mathf.Clamp01((speed - runSpeed) / Mathf.Max(sprintSpeed - runSpeed, 0.01f));
+        }
 
         public void FaceTowards(Vector3 direction, float maxDegrees)
         {

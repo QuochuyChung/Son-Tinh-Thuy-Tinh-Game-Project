@@ -19,5 +19,10 @@ MonoBehaviour:
     h\xF4 m\u01B0a l\xE0 m\u01B0a v\u1EC1. Vung \u0111\u1EA1i ki\u1EBFm t\u1EA7m
     xa, \u0111\xF2n \u0111\xE1nh n\u1EB7ng v\xE0 r\u1ED9ng, nh\u01B0ng b\u01B0\u1EDBc
     ch\xE2n ch\u1EADm h\u01A1n."
-  playerPrefab: {fileID: 1759369875237003756, guid: eb09d615c366164489dc821667536f54, type: 3}
+  signatureMoves:
+  - "G\u1ECDi gi\xF3, gi\xF3 t\u1EDBi"
+  - "H\xF4 m\u01B0a, m\u01B0a v\u1EC1"
+  - "S\xF3ng n\u01B0\u1EDBc nghe l\u1EC7nh"
+  portrait: {fileID: 21300000, guid: d9eda25ffe2edda4baa3c9694f8008fb, type: 3}
+  playerPrefab: {fileID: 8660803594350561352, guid: e474c849544c9e94382444f025c47989, type: 3}
   giftBranchScene: Sandbox_Combat
