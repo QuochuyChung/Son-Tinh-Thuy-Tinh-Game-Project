@@ -950,6 +950,64 @@ Transform:
   - {fileID: 65271183}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &125572604
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 125572606}
+  - component: {fileID: 125572605}
+  m_Layer: 0
+  m_Name: StormDirector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &125572605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 125572604}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e968eaa0d7a68d43acb650610810638, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.Environment.StormDirector
+  strikeInterval: 4
+  telegraphSeconds: 0.8
+  strikeRadius: 2.6
+  strikeDamage: 18
+  strikeStunSeconds: 0.75
+  strikeTrauma: 0.65
+  strikeOffsetRadius: 1.5
+  arenaClamp: 12
+  rainRateP2: 45
+  rainRateP3: 150
+  rainRampPerSecond: 40
+  ambientTrauma: 0.25
+  ambientInterval: 2
+  traumaDecayPerSecond: 1
+--- !u!4 &125572606
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 125572604}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &136554958
 GameObject:
   m_ObjectHideFlags: 0
@@ -13350,3 +13408,4 @@ SceneRoots:
   - {fileID: 1227531606}
   - {fileID: 1868401836}
   - {fileID: 766312048}
+  - {fileID: 125572606}
