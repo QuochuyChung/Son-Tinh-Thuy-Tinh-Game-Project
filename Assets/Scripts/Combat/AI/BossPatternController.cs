@@ -101,6 +101,11 @@ namespace SonTinhThuyTinh.Combat.AI
         {
             while (true)
             {
+                if (EntryCutscene.IntroActive)
+                {
+                    yield return null;
+                    continue;
+                }
                 if (BattleFlow.Instance != null && BattleFlow.Instance.State != BattleState.Fighting) yield break;
                 if (boss.IsExhausted || player.IsDead) yield break;
                 if (boss.IsStunned)
