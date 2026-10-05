@@ -1987,6 +1987,62 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 455211bb50ec47a479353b0578891680, type: 3}
+--- !u!1 &1378667886
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1378667887}
+  - component: {fileID: 1378667888}
+  m_Layer: 0
+  m_Name: BattleAudio
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1378667887
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1378667886}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1378667888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1378667886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ab8f9c42e897e34a957517c8b04cac2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Audio.BattleAudio
+  thunderClip: {fileID: 0}
+  waveClip: {fileID: 0}
+  crumblingClip: {fileID: 0}
+  rumbleClip: {fileID: 0}
+  muffledClip: {fileID: 0}
+  stingerSonTinhClip: {fileID: 0}
+  stingerThuyTinhClip: {fileID: 0}
+  sfxVolume: 0.8
+  stingerVolume: 0.9
+  muffledVolume: 0.5
+  muffledFadeSeconds: 0.5
+  muffledThreshold: 0.5
 --- !u!4 &1432687294 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 455211bb50ec47a479353b0578891680, type: 3}
@@ -2213,3 +2269,4 @@ SceneRoots:
   - {fileID: 1183157117}
   - {fileID: 421740289}
   - {fileID: 775796428}
+  - {fileID: 1378667887}

@@ -1,5 +1,6 @@
 using Unity.Cinemachine;
 using UnityEngine;
+using SonTinhThuyTinh.Audio;
 using SonTinhThuyTinh.Combat.Boss;
 using SonTinhThuyTinh.Player;
 
@@ -188,6 +189,7 @@ namespace SonTinhThuyTinh.Combat.Environment
             int hits = AttackResolver.Area(in hit, strikeRadius);
             Debug.Log($"[Storm] KheSam hits={hits} @({telegraphPos.x:F1},{telegraphPos.z:F1}) t={Time.time:F3}");
             AddTrauma(strikeTrauma);
+            BattleAudio.Instance?.PlayThunderStrike();
 
             if (telegraphRing != null)
             {

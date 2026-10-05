@@ -1,3 +1,4 @@
+using SonTinhThuyTinh.Audio;
 using SonTinhThuyTinh.Combat.Environment;
 using SonTinhThuyTinh.Combat.Skills;
 using SonTinhThuyTinh.Core;
@@ -21,7 +22,10 @@ namespace SonTinhThuyTinh.Player.States
             if (skill != SkillSlot.None && player.Skills != null && player.Skills.TryCast(skill))
             {
                 if (skill == SkillSlot.Ult && EnvironmentDirector.Instance != null)
+                {
                     EnvironmentDirector.Instance.RegisterUlt();
+                    BattleAudio.Instance?.PlayUltStinger(EnvironmentDirector.Instance.PlayerFaction);
+                }
                 player.ChangeState(player.CastState);
                 return;
             }

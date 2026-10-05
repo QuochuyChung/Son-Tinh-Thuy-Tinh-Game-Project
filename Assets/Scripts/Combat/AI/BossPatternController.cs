@@ -1,5 +1,6 @@
 using System.Collections;
 using SonTinhThuyTinh.Arena;
+using SonTinhThuyTinh.Audio;
 using SonTinhThuyTinh.Combat.Boss;
 using SonTinhThuyTinh.Combat.Environment;
 using SonTinhThuyTinh.Combat.Skills;
@@ -190,6 +191,7 @@ namespace SonTinhThuyTinh.Combat.AI
             Debug.Log($"[BossPattern] Đại Pháp scripted P{phase} — telegraph {aggression.fTelegraphSeconds:F1}s");
             yield return Windup(aggression.fTelegraphSeconds);
             caster.Execute(ult, transform);
+            BattleAudio.Instance?.PlayUltStinger(bossFaction);
             ScriptedFCastCount++;
             Debug.Log($"[BossPattern] Đại Pháp P{phase} đã cast (lần {ScriptedFCastCount}) — kiệt sức {aggression.exhaustionSeconds:F1}s");
 
