@@ -656,7 +656,7 @@ namespace SonTinhThuyTinh.EditorTools
                 var sphere = pickup.GetComponent<SphereCollider>();
                 if (sphere != null) { sphere.isTrigger = true; sphere.radius = 2f; sphere.center = new Vector3(0f, 1.2f, 0f); }
                 Transform visual = pickup.Find("Visual");
-                if (visual != null) visual.localPosition = new Vector3(0f, 1.4f, 0f);
+                if (visual != null) visual.localPosition = new Vector3(0f, visual.Find(RoosterGiftSetup.ChildName) != null ? RoosterGiftSetup.VisualHeight : 1.4f, 0f);   // the chicken gift (RoosterGiftSetup) sits lower than the yellow placeholder
 
                 Transform glow = pickup.Find("Glow");
                 if (glow == null)

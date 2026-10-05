@@ -414,3 +414,7 @@ Animation Mixamo bạn thêm ở `ArtSource/Son-Tinh-vs-Thuy-Tinh_Animation/` (t
 
 ---
 Bảng việc chi tiết + phân người: [Claude Doc](https://claude.ai/code/artifact/9b63c56a-f193-4db3-a892-4930ebe64584)
+
+### Gà chín cựa (model thật, 05/10)
+- **Nguồn**: `ArtSource/Meshy/Rooster/` (model Meshy "Embercrest Rooster" có texture) và `ArtSource/Blender/Rooster/Rooster_Rigged_Color.blend` (đã rig 19 xương gồm 2 đốt cánh mỗi bên, kèm 3 animation **Walk** 73 khung / **Eat** 83 khung / **Fly** 17 khung, 24 fps). Model cao ~0,7 m, gốc toạ độ ở chân.
+- **Trong game**: `Assets/Art/Characters/Rooster/rooster.fbx` + `Textures/` (chỉ dùng basecolor + normal, như cung điện). Menu **Tools ▸ Son Tinh Thuy Tinh ▸ Rooster ▸ Setup Ga chin cua (prefab + 3 scenes)** (`Assets/Editor/RoosterGiftSetup.cs`) dựng vật liệu `M_Rooster`, `AC_Rooster` (mặc định phát **Fly**, đổi default state sang Eat/Walk nếu muốn), prefab `Assets/Prefabs/Gifts/Rooster_GaChinCua.prefab`, rồi thay khối vàng bên trong `Visual` của `Pickup_GaChinCua` ở `Map_SonTinh`, `Map_ThuyTinh`, `Sandbox_Combat` (chạy lại không sao, pickup đã thay thì bỏ qua). `GiftPickup` vẫn xoay/nhấp nhô `Visual` như cũ. Hai MapBuilder đã sửa để lúc dựng lại map, `Visual` có gà thì đặt ở độ cao 0,9 thay vì 1,4.
