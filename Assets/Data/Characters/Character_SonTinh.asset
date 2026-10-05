@@ -24,4 +24,4 @@ MonoBehaviour:
   - "\u0110\u1EA5t d\xE2ng th\xE0nh b\xE3i"
   portrait: {fileID: 21300000, guid: 7fc0563be0671684eac4e48cb650a1fb, type: 3}
   playerPrefab: {fileID: 8660803594350561352, guid: 91e2c870c738a22468de257f00891ae9, type: 3}
-  giftBranchScene: Sandbox_Combat
+  giftBranchScene: Map_SonTinh

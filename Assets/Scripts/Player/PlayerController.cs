@@ -35,9 +35,16 @@ namespace SonTinhThuyTinh.Player
         [Header("Dodge")]
         [SerializeField] DodgeSettings dodge = new();
 
+        [Header("Jump (Space; Space while sprinting = running jump)")]
+        [SerializeField] JumpSettings jump = new();
+
+        [Header("Slide (C while sprinting)")]
+        [SerializeField] SlideSettings slide = new();
+
         CharacterController body;
         readonly StateMachine stateMachine = new();
         float verticalVelocity;
+        float slideReadyAt;
 
         public PlayerInputReader InputReader => input;
         public Animator Animator => animator;
@@ -45,7 +52,15 @@ namespace SonTinhThuyTinh.Player
         public Health Health => health;
         public Transform CameraTarget => cameraTarget;
         public DodgeSettings Dodge => dodge;
+        public JumpSettings JumpSettings => jump;
+        public SlideSettings Slide => slide;
         public float CurrentSpeed { get; private set; }
+        public float RunSpeed => runSpeed;
+        public float SprintSpeed => sprintSpeed;
+        public bool IsGrounded => body.isGrounded;
+        // Shift held and really running (not just starting to walk): what the running jump and the slide need.
+        public bool IsSprinting => input.SprintHeld && input.Move.sqrMagnitude > 0.25f && CurrentSpeed >= runSpeed * 0.8f;
+        public bool CanSlide => Time.time >= slideReadyAt && IsSprinting && body.isGrounded;
         public bool IsInvulnerable
         {
             get => health.IsInvulnerable;
@@ -55,6 +70,10 @@ namespace SonTinhThuyTinh.Player
 
         public PlayerLocomotionState LocomotionState { get; private set; }
         public PlayerDodgeState DodgeState { get; private set; }
+        public PlayerJumpState JumpUpState { get; private set; }
+        public PlayerJumpState RunJumpState { get; private set; }
+        public PlayerSlideState SlideState { get; private set; }
+        public PlayerDeathState DeathState { get; private set; }
 
         void Awake()
         {
@@ -63,13 +82,65 @@ namespace SonTinhThuyTinh.Player
 
             LocomotionState = new PlayerLocomotionState(this);
             DodgeState = new PlayerDodgeState(this);
+            JumpUpState = new PlayerJumpState(this, running: false);
+            RunJumpState = new PlayerJumpState(this, running: true);
+            SlideState = new PlayerSlideState(this);
+            DeathState = new PlayerDeathState(this);
         }
 
-        void Start() => stateMachine.ChangeState(LocomotionState);
+        void Start()
+        {
+            stateMachine.ChangeState(LocomotionState);
+            health.Died += OnDied;
+        }
 
-        void Update() => stateMachine.Tick(Time.deltaTime);
+        void OnDestroy()
+        {
+            if (health != null) health.Died -= OnDied;
+        }
+
+        void Update()
+        {
+            stateMachine.Tick(Time.deltaTime);
+#if UNITY_EDITOR
+            EditorTestKeys();
+#endif
+        }
 
         public void ChangeState(IState next) => stateMachine.ChangeState(next);
+
+        // Health reached zero: knocked down.
+        void OnDied(DamageInfo _) => ChangeState(DeathState);
+
+        // Gets a knocked-down character back on its feet with full health.
+        public void Revive()
+        {
+            if (!health.IsDead) return;
+            health.Revive();
+            ChangeState(LocomotionState);
+        }
+
+#if UNITY_EDITOR
+        // Test keys while there are no enemies yet: L = knocked down now, R = get up again.
+        void EditorTestKeys()
+        {
+            var keyboard = UnityEngine.InputSystem.Keyboard.current;
+            if (keyboard == null) return;
+            if (keyboard.lKey.wasPressedThisFrame) health.TakeDamage(new DamageInfo(health.Max * 10f, gameObject));
+            if (keyboard.rKey.wasPressedThisFrame) Revive();
+        }
+#endif
+
+        // Jump: the vertical speed that reaches `height` metres under this controller's gravity. The arc is then plain physics in Move().
+        public void Jump(float height) => verticalVelocity = Mathf.Sqrt(2f * -gravity * Mathf.Max(height, 0.01f));
+
+        public void SetSpeed(float speed)
+        {
+            CurrentSpeed = Mathf.Max(0f, speed);
+            animator.SetFloat(LocomotionBlendParam, LocomotionBlend(CurrentSpeed));
+        }
+
+        public void SlideEnded() => slideReadyAt = Time.time + slide.cooldown;
 
         public Vector3 CameraRelative(Vector2 moveInput)
         {
@@ -101,6 +172,8 @@ namespace SonTinhThuyTinh.Player
 
         // Run is the normal top speed; holding Sprint while really moving (not a light stick tilt) raises it to the sprint clip's speed.
         float TopSpeed(Vector2 moveInput) => input.SprintHeld && moveInput.sqrMagnitude > 0.25f ? sprintSpeed : runSpeed;
+
+        public float TopSpeedFor(Vector2 moveInput) => TopSpeed(moveInput) * CameraRelative(moveInput).magnitude;
 
         // Blend tree thresholds are Idle 0 / Walk 1 / Run 2 / Sprint 3, so one shared controller works for characters whose clips move at different speeds.
         float LocomotionBlend(float speed)

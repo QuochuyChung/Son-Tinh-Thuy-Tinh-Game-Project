@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37510c254e889794a8c0f7d68d540bd1, type: 3}
+  m_Name: WorldMap
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.UI.Map.WorldMapData
+  texture: {fileID: 2800000, guid: 287ffc1c28008034fb97f411c65d4a47, type: 3}
+  places:
+  - label: "R\u1EEBng R\u1ED1i"
+    position: {x: 0.06508944, y: 0.4751016}
+  - label: "Khu r\u1EEBng linh"
+    position: {x: 0.22799234, y: 0.6587943}
+  - label: "L\xE0ng s\u01A1n c\u01B0\u1EDBc"
+    position: {x: 0.10410402, y: 0.86360675}
+  - label: "Cung \u0111i\u1EC7n Vua H\xF9ng"
+    position: {x: 0.5, y: 0.14583333}
+  - label: "V\u1ECBnh \u0110\u1EA7m L\u1EA7y"
+    position: {x: 0.8778076, y: 0.79123694}
+  - label: "Th\xE1c M\u1EDD S\u01B0\u01A1ng"
+    position: {x: 0.90570176, y: 0.5332031}
+  - label: "Hang Ch\xECm"
+    position: {x: 0.91375834, y: 0.647759}

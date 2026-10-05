@@ -33,13 +33,14 @@ namespace SonTinhThuyTinh.DevTools
             string exhausted = stamina.IsExhausted ? " (KIỆT SỨC)" : "";
             string dead = health.IsDead ? " (CHẾT)" : "";
 
-            GUILayout.BeginArea(new Rect(16, 16, 420, 210), GUI.skin.box);
+            GUILayout.BeginArea(new Rect(16, 16, 420, 240), GUI.skin.box);
             GUILayout.Label($"State: {player.CurrentStateName}", style);
             GUILayout.Label($"Speed: {player.CurrentSpeed:F2} m/s", style);
             GUILayout.Label($"Health: {health.Current:F0}/{health.Max:F0}{dead}", style);
             GUILayout.Label($"Stamina: {stamina.Current:F0}/{stamina.Max:F0}{exhausted}", style);
             GUILayout.Label($"I-frame: {(player.IsInvulnerable ? "ON" : "off")}", style);
             GUILayout.Label($"[K] trừ {testDamage:F0} máu để test", style);
+            GUILayout.Label("[L] bị đánh gục ngay   [R] đứng dậy (trong editor)", style);
             GUILayout.EndArea();
         }
     }

@@ -40,7 +40,8 @@ namespace SonTinhThuyTinh.UI
         void Update()
         {
             // Unscaled: the action must still fire while Time.timeScale is 0.
-            if (pauseAction.WasPressedThisFrame() && !SceneLoader.IsLoading)
+            // The map closes with Esc too; that same press must not also open the pause menu.
+            if (pauseAction.WasPressedThisFrame() && !SceneLoader.IsLoading && !Map.MapHUD.IsOpen && Map.MapHUD.LastCloseFrame != Time.frameCount)
             {
                 if (IsPaused) Resume();
                 else Pause();

@@ -15,6 +15,15 @@ EditorBuildSettings:
     path: Assets/Scenes/CharacterSelect.unity
     guid: b6fda30ce18250e4182352c718ea3976
   - enabled: 1
+    path: Assets/Scenes/Map_SonTinh.unity
+    guid: 17db5845b7dfcfb4bb558a7c97614be3
+  - enabled: 1
+    path: Assets/Scenes/Map_ThuyTinh.unity
+    guid: da5c79fa5ec91c3469b1e64b3751cc18
+  - enabled: 1
+    path: Assets/Scenes/Map_HungVuong.unity
+    guid: fa61c29839fd1d648b444ce1fdc83bea
+  - enabled: 1
     path: Assets/Scenes/Sandbox_Combat.unity
     guid: f5ec426fc383ce1478286369b6618e21
   m_configObjects:

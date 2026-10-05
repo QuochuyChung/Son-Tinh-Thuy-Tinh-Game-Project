@@ -15,7 +15,11 @@ namespace SonTinhThuyTinh.Player
         InputAction look;
         InputAction dodge;
         InputAction sprint;
+        InputAction jump;
+        InputAction slide;
         float dodgePressedAt = float.NegativeInfinity;
+        float jumpPressedAt = float.NegativeInfinity;
+        float slidePressedAt = float.NegativeInfinity;
 
         public Vector2 Move => move.ReadValue<Vector2>();
         // Held, not pressed: Shift (or left stick click) while moving makes the character sprint.
@@ -32,17 +36,23 @@ namespace SonTinhThuyTinh.Player
             look = map.FindAction("Look", throwIfNotFound: true);
             dodge = map.FindAction("Dodge", throwIfNotFound: true);
             sprint = map.FindAction("Sprint", throwIfNotFound: true);
+            jump = map.FindAction("Jump", throwIfNotFound: true);
+            slide = map.FindAction("Slide", throwIfNotFound: true);
         }
 
         void OnEnable()
         {
             dodge.performed += OnDodge;
+            jump.performed += OnJump;
+            slide.performed += OnSlide;
             map.Enable();
         }
 
         void OnDisable()
         {
             dodge.performed -= OnDodge;
+            jump.performed -= OnJump;
+            slide.performed -= OnSlide;
             map.Disable();
         }
 
@@ -50,7 +60,25 @@ namespace SonTinhThuyTinh.Player
 
         public bool ConsumeDodge() => Consume(ref dodgePressedAt);
 
+        // Space / gamepad South. Becomes a running jump when the character is sprinting (decided by the locomotion state).
+        public bool ConsumeJump() => Consume(ref jumpPressedAt);
+
+        // C / gamepad right shoulder. Only slides while sprinting (decided by the locomotion state).
+        public bool ConsumeSlide() => Consume(ref slidePressedAt);
+
+        // Forgets presses that were made while the character could not act (so they do not fire the moment it lands).
+        public void ClearBuffered()
+        {
+            dodgePressedAt = float.NegativeInfinity;
+            jumpPressedAt = float.NegativeInfinity;
+            slidePressedAt = float.NegativeInfinity;
+        }
+
         void OnDodge(InputAction.CallbackContext _) => dodgePressedAt = Time.time;
+
+        void OnJump(InputAction.CallbackContext _) => jumpPressedAt = Time.time;
+
+        void OnSlide(InputAction.CallbackContext _) => slidePressedAt = Time.time;
 
         bool Consume(ref float pressedAt)
         {
