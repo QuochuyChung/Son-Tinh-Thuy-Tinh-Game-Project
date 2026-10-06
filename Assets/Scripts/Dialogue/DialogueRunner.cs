@@ -19,6 +19,8 @@ namespace SonTinhThuyTinh.Dialogue
         [SerializeField] GameObject continueIndicator;
         [Tooltip("Optional. Shows DialogueLine.illustration full screen. With an Aspect Ratio Fitter (Envelope Parent) on the same object the picture covers the whole screen at any window shape, cropping the edges instead of leaving black bars.")]
         [SerializeField] Image illustration;
+        [Tooltip("On: a line without an illustration keeps the previous one (Prologue). Off: it hides the picture, so a 3D cutscene shows through.")]
+        [SerializeField] bool keepIllustration = true;
         [SerializeField] float charactersPerSecond = 40f;
         [SerializeField] bool allowSkip = true;
 
@@ -126,6 +128,10 @@ namespace SonTinhThuyTinh.Dialogue
                 illustration.enabled = true;
                 if (illustration.TryGetComponent(out AspectRatioFitter fitter))
                     fitter.aspectRatio = line.illustration.rect.width / line.illustration.rect.height;
+            }
+            else if (illustration != null && !keepIllustration)
+            {
+                illustration.enabled = false;
             }
 
             revealed = 0f;
