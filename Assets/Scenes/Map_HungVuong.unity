@@ -139362,7 +139362,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1a7487c8effdf5428a9cd43c5db1448, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Flow.SceneTransitionTrigger
-  sceneName: Sandbox_Combat
+  sceneName: Cutscene_PhanXu
   requiredQuest: {fileID: 0}
   blocked:
     m_PersistentCalls:

@@ -16,7 +16,7 @@ namespace SonTinhThuyTinh.EditorTools
     // Builds Assets/Scenes/Map_HungVuong.unity: the plateau where the two gift routes meet and King Hung's palace stands (docs/progress.md 9.10).
     // The middle of the world map. Sơn Tinh arrives from the west gate, Thủy Tinh from the east gate, both walk to the plaza with the
     // bronze drum and on to the palace. The palace does not exist yet: a placeholder (walls, towers, a two-tier hall, a label) stands
-    // where it will go, and its gate leads to Sandbox_Combat until the judgement scene exists.
+    // where it will go, and its gate leads to the judgement cutscene (Cutscene_PhanXu).
     // Vegetation, terrain layers, sky and sea come from the Asset Store pack "Idyllic Fantasy Nature" (not in git, docs/progress.md 9.6).
     public static class PalaceMapBuilder
     {
@@ -622,7 +622,7 @@ namespace SonTinhThuyTinh.EditorTools
             }
             var transition = trigger.gameObject.AddComponent<SceneTransitionTrigger>();
             var so = new SerializedObject(transition);
-            so.FindProperty("sceneName").stringValue = SceneNames.Sandbox;   // placeholder until the judgement scene exists
+            so.FindProperty("sceneName").stringValue = SceneNames.JudgementCutscene;   // Hùng Vương's judgement (JudgementCutsceneBuilder)
             so.FindProperty("requiredQuest").objectReferenceValue = null;
             so.ApplyModifiedProperties();
             return trigger;
