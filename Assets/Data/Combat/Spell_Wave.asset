@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ffec3c3c57507d40aab01d905fa7511, type: 3}
+  m_Name: Spell_Wave
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.SpellData
+  stateName: SpellWave
+  animSpeed: 1.15
+  duration: 1.5043479
+  hitStart: 0
+  hitEnd: 0
+  comboStart: 1.0869565
+  staminaCost: 0
+  damage: 16
+  heavy: 1
+  superArmor: 1
+  hitCenter: {x: 0, y: 1, z: 1.4}
+  hitSize: {x: 2.4, y: 2, z: 2.4}
+  hitAround: 0
+  knockback: 10
+  knockUp: 3
+  lungeDistance: 3
+  lungeStart: 0.21739131
+  lungeEnd: 0.86956525
+  hitStop: 0
+  shake: 0.45
+  swingEffect: {fileID: 0}
+  swingEffectTime: 0
+  swingEffectScale: 1
+  displayName: "S\xF3ng n\u01B0\u1EDBc"
+  color: {r: 0.2, g: 0.85, b: 0.9, a: 1}
+  kind: 2
+  cooldown: 10
+  effectPrefab: {fileID: 2530278053439715347, guid: f9c3bd4428b813448bac6e0abdb63395, type: 3}
+  effectTime: 0.39130434
+  radius: 2.5
+  range: 10
+  speed: 14
+  knockUpSpeed: 7
+  effectDuration: 6
+  tickDamage: 2
+  tickInterval: 0.5
+  slowFactor: 0.5

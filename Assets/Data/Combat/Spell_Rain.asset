@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ffec3c3c57507d40aab01d905fa7511, type: 3}
+  m_Name: Spell_Rain
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.SpellData
+  stateName: SpellRain
+  animSpeed: 1
+  duration: 1.2
+  hitStart: 0
+  hitEnd: 0
+  comboStart: 0.9
+  staminaCost: 0
+  damage: 0
+  heavy: 0
+  superArmor: 1
+  hitCenter: {x: 0, y: 1, z: 1.4}
+  hitSize: {x: 2.4, y: 2, z: 2.4}
+  hitAround: 0
+  knockback: 3
+  knockUp: 0
+  lungeDistance: 0
+  lungeStart: 0
+  lungeEnd: 0
+  hitStop: 0
+  shake: 0
+  swingEffect: {fileID: 0}
+  swingEffectTime: 0
+  swingEffectScale: 1
+  displayName: "H\xF4 m\u01B0a"
+  color: {r: 0.4, g: 0.65, b: 1, a: 1}
+  kind: 1
+  cooldown: 18
+  effectPrefab: {fileID: 5544525270713056564, guid: 58628f5f9899356489f8ab164593bb80, type: 3}
+  effectTime: 0.33
+  radius: 6
+  range: 8
+  speed: 14
+  knockUpSpeed: 7
+  effectDuration: 6
+  tickDamage: 2
+  tickInterval: 0.5
+  slowFactor: 0.5

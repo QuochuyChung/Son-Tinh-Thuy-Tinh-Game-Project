@@ -16,6 +16,8 @@ namespace SonTinhThuyTinh.Player.States
         public void Enter()
         {
             player.SetSpeed(0f);
+            player.SetTrail(false);
+            player.SetAnimSpeed(1f);
             player.InputReader.ClearBuffered();
             player.Animator.CrossFadeInFixedTime(DeathHash, 0.1f);
         }

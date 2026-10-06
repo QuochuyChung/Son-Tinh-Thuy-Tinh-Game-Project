@@ -22,6 +22,7 @@ namespace SonTinhThuyTinh.DevTools
 
 #if UNITY_EDITOR
         InputSettings.EditorInputBehaviorInPlayMode previousBehavior;
+        InputSettings.BackgroundBehavior previousBackground;
 #endif
 
         IEnumerator Start()
@@ -30,9 +31,20 @@ namespace SonTinhThuyTinh.DevTools
             // the Game view is not focused while this runs from outside the editor window: let the virtual keyboard through anyway
             previousBehavior = InputSystem.settings.editorInputBehaviorInPlayMode;
             InputSystem.settings.editorInputBehaviorInPlayMode = InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+            // a virtual device is reset and disabled as soon as the editor is not the active window, unless focus is ignored
+            previousBackground = InputSystem.settings.backgroundBehavior;
+            InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
 #endif
+            foreach (InputDevice stale in InputSystem.devices.ToArray())   // a leftover from a run that was stopped before Finish
+                if (stale.name == "SmokeTestKeyboard") InputSystem.RemoveDevice(stale);
             keyboard = InputSystem.AddDevice<Keyboard>("SmokeTestKeyboard");
             yield return new WaitForSeconds(1.5f);
+            // an Esc from the real keyboard would pause the game (Time.timeScale 0) and freeze the test for good
+            var pauseMenu = FindFirstObjectByType<SonTinhThuyTinh.UI.PauseMenu>();
+            if (pauseMenu != null) pauseMenu.enabled = false;
+            // and a real mouse moved meanwhile would turn the camera, so W / S would no longer mean the same direction
+            var cameraInput = FindFirstObjectByType<SonTinhThuyTinh.CameraSystem.ThirdPersonCameraInput>();
+            if (cameraInput != null) cameraInput.enabled = false;
             player = FindFirstObjectByType<PlayerController>();
             if (player == null) { Finish("no PlayerController in the scene"); yield break; }
             log.AppendLine("player: " + player.name + " in " + gameObject.scene.name);
@@ -134,7 +146,8 @@ namespace SonTinhThuyTinh.DevTools
             File.WriteAllText(Path.Combine(Application.dataPath, "..", "Temp", "moves_smoke_test.txt"), log.ToString());
             if (keyboard != null) InputSystem.RemoveDevice(keyboard);
 #if UNITY_EDITOR
-            InputSystem.settings.editorInputBehaviorInPlayMode = previousBehavior;   // the setting lives in an asset, so put it back
+            InputSystem.settings.editorInputBehaviorInPlayMode = previousBehavior;   // the settings live in an asset, so put them back
+            InputSystem.settings.backgroundBehavior = previousBackground;
             UnityEditor.EditorApplication.isPlaying = false;
 #endif
         }

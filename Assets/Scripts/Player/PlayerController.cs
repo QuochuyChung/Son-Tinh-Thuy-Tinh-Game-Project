@@ -1,6 +1,7 @@
 using SonTinhThuyTinh.Combat;
 using SonTinhThuyTinh.Core;
 using SonTinhThuyTinh.Player.States;
+using Unity.Cinemachine;
 using UnityEngine;
 
 namespace SonTinhThuyTinh.Player
@@ -9,6 +10,7 @@ namespace SonTinhThuyTinh.Player
     public class PlayerController : MonoBehaviour
     {
         static readonly int LocomotionBlendParam = Animator.StringToHash("LocomotionBlend");
+        static readonly int AnimSpeedParam = Animator.StringToHash("AnimSpeed");
 
         [SerializeField] PlayerInputReader input;
         [SerializeField] Animator animator;
@@ -41,10 +43,22 @@ namespace SonTinhThuyTinh.Player
         [Header("Slide (C while sprinting)")]
         [SerializeField] SlideSettings slide = new();
 
+        [Header("Climb (Space next to a ledge; off = cannot climb)")]
+        [SerializeField] ClimbSettings climb = new();
+
+        [Header("Combat (empty = cannot fight)")]
+        [SerializeField] MoveSet moveSet;
+        [Tooltip("Optional: the glowing trail of the sword. Found on the sword at runtime when empty.")]
+        [SerializeField] SwordTrail swordTrail;
+
         CharacterController body;
         readonly StateMachine stateMachine = new();
         float verticalVelocity;
         float slideReadyAt;
+        float climbReadyAt;
+        float hitStopUntil;
+        float[] spellReadyAt = new float[3];
+        CinemachineImpulseSource shakeSource;
 
         public PlayerInputReader InputReader => input;
         public Animator Animator => animator;
@@ -54,6 +68,7 @@ namespace SonTinhThuyTinh.Player
         public DodgeSettings Dodge => dodge;
         public JumpSettings JumpSettings => jump;
         public SlideSettings Slide => slide;
+        public ClimbSettings Climb => climb;
         public float CurrentSpeed { get; private set; }
         public float RunSpeed => runSpeed;
         public float SprintSpeed => sprintSpeed;
@@ -74,6 +89,13 @@ namespace SonTinhThuyTinh.Player
         public PlayerJumpState RunJumpState { get; private set; }
         public PlayerSlideState SlideState { get; private set; }
         public PlayerDeathState DeathState { get; private set; }
+        public PlayerAttackState AttackState { get; private set; }
+        public PlayerHitState HitState { get; private set; }
+        public PlayerClimbState ClimbState { get; private set; }
+
+        public MoveSet MoveSet => moveSet;
+        public bool HasCombat => moveSet != null;
+        public bool IsInAir => !body.isGrounded;
 
         void Awake()
         {
@@ -86,22 +108,34 @@ namespace SonTinhThuyTinh.Player
             RunJumpState = new PlayerJumpState(this, running: true);
             SlideState = new PlayerSlideState(this);
             DeathState = new PlayerDeathState(this);
+            AttackState = new PlayerAttackState(this);
+            HitState = new PlayerHitState(this);
+            ClimbState = new PlayerClimbState(this);
         }
 
         void Start()
         {
             stateMachine.ChangeState(LocomotionState);
             health.Died += OnDied;
+            health.Damaged += OnDamaged;
+            if (swordTrail == null) swordTrail = GetComponentInChildren<SwordTrail>(true);
+            shakeSource = GetComponent<CinemachineImpulseSource>();
+            if (shakeSource == null && moveSet != null) shakeSource = gameObject.AddComponent<CinemachineImpulseSource>();
         }
 
         void OnDestroy()
         {
-            if (health != null) health.Died -= OnDied;
+            if (health == null) return;
+            health.Died -= OnDied;
+            health.Damaged -= OnDamaged;
         }
 
         void Update()
         {
-            stateMachine.Tick(Time.deltaTime);
+            // a short freeze when a hit lands: animation and the state both stop
+            bool frozen = Time.unscaledTime < hitStopUntil;
+            animator.speed = frozen ? 0f : 1f;
+            stateMachine.Tick(frozen ? 0f : Time.deltaTime);
 #if UNITY_EDITOR
             EditorTestKeys();
 #endif
@@ -111,6 +145,102 @@ namespace SonTinhThuyTinh.Player
 
         // Health reached zero: knocked down.
         void OnDied(DamageInfo _) => ChangeState(DeathState);
+
+        // Took a hit: flinch (or stagger from a big hit) unless busy with something that cannot be interrupted. Only characters with a move set
+        // have the reaction clips for now.
+        void OnDamaged(DamageInfo info)
+        {
+            if (health.IsDead || moveSet == null) return;
+            IState current = stateMachine.Current;
+            if (current == DeathState || current == HitState || current == ClimbState) return;
+            if (current == AttackState && !AttackState.CanBeInterrupted) return;
+            bool heavy = info.IsHeavy || info.Amount >= moveSet.staggerDamage;
+            Vector3 from = info.Source != null ? info.Source.transform.position : transform.position - transform.forward;
+            HitState.Begin(heavy, from);
+            ChangeState(HitState);
+        }
+
+        // ---------------------------------------------------------------- climbing
+
+        // Space next to a ledge: climb it instead of jumping. Looks the way the stick points first, then the way the character faces.
+        public bool TryClimb()
+        {
+            if (!climb.enabled || Time.time < climbReadyAt || !body.isGrounded || health.IsDead) return false;
+
+            Vector3 wish = CameraRelative(input.Move);
+            if (wish.sqrMagnitude > 0.09f && LedgeProbe.TryFind(transform, body.radius, body.height, climb, wish, out LedgeProbe.Ledge toward))
+                return StartClimb(toward);
+            if (LedgeProbe.TryFind(transform, body.radius, body.height, climb, transform.forward, out LedgeProbe.Ledge ahead))
+                return StartClimb(ahead);
+            return false;
+        }
+
+        bool StartClimb(LedgeProbe.Ledge ledge)
+        {
+            ClimbState.Begin(ledge);
+            ChangeState(ClimbState);
+            return true;
+        }
+
+        public void ClimbEnded() => climbReadyAt = Time.time + climb.cooldown;
+
+        // The climb moves the transform by itself, so the character controller must not push back meanwhile.
+        public void SetBodyEnabled(bool on)
+        {
+            body.enabled = on;
+            if (on) verticalVelocity = 0f;
+        }
+
+        // ---------------------------------------------------------------- combat helpers
+
+        public void SetAnimSpeed(float speed) => animator.SetFloat(AnimSpeedParam, speed);
+
+        // Freezes the character for a moment (real time), the "weight" of a landed hit.
+        public void HitStop(float seconds)
+        {
+            if (seconds > 0f) hitStopUntil = Mathf.Max(hitStopUntil, Time.unscaledTime + seconds);
+        }
+
+        public void Shake(float force)
+        {
+            if (shakeSource != null && force > 0f) shakeSource.GenerateImpulseWithForce(force);
+        }
+
+        public void SetTrail(bool on) => swordTrail?.SetEmitting(on);
+
+        // Starts an attack (or spell) if there is stamina for it.
+        public bool TryAttack(AttackData data, int comboIndex)
+        {
+            if (data == null || health.IsDead) return false;
+            if (data.staminaCost > 0f && !stamina.TryConsume(data.staminaCost)) return false;
+            AttackState.Begin(data, comboIndex);
+            ChangeState(AttackState);
+            return true;
+        }
+
+        // Spell 0..2 (U / I / O): when it is off cooldown.
+        public bool TryCast(int index)
+        {
+            if (moveSet == null || moveSet.spells == null || index < 0 || index >= moveSet.spells.Length) return false;
+            SpellData spell = moveSet.spells[index];
+            if (spell == null || !SpellReady(index) || !TryAttack(spell, -1)) return false;
+            spellReadyAt[index] = Time.time + spell.cooldown;
+            return true;
+        }
+
+        public bool SpellReady(int index) => index >= 0 && index < spellReadyAt.Length && Time.time >= spellReadyAt[index];
+
+        public float SpellCooldownLeft(int index) => Mathf.Max(0f, spellReadyAt[index] - Time.time);
+
+        // Turns to the way the stick points (camera relative) at once, so an attack goes where the player aims.
+        public void FaceInput(float maxDegrees)
+        {
+            Vector3 direction = CameraRelative(input.Move);
+            if (direction.sqrMagnitude > 0.04f) FaceTowards(direction, maxDegrees);
+        }
+
+        // Stops any rise or fall (starting an attack in the air).
+        public void CancelVertical(float downwardSpeed = 0f) => verticalVelocity = -Mathf.Abs(downwardSpeed);
 
         // Gets a knocked-down character back on its feet with full health.
         public void Revive()

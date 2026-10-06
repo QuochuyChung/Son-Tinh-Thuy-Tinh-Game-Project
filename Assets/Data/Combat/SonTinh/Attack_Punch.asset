@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 857f5c0f9bcdf7d4db16a9b921cf3da2, type: 3}
+  m_Name: Attack_Punch
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.AttackData
+  stateName: Attack1
+  animSpeed: 1.25
+  duration: 0.90666664
+  hitStart: 0.296
+  hitEnd: 0.496
+  comboStart: 0.544
+  staminaCost: 8
+  damage: 10
+  heavy: 0
+  superArmor: 0
+  hitCenter: {x: 0, y: 1.1, z: 1.3}
+  hitSize: {x: 2.2, y: 1.9, z: 2.2}
+  hitAround: 0
+  knockback: 3.5
+  knockUp: 0
+  lungeDistance: 0.7
+  lungeStart: 0.12
+  lungeEnd: 0.4
+  hitStop: 0.05
+  shake: 0.2
+  swingEffect: {fileID: 1356342638563471466, guid: ad346cc1c8b0b82409e243334ecd7303, type: 3}
+  swingEffectTime: 0.28
+  swingEffectScale: 0.85

@@ -53,6 +53,13 @@ namespace SonTinhThuyTinh.Player
             if (gameplayHud != null) gameplayHud.Bind(Player, character);
             if (mapHud != null) mapHud.Bind(Player, character);
             if (debugHud != null) debugHud.Bind(Player);
+
+            // fighting characters: the camera shakes with their hits, and their spell slots show at the bottom of the screen
+            if (Player.HasCombat)
+            {
+                if (followCamera.GetComponent<CinemachineImpulseListener>() == null) followCamera.gameObject.AddComponent<CinemachineImpulseListener>();
+                SpellHud.Create(Player);
+            }
         }
 
         void OnDrawGizmos()

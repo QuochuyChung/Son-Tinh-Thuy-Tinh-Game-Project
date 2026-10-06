@@ -1,6 +1,6 @@
 # Tiến độ dự án — Sơn Tinh Thủy Tinh
 
-*Cập nhật: 28/09/2026. Thiết kế tổng thể xem [game-overview.md](game-overview.md).*
+*Cập nhật: 06/10/2026. Thiết kế tổng thể xem [game-overview.md](game-overview.md).*
 
 ## 1. Tổng quan theo Phase
 
@@ -8,9 +8,11 @@
 |---|---|---|
 | 0 — Setup | ✅ Xong | Unity 6000.3.24f1, URP, git + GitHub, Unity MCP, Cinemachine 3.1.7, Input System |
 | 1 — Chốt thiết kế | ✅ Xong phần chính | Combat, nhánh sính lễ, arena đã chốt trong GDD |
-| 2 — Asset pipeline | 🟡 Đang làm | 2 nhân vật + kiếm của Thủy Tinh xong; còn animation combat |
-| 3 — Lập trình core | 🟡 Đang làm | Mốc 1 (di chuyển, camera, stamina, dodge) xong. Đã thêm: máu, chọn nhân vật, hội thoại + prologue, sính lễ, chuyển cảnh |
-| 4 → 9 | ⬜ Chưa bắt đầu | |
+| 2 — Asset pipeline | 🟡 Đang làm | 2 nhân vật + kiếm của Thủy Tinh xong; animation combat + leo bậc của **cả 2 nhân vật xong** (05/10) |
+| 3 — Lập trình core | 🟡 Đang làm | Mốc 1 (di chuyển, camera, stamina, dodge) xong. Đã thêm: máu, chọn nhân vật, hội thoại + prologue, sính lễ, chuyển cảnh, nhảy / trượt / ngã, **đánh nhau của cả 2 nhân vật (combo, đòn nặng, đòn nhảy, 3 phép, trúng đòn, bia tập, mục 9.12 và 9.14), leo bậc (9.13)** |
+| 4 — Dựng scene/level | 🟡 Đang làm | Map Sơn Tinh, Thủy Tinh, Hùng Vương cơ bản đã kết nối |
+| 5 — Polish hình ảnh | 🟡 Đang làm | **Nâng cấp VFX combat nguyên tố** (đá 3D, nứt đất phát sáng, tia nước, bọt sóng) + ánh sáng va chạm realtime Point Light (06/10, mục 9.15) |
+| 6 → 9 | ⬜ Chưa bắt đầu | |
 
 **Luồng game chạy được hiện tại:** Menu chính → Prologue (kể chuyện Vua Hùng kén rể) → Chọn nhân vật → **chọn Sơn Tinh thì vào `Map_SonTinh`** (map rừng, nhặt 3 sính lễ rồi đi tới cổng cuối map; xem mục 9.7), **chọn Thủy Tinh thì vào `Map_ThuyTinh`** (map đầm nước, xem mục 9.8). Cuối mỗi đường dốc lên một cổng đình, qua cổng là **`Map_HungVuong`** (cao nguyên cung điện Vua Hùng, ở giữa bản đồ thế giới; cung điện đang là chỗ giữ chỗ, xem mục 9.10), rồi mới qua Sandbox_Combat (chỗ giữ tạm cho cutscene phán xét, có thanh máu/stamina thật + bấm Esc để tạm dừng). Cả 3 map có **vòng tròn bản đồ góc phải dưới**, bấm vào (hoặc phím M) để xem bản đồ chi tiết có mũi tên "bạn đang ở đây" (mục 9.9).
 
@@ -20,21 +22,21 @@
 
 | | Sơn Tinh | Thủy Tinh |
 |---|---|---|
-| Prefab dùng khi chơi | `Assets/Prefabs/Player/Player_SonTinh_v2.prefab` (thiết kế mới, mão + áo choàng lông vũ; bản cũ `Player_SonTinh.prefab` giữ làm dự phòng, không còn dùng) | `Assets/Prefabs/Player/Player_ThuyTinh.prefab` |
+| Prefab dùng khi chơi | `Assets/Prefabs/Player/Player_SonTinh_v2.prefab` (thiết kế mới, mão + áo choàng lông vũ; bản cũ `Player_SonTinh.prefab` giữ làm dự phòng, không còn dùng) | `Assets/Prefabs/Player/Player_ThuyTinh_v2.prefab` (đã gắn kiếm; bản cũ `Player_ThuyTinh.prefab` giữ làm dự phòng) |
 | Model (chỉ phần hình) | `Assets/Prefabs/Characters/SonTinh_v2.prefab` | `Assets/Prefabs/Characters/ThuyTinh.prefab` |
 | Chiều cao | 1.9m tới đỉnh đầu (mão lông vũ nhô thêm, tổng ~2.14m) | 1.9m tới đỉnh đầu |
 | Vũ khí | Tay không (võ + VFX đất đá khi đánh) | Đại kiếm (Great Sword), cầm 2 tay |
-| Animation hiện có | Idle / Walk / Run (tay không, bộ mới trong `Assets/Animations/SonTinh_v2/`, override `AOC_SonTinh_v2`) | Great Sword Idle / Walk / Run (cầm vũ khí 2 tay) |
-| Tốc độ đi / chạy | 2.12 / 6.86 m/s | 1.13 / 4.80 m/s |
+| Animation hiện có | Idle / Walk / Run / trượt / nhảy / chết + **đấm / đá / đá lốc xoáy / đấm hất / đòn nhảy / 3 phép / lăn / bị đánh / leo** (tay không, `Assets/Animations/SonTinh_v2/`, override `AOC_SonTinh_v2`, mục 9.14) | Great Sword: Idle / Walk / Run / nhảy / nhảy chạy / lăn / chém / đá / xoay / lao chém / niệm phép / tụ lực / đòn nhảy / bị đánh (`Assets/Animations/ThuyTinh_v2/thuy_tinh_v2_gs_*`, mục 9.12) + trượt, sprint, chết tay không |
+| Tốc độ đi / chạy | 2.12 / 6.86 m/s | 1.22 / 4.86 m/s (đo lại 05/10 với clip Great Sword mới; sprint vẫn 6.86) |
 
-- Thủy Tinh chạy chậm hơn Sơn Tinh ~27% vì animation cầm vũ khí nặng có bước chân ngắn hơn. Tốc độ code phải khớp tốc độ bước chân của animation, nếu không chân sẽ bị trượt. Bù lại, Đại kiếm cho vùng chém rộng và lực đánh mạnh hơn. Nếu muốn 2 nhân vật chạy nhanh bằng nhau thì chỉnh lại được.
+- Thủy Tinh chạy chậm hơn Sơn Tinh ~29% vì animation cầm vũ khí nặng có bước chân ngắn hơn. Tốc độ code phải khớp tốc độ bước chân của animation, nếu không chân sẽ bị trượt. Bù lại, Đại kiếm cho vùng chém rộng và lực đánh mạnh hơn. Nếu muốn 2 nhân vật chạy nhanh bằng nhau thì chỉnh lại được.
 - File gốc (chưa import) nằm trong `ArtSource/` (Concept, Meshy, Mixamo), không nằm trong `Assets/`.
 - **Sơn Tinh v2 (đổi thiết kế 01/10)** đã vào game qua `Assets/Data/Characters/Character_SonTinh.asset`. Cách dựng: xem [tools/README.md](../tools/README.md) (rig "ma-nơ-canh" rồi chép trọng số sang mesh đầy đủ). Lưu ý khi import vào Unity: (1) mỗi file animation phải dùng **avatar riêng** (`Create From This Model`), không dùng `Copy From Other Avatar` được vì cây xương của model có thêm node `Armature`; Humanoid vẫn tự chuyển clip sang model; (2) **vị trí Y của `Model` phải để 0**: lúc chạy animation Humanoid, chân luôn đứng trên mặt phẳng gốc của model, bù thêm độ cao theo tư thế gốc sẽ làm nhân vật lơ lửng; (3) material `M_SonTinh_v2` bật **Render Face: Both** vì áo choàng là tấm đơn; (4) tốc độ đi/chạy đo bằng cách cho Animator chạy 3 chu kỳ với root motion rồi chia quãng đường cho thời gian (cách này khớp lại giá trị cũ của Sơn Tinh 0.1%).
 
 ### Vũ khí
 
-- **Kiếm của Thủy Tinh**: `Assets/Prefabs/Weapons/Sword.prefab` (mesh + texture trong `Assets/Art/sword/`, material `Mat_Sword`). Dài 1.5m, scale đều 3 trục đúng tỷ lệ ảnh concept `ArtSource/Concept/kiem_cua_thuy_tinh.jpg`. Gốc prefab đặt ở tay cầm (20% chiều dài tính từ chuôi), mũi kiếm hướng +Y.
-- Kiếm gắn vào xương `mixamorig:RightHand` **bên trong prefab** `Player_ThuyTinh` (không gắn trong scene), nên dùng prefab ở scene nào cũng có kiếm. Trục kiếm đo từ vị trí 2 bàn tay trong animation Great Sword Idle, cạnh lưỡi cùng hướng đốt ngón tay.
+- **Kiếm của Thủy Tinh**: `Assets/Prefabs/Weapons/Sword.prefab` (mesh `Assets/Art/sword/sword_lowpoly.fbx` + texture trong `Assets/Art/sword/`, material `Mat_Sword`). Dài 1.5m, scale đều 3 trục đúng tỷ lệ ảnh concept `ArtSource/Concept/kiem_cua_thuy_tinh.jpg`. Gốc prefab đặt ở tay cầm (20% chiều dài tính từ chuôi), mũi kiếm hướng +Y. **Mesh đã giảm từ 238.840 xuống 7.000 tam giác** (05/10, Decimate của Blender chạy ngầm, giữ nguyên tỷ lệ nên toạ độ tay cầm không đổi; file `.fbx` 20 MB cũ đã xoá, bản gốc 239.000 mặt vẫn ở `ArtSource/Meshy/sword`). Prefab gồm gốc `Sword` + con `Mesh` + 2 điểm đặt vệt kiếm.
+- Kiếm gắn vào xương `mixamorig:RightHand` **bên trong prefab** `Player_ThuyTinh_v2` (không gắn trong scene; chép toạ độ cầm từ bản v1, do `CombatSetupBuilder` làm), nên dùng prefab ở scene nào cũng có kiếm. Trục kiếm đo từ vị trí 2 bàn tay trong animation Great Sword Idle, cạnh lưỡi cùng hướng đốt ngón tay.
 - Đinh Ba cũ (`Assets/Prefabs/Weapons/DinhBa.prefab`) đã gỡ khỏi Thủy Tinh, file vẫn giữ lại nhưng không còn dùng.
 
 ## 3. Code đã xong (`Assets/Scripts/`)
@@ -65,8 +67,16 @@
 | `UI/GameplayHUD.cs` | Thanh máu (đổi màu xanh→vàng→đỏ) + thanh stamina thật, thay cho DebugHUD chỉ để test |
 | `UI/PauseMenu.cs` | Bấm Esc để tạm dừng: dừng thời gian, mở khoá chuột, hiện menu Tiếp tục / Về màn hình chính / Thoát |
 | `UI/MainMenu/MainMenuController.cs` | Màn hình chính: Bắt đầu (vào Prologue) / Thoát |
+| `Combat/AttackData.cs`, `SpellData.cs`, `MoveSet.cs` | **Đánh nhau (mục 9.12)**: mỗi đòn / phép là 1 asset (`Assets/Data/Combat/`): state animator, tốc độ, các mốc thời gian (trúng, nối combo), sát thương, thể lực, vùng trúng, đẩy lùi, hiệu ứng; `MoveSet` gom combo nhẹ + đòn nặng + đòn nhảy + 3 phép + số liệu bị đánh |
+| `Combat/IHitReceiver.cs`, `TrainingDummy.cs`, `FloatingText.cs` | Thứ bị đánh trúng (đẩy lùi, làm chậm), bia tập trong `Sandbox_Combat`, số sát thương bay lên |
+| `Combat/SpellEffects.cs`, `WindBlast.cs`, `RainZone.cs`, `WaveProjectile.cs`, `ISpellEffect.cs` | Phép: tạo prefab hiệu ứng rồi cho nó làm việc (gió hút + hất, vùng mưa làm chậm, sóng nước chạy thẳng). **Mỗi MonoBehaviour phải nằm trong file cùng tên**, nếu không prefab báo "script missing" |
+| `Combat/SwordTrail.cs` | Vệt kiếm (TrailRenderer) bật trong lúc vung |
+| `Combat/CombatLightFlash.cs` | Chớp sáng Point Light va chạm theo màu nguyên tố (vàng hổ phách / xanh lam), tự suy giảm và tắt (mục 9.15) |
+| `Player/States/PlayerAttackState.cs`, `PlayerHitState.cs` | State đánh (một đòn hoặc một phép: lao tới, quét trúng, nối combo) và state bị đánh trúng (nhẹ / loạng choạng) |
+| `UI/SpellHud.cs` | 3 ô phép U / I / O ở đáy màn hình, vòng đen quét theo thời gian hồi (tự dựng bằng code khi vào game) |
+| `Player/LedgeProbe.cs`, `ClimbSettings.cs`, `States/PlayerClimbState.cs` | **Leo bậc (mục 9.13)**: Space sát tường / khối cao 0,7–1,9 m thì leo lên (chỉ Thủy Tinh); `LedgeProbe` tìm mép, `ClimbSettings` là số chỉnh, `PlayerClimbState` đưa nhân vật lên theo đường cong đo từ clip |
 
-**Phím** (`Assets/Input/PlayerControls.inputactions`): WASD / cần trái để di chuyển, **giữ Shift (hoặc nhấn cần trái) để chạy nhanh (sprint)**, chuột / cần phải để xoay camera, **Ctrl trái / B để né (dodge)**, **Space / A để nhảy** (Space khi đang sprint = nhảy chạy), **C / nút vai phải để trượt (chỉ khi đang sprint)**, xem mục 9.11. LMB/RMB (đánh nhẹ / nặng) và Q / chuột giữa (lock-on) đã khai báo sẵn nhưng chưa có code.
+**Phím** (`Assets/Input/PlayerControls.inputactions`): WASD / cần trái để di chuyển, **giữ Shift (hoặc nhấn cần trái) để chạy nhanh (sprint)**, chuột / cần phải để xoay camera, **Ctrl trái / B để né (dodge)**, **Space / A để nhảy** (Space khi đang sprint = nhảy chạy), **C / nút vai phải để trượt (chỉ khi đang sprint)**, xem mục 9.11. **Đánh nhau (cả 2 nhân vật, mục 9.12 và 9.14): J chạm / chuột trái = combo 3 đòn, giữ J / chuột phải = đòn nặng, J hoặc chuột phải khi đang nhảy = đòn nhảy, U / I / O = ba phép (Thủy Tinh: gió / mưa / sóng; Sơn Tinh: núi mọc / đất dâng / núi non).** **Space sát một khối / tường cao 0,7–1,9 m = leo lên (cả 2 nhân vật, mục 9.13).** Q / chuột giữa (lock-on) đã khai báo sẵn nhưng chưa có code.
 
 **Chữ tiếng Việt**: dùng TextMeshPro với font Roboto (`Assets/Art/Fonts/`, đã đặt làm font mặc định). Atlas đã nướng sẵn đủ chữ có dấu nên file không bị đổi mỗi lần Play. Font này **không có ký tự mũi tên ← →** và dấu ✓.
 
@@ -78,7 +88,7 @@
 
 1. Mở scene `Assets/Scenes/Sandbox_Combat.unity` (sàn caro, mỗi ô 1m).
 2. Bấm Play, **click vào cửa sổ Game** (không click thì Unity không nhận phím).
-3. WASD chạy, giữ Shift để sprint (nhả ra là về chạy thường), chuột xoay camera, **Space nhảy, Shift+Space nhảy chạy, Shift+C trượt, Ctrl trái né**, Esc mở menu tạm dừng (nhả chuột), K tự trừ máu, **L bị đánh gục ngay, R đứng dậy** (hai phím L/R chỉ có trong editor).
+3. WASD chạy, giữ Shift để sprint (nhả ra là về chạy thường), chuột xoay camera, **Space nhảy, Shift+Space nhảy chạy, Shift+C trượt, Ctrl trái né (Thủy Tinh: lăn)**, Esc mở menu tạm dừng (nhả chuột), K tự trừ máu, **L bị đánh gục ngay, R đứng dậy** (hai phím L/R chỉ có trong editor). **Đánh nhau: J chạm 3 lần = combo, giữ J = đòn nặng, Space rồi J = đòn nhảy, U / I / O = ba phép** (Thủy Tinh: gió / mưa / sóng nước; Sơn Tinh: núi mọc / đất dâng / núi non). Mặc định scene thử ra Thủy Tinh; **muốn thử Sơn Tinh thì chọn `PlayerSpawn` → đổi `Fallback Character` thành Sơn Tinh** (nhớ trả lại). Phía trước có **4 bia tập** (`TrainingDummy_1..4`, 300 máu, ngã ra rồi tự đứng dậy sau 3 giây) để thử, trúng đòn thì hiện số sát thương, đổi màu xanh khi bị mưa làm chậm. Bên trái có **3 khối để thử leo** (cao 0,8 / 1,15 / 1,6 m, nhóm `ClimbBlocks`): chạy sát một khối rồi bấm Space (cả 2 nhân vật).
 4. 3 khối vàng phát sáng là sính lễ test (ngựa / gà / voi), chạy vào là nhặt.
 
 Nhân vật không còn đặt sẵn trong scene nữa mà do object `PlayerSpawn` tạo ra khi Play. **Đổi nhân vật để test**: chọn `PlayerSpawn` → đổi `Fallback Character` (Sơn Tinh / Thủy Tinh), không cần gán lại camera hay HUD.
@@ -107,10 +117,10 @@ Nhân vật không còn đặt sẵn trong scene nữa mà do object `PlayerSpaw
 
 ## 7. Vấn đề đã biết
 
-- Dodge đang mượn tạm animation Run (nhìn như lướt nhanh), cần tải animation lăn/né thật.
+- ~~Dodge mượn tạm animation Run~~: **cả 2 nhân vật đã có lăn thật** (Thủy Tinh mục 9.12, Sơn Tinh mục 9.14).
 - **Áo choàng Sơn Tinh v2**: lúc đầu bám cứng theo lưng nên tay vung ra sau xuyên qua (đo trong Blender: tay lọt sau tấm áo tới ~16% chiều cao người). Đẩy áo ra sau hoặc cho mép áo bám theo tay chỉ giảm số đỉnh xuyên (98 → ~40), không hết. **Đã chuyển sang Cloth của Unity** (áo bay phấp phới khi chạy, va chạm với tay/thân/chân), chi tiết và việc còn lại ở mục 9. **Chưa đo lại có còn xuyên tay không**, cần coi bằng mắt khi chơi.
 - Thủy Tinh khi đứng/đi cầm 2 tay: tay trái đặt trên cán nhưng lệch vài cm (chưa làm IK 2 tay). Đã đo: lúc chạy kiếm không cạ vào vai/tóc; lúc đứng/đi chuôi kiếm chạm nhẹ vạt áo dưới 1cm.
-- Mesh kiếm rất nặng: **239.000 tam giác** (gấp ~30 lần cả nhân vật). Nên giảm còn ~4.000–8.000 (tạo lại trên Meshy theo công thức vũ khí ở mục 6, hoặc decimate bằng Blender), giữ nguyên tỷ lệ để khỏi phải canh lại tay cầm.
+- ~~Mesh kiếm rất nặng (239.000 tam giác)~~: **đã giảm còn 7.000 (05/10)**, xem mục "Vũ khí". Chưa soi cận cảnh xem họa tiết có mất chi tiết so với bản gốc không (texture giữ nguyên).
 - File phím mẫu `Assets/InputSystem_Actions.inputactions` của template vẫn đang được đặt làm "project-wide actions" trong Project Settings. Game không dùng tới, vô hại, có thể gỡ khi dọn project.
 - Vài cảnh báo **"The referenced script (Unknown) on this Behaviour is missing!"** (khoảng 7–19 dòng) hiện lúc vào/ra Play: **vô hại**, nguồn là `Assets/Settings/DefaultVolumeProfile.asset` (profile mặc định của template URP, có 2 volume component thử nghiệm `CopyPasteTestComponent2` và `VolumeComponentSupportedEverywhere` mà script chỉ có trong gói test của URP). Đã quét mọi scene/prefab của project (trừ các gói Asset Store): không có script nào bị thiếu. Muốn hết cảnh báo thì mở profile đó trong Inspector, gỡ 2 component bị "Missing" (chưa đụng vào vì là file của template).
 - **Cần chốt**: GDD ghi dùng HDRP nhưng project đang chạy **URP**. Đề xuất giữ URP (nhẹ, đủ đẹp cho phong cách stylized; đổi sang HDRP phải chuyển lại toàn bộ material).
@@ -136,7 +146,11 @@ Nhân vật không còn đặt sẵn trong scene nữa mà do object `PlayerSpaw
 
 Tải xong đưa Claude import + rig là dùng được ngay.
 
+**Tình trạng 05/10**: các dòng 3–7 và "Chết" đã xong cho **Thủy Tinh** (mục 9.12, 9.11); "Chết" cũng xong cho Sơn Tinh. **Sơn Tinh (tay không) cũng đã xong dòng 1, 2, 5, 6, 7** (05/10, mục 9.14: combo đấm-đá-đá lốc xoáy, đấm hất, lăn, bị đánh); không còn gì thiếu trong bảng này.
+
 ### 8.1b Bộ chiêu của Thủy Tinh (đại kiếm + phép nước) — danh sách cần tải trên Mixamo (03/10)
+
+> **ĐÃ LÀM XONG 05/10, xem mục 9.12.** Phím cuối cùng khác bảng dưới (J chạm / giữ J thay chuột trái / phải, U / I / O thay Q / E / R); phần dưới giữ lại làm kế hoạch gốc.
 
 Thiết kế từ đầu đã là **Thủy Tinh cầm Đại kiếm 2 tay** (Sơn Tinh tay không), kiếm đã có (`Sword.prefab`, mục "Vũ khí"); việc còn lại là gắn vào `Player_ThuyTinh_v2` (xương `mixamorig:RightHand`), giảm mesh kiếm (239.000 tam giác) và có animation cầm kiếm. Bộ chiêu đề xuất (ưu tiên: **A bắt buộc**, **B nên có**, **C tuỳ chọn**). Tên clip trên Mixamo có thể lệch chút, ưu tiên bộ **"Great Sword"** vì cùng kiểu cầm với Idle/Walk/Run đã dùng:
 
@@ -153,6 +167,17 @@ Thiết kế từ đầu đã là **Thủy Tinh cầm Đại kiếm 2 tay** (Sơ
 | C | Dâng nước (chiêu cuối cho trận boss) | cả 3 chiêu B đầy | nước dâng ngập arena | dùng lại Casting |
 
 Tải theo Thủy Tinh v2 (FBX for Unity, 30 fps, Without Skin, **bật "In Place" cho đòn đánh / phép / lăn** vì quãng đi do code quyết định). Ba tên "Gọi gió / Hô mưa / Sóng nước" lấy từ dòng chiêu đặc trưng đã có ở màn chọn nhân vật (`CharacterDefinition.signatureMoves`). Cầm kiếm thì bộ Idle / Walk / Run cũng phải là bản Great Sword (bản v1 dùng thử trên v2 được nhờ Humanoid, tải lại cho v2 thì khớp tay cầm hơn).
+
+
+**8.1c Kế hoạch chốt cho Thủy Tinh cầm kiếm (05/10)** — **đã làm xong cùng ngày, kết quả và những gì đã thử ở mục 9.12.** Phần dưới là kế hoạch gốc; "hiện trạng" bên dưới là của trước khi làm (kiếm đã giảm còn 7.000 tam giác, clip đã nhập, code đánh đã có).
+
+*Hiện trạng đã kiểm*: 14 clip Great Sword đã tải về `ArtSource/Mixamo/ThuyTinh_v2/GreatSword` nhưng **chưa nhập vào Unity** (trong `Assets` chỉ có Idle/Walk/Run Great Sword bản v1); `Player_ThuyTinh_v2` **chưa gắn kiếm** (chỉ bản v1 có); **chưa có code đánh nhau** (các phím LightAttack / HeavyAttack / LockOn có trong file phím nhưng không script nào đọc); chưa có hiệu ứng (VFX) nào, chưa có kẻ địch / bia tập; mesh kiếm vẫn 239.000 tam giác (file FBX 20 MB). Số đo từ Blender: Slash 1,83 s, Kick 1,73 s, High Spin 1,87 s, Slide Attack 2,13 s (lao tới), Casting 4,8 s, Power Up 3,5 s, Stand To Roll 2,37 s, Jump 0,9 s (đứng yên) và **Jump (1) 0,63 s (nhảy chạy, có lao tới)**, Blocking 0,5 s (đỡ nhanh) và **Blocking (1) 0,97 s (giữ đỡ)**. **Các file đuôi `(1)` không phải bản trùng**: Jump/Jump (1) và Blocking/Blocking (1) là hai clip khác nhau, còn Idle/Walk/Run (1) chỉ là tên do trình duyệt thêm.
+
+*Phân clip → chiêu (đã chỉnh theo ý bạn 05/10)*: **J chạm = chém nhẹ combo 3** = Slash → Kick → High Spin (đòn 3 quét 360°, sóng nước vỡ hình quạt); **giữ J = chém nặng** = Casting cắt phần chính và chạy chậm (số giây chỉnh khi thử); **J khi đang ở trên không (nhảy + chuột phải) = đòn nhảy** = Great Sword Jump Attack (2,17 s, lao tới, đã tải về, nằm trong `ArtSource/Mixamo/ThuyTinh_v2/GreatSword`); **U / I / O = ba phép** như Bleach vs Naruto: **U Gọi gió = Casting nhanh** (dùng chung clip với chém nặng, khác tốc độ và hiệu ứng), **I Hô mưa = Power Up** (cắt còn ~1,3 s), **O Sóng nước nghe lệnh = Slide Attack**; Ctrl lăn né = Stand To Roll; Space nhảy / Shift+Space nhảy chạy = Jump / Jump (1); đỡ = Blocking (1) (giữ, tuỳ chọn). Trượt (Shift+C) và chết vẫn dùng clip tay không. Idle / Walk / Run = bản Great Sword (sprint = Run chạy nhanh hơn). **Phím**: J cho đánh (chuột trái vẫn ăn như J chạm, chuột phải như giữ J / đòn nhảy), U I O cho phép, **Q giữ nguyên là khoá mục tiêu** (cùng chuột giữa / bấm cần phải); tay cầm: X chạm / giữ = nhẹ / nặng, D-pad ← ↑ → cho 3 phép. Ba phép chỉ có **thời gian hồi** (gió 8 s, mưa 18 s, sóng 10 s), không thanh năng lượng; đòn thường tốn thể lực (nhẹ 8–10, nặng 25, đòn nhảy 15). Phím cũ vẫn giữ: K (trừ máu thử), L / R (gục / đứng dậy, chỉ trong editor), M bản đồ.
+
+*Các bước làm (theo thứ tự)*: **P0 chuẩn bị**: nhập 13 clip (cả Jump Attack), cắt đoạn dài (Casting, Power Up, Roll chỉ lấy phần chính), đo tốc độ đi / chạy mới, gắn kiếm vào tay phải bản v2 (lấy toạ độ từ bản v1), giảm mesh kiếm xuống ≤ 8.000 tam giác bằng Blender chạy ngầm, đổi bộ Idle/Walk/Run/Jump/Roll của Thủy Tinh sang bản cầm kiếm. **P1 lõi đánh nhau**: `PlayerAttackState` (J chạm = combo, giữ J = đòn nặng, J trên không = đòn nhảy; combo có bộ nhớ phím, cửa sổ gây sát thương, huỷ đòn sớm để nối combo), dữ liệu từng đòn trong ScriptableObject (clip, tốc độ, sát thương, thể lực, hình vùng trúng), phát hiện trúng bằng quét hình hộp trước mặt, gây sát thương qua `Health.TakeDamage`, dừng khung hình ngắn khi trúng, rung camera; thêm bia tập (`TrainingDummy`) để thử. **P2 phản ứng**: nhân vật bị trúng đòn (flinch / loạng choạng), cần clip "Great Sword Impact". **P3 ba phép (U / I / O)**: gió hút + hất tung, vùng mưa 6 s làm chậm, sóng nước chạy 10 m. **P4 hiệu ứng** (hệ hạt, không cần asset ngoài): vệt kiếm xanh nước (TrailRenderer), tia nước bắn khi trúng, sóng quạt, xoáy gió, mưa + gợn nước, sóng nước. **P5 HUD**: biểu tượng thời gian hồi 3 phép, tinh chỉnh, cập nhật tài liệu. Chưa gồm: AI boss / arena (mục 8.8), combat của Sơn Tinh (cần 2 clip tay không + hiệu ứng đất đá), âm thanh.
+
+*Bạn cần tải thêm*: **Great Sword Impact / Hit Reaction** (1–2 clip: nhẹ và nặng) cho phản ứng bị đánh (P2); **Great Sword Strafe** chỉ khi làm lock-on đi ngang; cho Sơn Tinh sau này: Roll, combo đấm, trúng đòn. Đòn nặng và đòn nhảy đã có clip (Casting, Jump Attack), không cần tải thêm.
 
 ### 8.2 Map sính lễ Sơn Tinh (núi/hang) — cần 1 người dựng trong Unity
 
@@ -316,10 +341,19 @@ Commit chưa push lúc đó nặng ~299 MB (chủ yếu `ArtSource`), sau khi d�
 **Dọn lần 2 (05/10, trước khi push các map mới):**
 - **Cảnh báo cho mục "Còn dọn thêm được" ngay trên: đừng xoá Sơn Tinh v1 (`Assets/Animations/SonTinh/son_tinh_idle|walk|run.fbx`)**: đó chính là **3 clip gốc của `AC_Humanoid_Base`** (cây blend Idle/Walk/Run), `AOC_SonTinh_v2` / `AOC_ThuyTinh_v2` đều override từ chúng nên xoá là vỡ cả 2 nhân vật. Cũng giữ **Thủy Tinh v1 bản Great Sword** (`thuy_tinh_*_greatsword.fbx`): sẽ dùng lại cho Thủy Tinh cầm kiếm (mục 8.1b). Mấy mục còn lại trong danh sách đó (Đinh Ba, SampleScene, TutorialInfo, Readme...) vẫn gỡ được như đã ghi.
 - **Đã xoá**: 7 file ảnh trùng hệt `* - Copy.jpg` trong `ArtSource/Concept` (so từng byte), thư mục `Assets/Audio` rỗng (git không giữ thư mục rỗng, còn `Audio.meta` mồ côi sẽ làm Unity cảnh báo khi clone; thêm âm thanh thì Unity tự tạo lại), 2 texture không dùng của lâu đài (`hungvuong_palace_roughness/metallic.png`, bản gốc vẫn ở `ArtSource/Meshy/Palace_HungVuong`) và 5 vật liệu sinh tự động không còn ai tham chiếu (`Mat_PalaceStone/Plaster/Door`, `Mat_RoofTile_662E1F` của cung điện giữ chỗ cũ, `Mat_Water` của nước Simple dự phòng; builder tự tạo lại khi cần).
-- **Đã sắp lại `ArtSource`** (chỉ di chuyển, không mất file): 8 clip Mixamo mới (trượt / nhảy / nhảy chạy / chết) từ thư mục lồng `Son-Tinh-vs-Thuy-Tinh_Animation/Son-Tinh-vs-Thuy-Tinh_Animation` sang `ArtSource/Mixamo/SonTinh_v2` và `ThuyTinh_v2` với **đúng tên như bản trong `Assets/Animations`** (giống quy ước cũ, đã so byte: giống hệt); 14 clip Great Sword tải cho Thủy Tinh từ `ArtSource/Meshy/ThuyTinh_v2` sang `ArtSource/Mixamo/ThuyTinh_v2/GreatSword` (giữ nguyên tên, kể cả 5 file đuôi `(1)`: Blocking, Idle, Jump, Run, Walk; **chưa so được file nào là bản đúng**, xem khi import rồi xoá bản thừa); ảnh lẻ ở gốc `ArtSource` vào `ArtSource/Concept`.
+- **Đã sắp lại `ArtSource`** (chỉ di chuyển, không mất file): 8 clip Mixamo mới (trượt / nhảy / nhảy chạy / chết) từ thư mục lồng `Son-Tinh-vs-Thuy-Tinh_Animation/Son-Tinh-vs-Thuy-Tinh_Animation` sang `ArtSource/Mixamo/SonTinh_v2` và `ThuyTinh_v2` với **đúng tên như bản trong `Assets/Animations`** (giống quy ước cũ, đã so byte: giống hệt); 14 clip Great Sword tải cho Thủy Tinh từ `ArtSource/Meshy/ThuyTinh_v2` sang `ArtSource/Mixamo/ThuyTinh_v2/GreatSword` (giữ nguyên tên, kể cả các file đuôi `(1)` là clip khác chứ không phải bản trùng (Jump / Jump (1) = nhảy đứng / nhảy chạy, Blocking / Blocking (1) = đỡ nhanh / giữ đỡ), xem mục 8.1c); ảnh lẻ ở gốc `ArtSource` vào `ArtSource/Concept`.
 - **`.gitignore`** thêm `/ArtSource/Meshy/*.zip` (file zip tải từ Meshy, 24 MB cho lâu đài, luôn để file giải nén rồi bỏ zip).
 - **Cố ý để trùng giữa `ArtSource` và `Assets`** (quy ước của dự án: `ArtSource` là nguồn, `Assets` là bản đã import): lâu đài (~24 MB), 8 clip mới (~6 MB). Nếu muốn push nhẹ hơn thì có thể bỏ bản `ArtSource/Meshy/Palace_HungVuong` khỏi git (file zip tải lại được từ Meshy) hoặc thêm vào `.gitignore`.
 - Ba file scene map mới nặng 9–15 MB mỗi file (hàng nghìn cây đá là prefab instance) + 3 dữ liệu địa hình 3,5 MB: lớn nhất trong lần push này nhưng dưới ngưỡng cảnh báo 50 MB của GitHub.
+
+**Dọn lần 3 (05/10, sau khi làm đánh nhau, mục 9.12):**
+- **Đã xoá**: file kiếm `.fbx` 20 MB cũ (thay bằng `sword_lowpoly.fbx` 0,3 MB; bản gốc vẫn ở `ArtSource/Meshy/sword`), texture `*_roughness.png` của kiếm (không vật liệu nào dùng, bản gốc ở `ArtSource`), và 2 clip Thủy Tinh tay không `thuy_tinh_v2_jump_up.fbx` / `thuy_tinh_v2_run_jump.fbx` (nhảy của Thủy Tinh đã chuyển sang clip Great Sword; bản gốc vẫn ở `ArtSource/Mixamo/ThuyTinh_v2`).
+- **Cố ý để lại dù không còn ai tham chiếu**: `thuy_tinh_v2_idle.fbx`, `idle_3`, `run`, `walk` (bộ tay không cũ của Thủy Tinh, đã có sẵn trên GitHub nên xoá không làm push nhẹ hơn, và hữu ích nếu muốn Thủy Tinh tay không ở cutscene). `thuy_tinh_v2_sprint`, `slide`, `death` vẫn đang dùng.
+- **`ProjectSettings.asset`** bị `Application.runInBackground = true` ghi vào lúc test: **đã trả về `false`** (kiểm tra `git diff ProjectSettings/` trước khi commit).
+- **Không dùng nữa nhưng giữ làm công cụ**: `Assets/Scripts/DevTools/CombatSmokeTest.cs`, `MovesSmokeTest.cs`, `GateWalkTest.cs` (bài thử tự động, mục 9.11 / 9.12; không nằm trong luồng game).
+- **Thêm sau đó (leo bậc, mục 9.13)**: file `Climbing.fbx` bạn bỏ ở `ArtSource/Meshy/ThuyTinh_v2` đã chuyển sang `ArtSource/Mixamo/ThuyTinh_v2/thuy_tinh_v2_climb.fbx` (~1 MB, cùng bản trong `Assets`); thêm `Assets/Editor/ClimbBuilder.cs`, 3 file code trong `Assets/Scripts/Player`, 2 công cụ thử `ClimbSmokeTest.cs` / `ClimbMeasureTest.cs` trong `Assets/Scripts/DevTools`, vật liệu `Assets/Art/Combat/Mat_ClimbBlock.mat` và 3 khối leo trong `Sandbox_Combat`.
+- **Thêm sau nữa (Sơn Tinh đánh nhau + leo, mục 9.14)**: 12 file bạn bỏ ở `ArtSource/Meshy/SonTinh_v2` đã chuyển sang `ArtSource/Mixamo/SonTinh_v2/son_tinh_v2_*.fbx` (~8 MB), 11 file trong đó có thêm bản trong `Assets/Animations/SonTinh_v2` (~7 MB; `melee_horizontal` chỉ ở `ArtSource`); thêm `SonTinhCombatBuilder.cs` và `EarthVfxBuilder.cs` trong `Assets/Editor`, `ClimbBuilder.cs` sửa để làm cho cả 2 nhân vật, dữ liệu `Assets/Data/Combat/SonTinh/`, 5 prefab hiệu ứng đất trong `Assets/Prefabs/Combat/` và `Mat_VfxRock` trong `Assets/Art/Combat/`.
+- Các file mới của lần này: 14 clip Great Sword (~13 MB), 3 builder trong `Assets/Editor` (`CombatAnimationsBuilder`, `CombatVfxBuilder`, `CombatSetupBuilder`), `Assets/Scripts/Combat/*`, dữ liệu `Assets/Data/Combat/`, prefab hiệu ứng `Assets/Prefabs/Combat/` (~1,5 MB, hạt đơn giản), `Sandbox_Combat.unity` có thêm 4 bia tập.
 
 ### 9.6 Gói Asset Store dùng cho map sính lễ (03/10) — KHÔNG commit, mỗi người tự tải
 
@@ -411,6 +445,122 @@ Animation Mixamo bạn thêm ở `ArtSource/Son-Tinh-vs-Thuy-Tinh_Animation/` (t
 
 **Đã kiểm khi chạy thật** (Play, gõ phím ảo bằng `Assets/Scripts/DevTools/MovesSmokeTest.cs`, ghi vào `Temp/moves_smoke_test.txt` + ảnh `Temp/smoke_*.png`): trên Sơn Tinh (map Sơn Tinh) và Thủy Tinh (Sandbox): chạy → sprint → nhảy chạy (state `RunJump`, bay ~0,6 s, cao ~1 m, tiếp đất vẫn chạy tiếp) → trượt (`Slide`, trượt đủ 6,5 m trên nền phẳng; trên đường rừng có thể bị cây đá chặn) → nhảy lên (`JumpUp`, bật sau ~0,3 s, cao ~0,9 m) → bị đánh gục (`Death`, nằm sấp trên sàn, không chìm xuống đất) → đứng dậy (về `Locomotion`). Ảnh chụp cho thấy tư thế đúng ở cả 4 clip. **Chưa kiểm bằng tay**: cảm giác điều khiển, tay cầm, nhảy trên dốc/mép vách, va chạm khi trượt sát vật cản, camera khi nằm gục. Chưa có: hoạt cảnh ngã (falling) khi rơi khỏi mép, hoạt cảnh bị đánh trúng không chết (flinch/knockdown ngắn), màn hình thua / hồi sinh thật (hiện chỉ có phím R trong editor), tiếng bước/va chạm.
 **Cách tự chạy bài thử**: mở scene gameplay, Play, thêm `MovesSmokeTest` vào một object rỗng, đợi ~25 s rồi đọc 2 file trên (bài thử tự thoát Play). Nếu Unity ở nền thì cần `Application.runInBackground = true` (bật tạm bằng script, nhớ tắt lại), nếu không game không chạy khi cửa sổ không được focus.
+
+### 9.12 Thủy Tinh cầm kiếm: đánh nhau (05/10)
+
+Làm xong kế hoạch ở mục 8.1c (P0 → P5). Mục này là phần của **Thủy Tinh** (kiếm, nước); **Sơn Tinh có cùng bộ đòn bằng tay không và đất ở mục 9.14**. Nhân vật nào có `MoveSet` thì đánh được (`PlayerController.HasCombat`), không có thì các phím đánh bị bỏ qua.
+
+**Phím** (`Assets/Input/PlayerControls.inputactions`; thêm action `Attack` [Tap/Hold 0,25 s], `LightAttack`, `HeavyAttack`, `Spell1–3`):
+| Hành động | Bàn phím / chuột | Tay cầm | Chi tiết |
+|---|---|---|---|
+| Chém nhẹ, combo 3 | **J chạm** / chuột trái | X chạm | Chém → Đá → Xoay 360° (đòn 3 có vòng nước bắn ra). Sát thương 10 / 8 / 18, thể lực 8 / 8 / 10. Bấm sớm 0,2 s được nhớ; nối đòn khi cửa sổ combo mở thì huỷ nốt phần cuối clip |
+| Chém nặng | **Giữ J** / chuột phải | giữ X | Clip Casting chạy chậm 0,9×; sát thương 30, thể lực 25, **không bị ngắt khi trúng đòn** (super armor), đẩy bật lên |
+| Đòn nhảy | **J / chuột phải khi đang trên không** (sau Space hoặc Shift+Space) | X lúc đang nhảy | Great Sword Jump Attack: lao tới ~3 m rồi đáp xuống, sát thương 22, thể lực 15, vòng nước lúc đáp |
+| **U** Gọi gió | U | D-pad trái | Hồi 8 s. Hút mọi thứ trong 8 m về trước mặt rồi hất tung, sát thương 6 |
+| **I** Hô mưa | I | D-pad lên | Hồi 18 s. Vùng mưa bán kính 6 m cách người ~4 m, kéo dài 6 s, làm chậm 50% và mất 2 máu mỗi 0,5 s |
+| **O** Sóng nước nghe lệnh | O | D-pad phải | Hồi 10 s. Bức sóng chạy thẳng 10 m (14 m/s), sát thương 16, hất lùi 10 và bật lên |
+| Lăn né | Ctrl trái | B | Bây giờ là **lăn thật** (clip Stand To Roll cắt còn 1,07 s): 4,5 m trong 0,75 s, bất tử 0,05–0,5 s, tốn 25 thể lực. Sơn Tinh vẫn dùng kiểu lướt cũ (mượn clip Run) |
+| Khoá mục tiêu | Q / chuột giữa | nhấn cần phải | **chưa làm** (chỉ có trong file phím) |
+Phép chỉ có thời gian hồi (không thanh năng lượng). Q vẫn là khoá mục tiêu, nên phép dùng U / I / O như Bleach vs Naruto. K (trừ máu thử), L / R (gục / đứng dậy, chỉ trong editor), M (bản đồ) giữ nguyên.
+
+**Clip → chiêu** (14 clip Great Sword, copy từ `ArtSource/Mixamo/ThuyTinh_v2/GreatSword/` vào `Assets/Animations/ThuyTinh_v2/thuy_tinh_v2_gs_*.fbx`; menu **Tools ▸ Son Tinh Thuy Tinh ▸ Set Up Great Sword Combat Animations** (`Assets/Editor/CombatAnimationsBuilder.cs`) nhập thành Humanoid, **cắt đoạn dùng được theo số khung đo bằng Blender**, thêm state vào `AC_Humanoid_Base` và gán override). Chém = `GS_Slash` (0–44), Đá = `GS_Kick` (0–40), Xoay = `GS_Spin` (0–48), chém nặng = `GS_CastHeavy` (Casting khung 46–96), Gọi gió = `GS_CastWind` (Casting 52–84), Hô mưa = `GS_PowerUp` (6–46), Sóng nước = `GS_SlideAttack` (0–52), đòn nhảy = `GS_JumpAttack`, lăn = `GS_Roll` (20–52), bị đánh = `GS_Impact` (0–32), cùng Idle / Walk / Run / Jump / RunJump bản Great Sword thay cho bản tay không của Thủy Tinh. Các state đánh dùng tham số mới `AnimSpeed` (float) làm tốc độ clip để tăng tốc / làm chậm từng đòn mà không sửa clip. **Clip Impact bạn tải thêm đã được đặt lại tên theo quy ước: `ArtSource/Mixamo/ThuyTinh_v2/GreatSword/Great Sword Impact.fbx` → `Assets/Animations/ThuyTinh_v2/thuy_tinh_v2_gs_impact.fbx`** (cùng chỗ với `Great Sword Jump Attack.fbx`). Chỉ còn `Great Sword Blocking` (2 file) trong `ArtSource` chưa dùng (chưa làm đỡ đòn).
+
+**Code** (`Assets/Scripts/Combat/` và `Assets/Scripts/Player/`):
+- **Dữ liệu** (ScriptableObject trong `Assets/Data/Combat/`): `AttackData` (state, tốc độ, các mốc "bắt đầu trúng / hết trúng / mở combo", sát thương, thể lực, hộp trúng hoặc vòng tròn quanh người, đẩy lùi / hất lên, lao tới, dừng khung hình, rung camera, hiệu ứng vung), `SpellData` (thêm thời gian hồi, prefab hiệu ứng, bán kính, tầm, tốc độ, sát thương theo nhịp, hệ số làm chậm), `MoveSet` (combo + nặng + nhảy + 3 phép + số liệu bị đánh). **Muốn chỉnh cân bằng thì sửa thẳng các asset này trong Inspector**, không cần đụng code. Chạy lại menu build sẽ ghi đè về số mặc định.
+- **`PlayerAttackState`**: phát clip, chuyển động lao tới do code (clip chạy tại chỗ), bật vệt kiếm, **quét trúng bằng `Physics.OverlapBox/Sphere` trong cửa sổ trúng (mỗi mục tiêu một lần)**, gây sát thương qua `Health.TakeDamage`, báo cho `IHitReceiver` để đẩy lùi, dừng khung hình ngắn (animator về tốc độ 0), rung camera bằng Cinemachine Impulse (`PlayerSpawner` tự thêm `CinemachineImpulseListener` vào camera). `PlayerHitState`: bị đánh thì chơi clip Impact (nhẹ 1,5× / ~0,7 s, từ 25 sát thương trở lên là loạng choạng chậm 0,9× / ~1,15 s, bị đẩy lùi), đòn super armor thì không bị ngắt. `PlayerController` thêm `TryAttack`, `TryCast`, `SpellReady / SpellCooldownLeft`, `HitStop`, `Shake`, `SetTrail`, `FaceInput`, `CancelVertical`. `PlayerJumpState` có thêm móc đòn nhảy trên không. `PlayerInputReader` viết lại phần đánh (`ConsumeLight / Heavy / Spell(i)`, vẫn nhớ phím bấm sớm).
+- **Phép** (`SpellEffects.Cast` đẻ prefab hiệu ứng rồi gọi `ISpellEffect.Init`): `WindBlast` (hút + hất, sát thương 1 lần), `RainZone` (kiểm tra mỗi 0,5 s trong 6 s: làm chậm + trừ máu), `WaveProjectile` (chạy thẳng, quét hộp, mỗi mục tiêu 1 lần). **Mỗi MonoBehaviour phải ở file cùng tên**: ban đầu cả ba nằm chung `SpellEffects.cs` và prefab hiệu ứng báo "script missing" (phép có hình nhưng không gây sát thương); đã tách ra 3 file.
+- **`TrainingDummy`** (cần `Health`): bia tập, bị đánh thì bị đẩy lùi / bật lên / bị gió hút, hiện số sát thương (`FloatingText`, cam nếu đòn nặng), đổi màu xanh khi bị mưa làm chậm, chết thì ngã ra và đứng dậy sau 3 s, nhàn rỗi 1,2 s thì tự về chỗ cũ. Chỉ là đồ thử; kẻ địch thật sẽ tạo sau (mục 8.7 / 8.8).
+- **`SpellHud`** (UI, dựng bằng code lúc vào game): 3 ô tròn U / I / O ở đáy màn hình **giữa thanh máu và vòng bản đồ**, vòng đen quét theo thời gian hồi + số giây còn lại.
+
+**Hiệu ứng** (hệ hạt, không dùng asset ngoài; dựng bằng `Assets/Editor/CombatVfxBuilder.cs`, vật liệu + 2 texture nhỏ ở `Assets/Art/Combat/`, prefab ở `Assets/Prefabs/Combat/`): vệt kiếm xanh nước (2 `TrailRenderer` ở giữa và mũi kiếm, `SwordTrail` bật theo cửa sổ vung), bắn nước khi trúng (`VFX_HitSplash`), vòng nước của đòn xoay / nặng / nhảy (`VFX_SpinWave`), xoáy gió (`VFX_Wind`), mưa + gợn nước dưới đất (`VFX_Rain`), bức sóng nước (`VFX_Wave`). Hình dạng chỉ là bản đầu: hạt đơn giản, chưa có âm thanh.
+
+**Kiếm + số chạy**: mesh kiếm giảm 239.000 → 7.000 tam giác (mục "Vũ khí"). Tốc độ đi / chạy của Thủy Tinh đo lại theo clip Great Sword mới: **1,22 / 4,86 m/s** (sprint vẫn 6,86, vì dùng clip chạy tay không). Nhảy đứng cao 1,3 m, nhảy chạy 0,9 m.
+
+**Dựng lại từ đầu**: menu **Tools ▸ Son Tinh Thuy Tinh ▸ Set Up Great Sword Combat Animations**, rồi **Build Thuy Tinh Combat** (`Assets/Editor/CombatSetupBuilder.cs`: dựng hiệu ứng, sinh các asset dữ liệu, gắn kiếm vào `mixamorig:RightHand` của `Player_ThuyTinh_v2` chép toạ độ cầm từ v1, gán `MoveSet`, chỉnh số lăn / nhảy / tốc độ, đặt 4 bia tập vào `Sandbox_Combat`). Cả hai chạy lại được nhiều lần. Cần chạy sau `Set Up Slide, Jump and Death Animations` (mục 9.11).
+
+**Đã kiểm khi chạy thật (Play, gõ phím ảo bằng `Assets/Scripts/DevTools/CombatSmokeTest.cs`, ghi `Temp/combat_smoke_test.txt` + ảnh `Temp/combat_*.png`)** trên Thủy Tinh ở `Sandbox_Combat`: chạy tới bia, chạm J 3 lần → state `Attack1 → Attack2 → Attack3` đúng thứ tự (sát thương 10 + 8 + 18 = 36 đúng số liệu, thể lực trừ 8 / 8 / 10), giữ J → `HeavyAttack` (−30 máu bia, −25 thể lực), Space rồi J → `JumpAttack` trên không rồi đáp (−22), **U / I / O → `SpellWind / SpellRain / SpellWave`** (cả 4 bia đều trúng: gió −6, mưa −2 mỗi nhịp và đổi màu xanh, sóng −16), thời gian hồi chạy đúng (sau ~5 s: U còn 3,1 s / I 14,6 s / O 8,0 s; bấm U lúc đang hồi thì không phát), Ctrl → `Dodge` lăn 4,5 m sang ngang, bị trừ 10 và 30 máu → `Hit` (clip Impact, nhẹ rồi loạng choạng), `SpellHud` hiện đủ 3 ô có vòng hồi. Ảnh chụp cho thấy kiếm nằm trong tay ở các tư thế đã xem (chưa soi kỹ khớp 2 tay từng đòn), có vệt kiếm, vòng nước, mưa, sóng nước, bia đổi màu. **Chạy lại bài thử nhảy / trượt / chết cũ (mục 9.11) trên Sơn Tinh ở `Map_SonTinh` sau khi sửa code đánh**: nhảy chạy, nhảy đứng, chết, đứng dậy vẫn đúng (trượt chỉ đi được 0,4 m vì bị vật cản trên đường rừng chặn tại z≈29, giống ghi chú ở 9.11, không phải lỗi mới).
+**Bài thử lần này vấp 3 chỗ, ai tự chạy lại cũng sẽ gặp**: (1) cửa sổ Unity không phải cửa sổ đang chọn thì Input System **tự tắt thiết bị ảo** (nhân vật đứng im suốt bài); `CombatSmokeTest` / `MovesSmokeTest` giờ đặt `backgroundBehavior = IgnoreFocus` lúc chạy rồi trả lại. **Đừng tắt bàn phím thật để "cô lập"**: tắt thì bàn phím ảo cũng chết theo. (2) bấm Esc trên bàn phím thật lúc đang thử sẽ mở menu tạm dừng (`timeScale = 0`) và bài thử đứng mãi; bài thử giờ tắt `PauseMenu` lúc chạy. (3) bài thử bị dừng giữa chừng sẽ để lại thiết bị ảo `CombatSmokeKeyboard` (bài sau tự gỡ cái cũ).
+
+**Chưa kiểm bằng tay / chưa làm**: cảm giác đánh thật (nhịp combo, độ nhạy của giữ J 0,25 s, dừng khung hình, rung camera, tầm quét) và tay cầm; **đỡ đòn** (clip Blocking chưa nhập); **khoá mục tiêu Q**; kẻ địch thật / AI / máu của boss (mục 8.8) — mới có bia tập (trong bài thử nhân vật từng bị đẩy lùi ~4 m lúc bia tự đi về chỗ cũ sau khi bị hất; nghi do bia dịch chuyển bằng `transform` xuyên qua `CharacterController`, chưa tìm hiểu, chỉ là hiện tượng của bia); đánh trúng lẫn nhau giữa 2 người chơi; **Sơn Tinh chưa có đòn** (cần 2 clip tay không + hiệu ứng đất đá); âm thanh; "Dâng nước" (chiêu cuối, mục 8.1b); hiệu ứng nhìn còn đơn giản (sóng nước lúc xa nhìn như đám sương xanh, cần chỉnh sau khi chơi thử). Hộp trúng và thời điểm trúng đã lấy từ số đo Blender nhưng chưa chỉnh theo cảm giác.
+
+### 9.13 Thủy Tinh leo bậc / vật cản (05/10)
+
+**Cách dùng**: đứng sát một tường, tảng đá hay khối cao khoảng **0,7–1,9 m** có mặt trên phẳng, hướng về phía nó (bấm hướng đó hoặc đang quay mặt vào nó) rồi bấm **Space** (nhảy) thì **leo lên luôn** thay vì nhảy tại chỗ: bước sát vào tường, bám, kéo người lên mép rồi đứng dậy trên đỉnh (~2,3 s + 0,25 s đứng dậy). Không có vật gần thì Space vẫn là nhảy như cũ; Shift+Space (nhảy chạy) gần vật cũng leo theo code (chưa thử riêng). **Cả Thủy Tinh và Sơn Tinh** leo được (Sơn Tinh dùng clip Mixamo "Climbing" của riêng anh, `ArtSource/Mixamo/SonTinh_v2/son_tinh_v2_climb.fbx`: **cùng clip nên cùng số đo**, đã so trong Blender: tường ở cùng chỗ, cao 1,15 m). Nhân vật nào không bật `climb.enabled` trên prefab thì Space vẫn chỉ là nhảy.
+
+**Clip**: bạn thêm `ArtSource/Meshy/ThuyTinh_v2/Climbing.fbx` (Mixamo "Climbing"), đã **đổi tên theo quy ước và chuyển** thành `ArtSource/Mixamo/ThuyTinh_v2/thuy_tinh_v2_climb.fbx` ↔ `Assets/Animations/ThuyTinh_v2/thuy_tinh_v2_climb.fbx`. Đo trong Blender và Unity: đây là clip **trèo lên một bức tường cao 1,15 m** (có đoạn chạy tới dài ~0,8 s ở đầu, rồi nhảy lên đặt 2 chân lên tường, 2 tay bám mép, kéo người lên và quỳ trên đỉnh). Menu **Tools ▸ Son Tinh Thuy Tinh ▸ Set Up Climb** (`Assets/Editor/ClimbBuilder.cs`) nhập thành Humanoid, **cắt khung 26–104** (bỏ đoạn chạy tới và đoạn quỳ cuối, còn 2,6 s, bắt đầu ngay khi nhân vật rời đất sát tường), thêm state `Climb` (dùng `AnimSpeed`) vào `AC_Humanoid_Base`, **bật `climb.enabled` trên `Player_ThuyTinh_v2.prefab`** và dựng 3 khối thử trong `Sandbox_Combat` (nhóm `ClimbBlocks`: cao 0,8 / 1,15 / 1,6 m, ở bên trái chỗ xuất hiện, x = −9). Chạy lại được nhiều lần.
+
+**Code** (`Assets/Scripts/Player/`): `LedgeProbe` (khi bấm Space bắn tia tìm: tường gần như thẳng đứng bị trúng ở 2 độ cao (đầu gối và 0,6 m), mặt trên phẳng nằm trong 0,7–1,9 m, đủ chỗ cho cả người ở trên đỉnh; **bỏ qua nhân vật, bia tập và mọi thứ có `Health`**), `PlayerClimbState` (tắt `CharacterController`, đặt vị trí theo đường cong đo từ clip, bật lại ở trên đỉnh; **không bị ngắt khi trúng đòn**, chết thì vẫn thoát), `ClimbSettings` (số chỉnh được trên `PlayerController`, nhóm Climb: độ cao min/max, tầm tìm tường, tốc độ phát clip 1,15, thời gian bước sát tường, thêm 0,12 m vào đỉnh cho khỏi đứng trên mép, thời gian chờ giữa 2 lần leo 0,4 s). `PlayerController.TryClimb()` được `PlayerLocomotionState` gọi trước khi nhảy. Đường cong "nâng lên / tiến tới" (`ClimbSettings.rise/forward`) là số đo từ chính clip bằng `Assets/Scripts/DevTools/ClimbMeasureTest.cs` (phát clip trên model có root motion, ghi `Temp/climb_measure.txt`); khoảng cách tới tường trong clip là 0,32 m, độ cao tường 1,15 m. **Tường thấp / cao hơn 1,15 m thì kéo giãn theo tỉ lệ** (0,8 m → 0,7×, 1,6 m → 1,4×) nên tư thế sẽ lệch dần càng xa 1,15 m (tay không vừa mép chính xác); nên làm các bậc leo được gần 1–1,3 m.
+
+**Lưu ý kỹ thuật**: với clip này thân người "nằm ngang" trong tư thế quỳ nên **không** bake độ cao vào pose (độ cao do code lái), và khi `Animator.applyRootMotion` bật thì chân nằm thấp hơn vị trí 0,45 m nhưng khi tắt (như trong game) chân nằm đúng tại vị trí nhân vật: lần đầu mình bù nhầm 0,45 m làm nhân vật bay lơ lửng, đã bỏ.
+
+**Đã kiểm khi chạy thật** (Play, `Assets/Scripts/DevTools/ClimbSmokeTest.cs`, ghi `Temp/climb_smoke_test.txt` + ảnh nhìn ngang `Temp/climb_*.png`): đi sát từng khối rồi bấm Space: cả 3 khối (0,8 / 1,15 / 1,6 m) đều vào state `Climb`, bám rồi trèo lên, kết thúc **đứng đúng trên đỉnh** (y = 0,80 / 1,15 / 1,60), `grounded` = true, đi tiếp trên đỉnh được (rồi rơi xuống ở mép kia); Space ngoài trống → nhảy bình thường (`JumpUp`); Space quay lưng vào khối → nhảy bình thường. Ảnh chụp cho thấy chuỗi nhảy bám tường → kéo người lên → quỳ rồi đứng trên đỉnh. Chạy lại bài thử đánh nhau (mục 9.12) sau khi thêm leo: số sát thương, đòn nhảy, phép vẫn y như trước (bia không bị coi là vật leo). **Chưa kiểm bằng tay**: cảm giác (độ nhạy "kế bên", đang chạy mà bấm Space), tay cầm, leo trên địa hình / đá thật của các map (chưa thử), camera lúc leo, tay nắm có vừa mép không khi khác 1,15 m, kiếm có xuyên tường không, leo khi đang ở giữa không trung (chỉ leo từ mặt đất), tốn thể lực (hiện miễn phí). **Sơn Tinh** (thêm 05/10, mục 9.14): `Set Up Climb` giờ nhập cả clip của anh và bật `climb.enabled` trên `Player_SonTinh_v2`; đã chạy cùng bài thử với anh: cả 3 khối đều lên đúng đỉnh, Space ngoài trống / quay lưng vào khối vẫn chỉ nhảy.
+
+### 9.14 Sơn Tinh đánh nhau và leo bậc (05/10)
+
+Sơn Tinh có **cùng bộ đòn và cùng phím với Thủy Tinh** (mục 9.12 và 9.13: J chạm combo, giữ J đòn nặng, J lúc nhảy = đòn nhảy, U / I / O ba phép, Ctrl lăn, Space sát vật = leo), nhưng **tay không và đất** thay cho kiếm và nước. Dùng lại toàn bộ code, animator dùng chung, `AttackData` / `SpellData` / `MoveSet`: chỉ thêm clip, số liệu, hiệu ứng và `MoveSet_SonTinh`.
+
+**Clip** (12 file bạn bỏ ở `ArtSource/Meshy/SonTinh_v2`, đã **đổi tên theo quy ước và chuyển** sang `ArtSource/Mixamo/SonTinh_v2/son_tinh_v2_*.fbx`; 11 file có bản trong `Assets/Animations/SonTinh_v2`). Số khung đo trong Blender từ tốc độ chân tay (khung đánh trúng = khung tay / chân nhanh nhất):
+| Đòn | Clip | Cắt (khung) | Ghi chú |
+|---|---|---|---|
+| Combo 1 | Cross Punch (`punch`) | 14–48 | cú đấm trúng ở khung 26–31; bỏ phần gồng tay đầu clip; 10 sát thương, thể lực 8 |
+| Combo 2 | Mma Kick (`kick`) | 4–40 | đá trúng ở khung 11–18; 9, thể lực 8 |
+| Combo 3 (cuối) | Hurricane Kick (`hurricane_kick`) | 0–50 | đá xoay liên tục (clip có sẵn tiến tới ~1,9 m, code lao 1,5 m); quét **vòng quanh 3,2 m**, 20, thể lực 10, kèm vòng bụi |
+| Đòn nặng (giữ J) | Uppercut (`uppercut`) | 3–38 | trúng ở khung 12–18, **hất mục tiêu lên cao** (7 m/s), 30, thể lực 25, chống bị ngắt |
+| Đòn nhảy | Standing Melee Run Jump Attack (`jump_attack`) | 28–64 | cú đập trúng lúc chạm đất (khung 47–52), lao 2,5 m, 22, thể lực 15 |
+| U "Núi mọc" | Standing 1H Magic Attack 03 (`magic_bolt`) | 4–50 | thả ở khung 24; **một dải đá và bụi phóng thẳng 10 m** (như Sóng nước), 16 sát thương, hồi 10 s |
+| I "Đất dâng" | Standing 2H Magic Area Attack 01 (`magic_area`) | 12–62 | thả ở khung 37; **một bãi đất bán kính 6 m dâng lên 6 s** làm chậm 50% và trừ 2 máu mỗi 0,5 s (như Hô mưa), hồi 18 s |
+| O "Núi non" | Standing Melee Attack Downward (`slam`) | 8–46 | đập xuống ở khung 25; **địa chấn bán kính 8 m hất mọi thứ lên** tại chỗ (như Gọi gió nhưng không hút), 10 sát thương, hồi 8 s |
+| Lăn | Stand To Roll (`roll`) | 20–52 | cùng cắt như Thủy Tinh: 4,5 m trong 0,75 s, bất tử 0,05–0,5 s, 25 thể lực (trước Sơn Tinh mượn clip Run) |
+| Bị đánh | Reaction (`reaction`) | 0–34 | nhẹ 1,5× / loạng choạng 0,9× như Thủy Tinh |
+| Leo | Climbing (`climb`) | 26–104 | cùng clip Mixamo với Thủy Tinh, cùng số đo (mục 9.13) |
+Ba tên phép lấy từ `signatureMoves` của Sơn Tinh ở màn chọn nhân vật ("Núi mọc theo tay chỉ", "Đất dâng thành bãi", "Sức mạnh của núi non"), rút ngắn cho vừa ô phép. **Chưa dùng**: `son_tinh_v2_melee_horizontal.fbx` (Standing Melee Attack Horizontal, chém ngang, đã đo: trúng ở khung 24–31) chỉ nằm trong `ArtSource/Mixamo/SonTinh_v2`, chưa nhập vào Unity; có thể làm đòn thay thế (ví dụ đòn nặng thứ hai hoặc thay Mma Kick) nếu bạn muốn.
+
+**Cách nối vào animator**: các state đánh trong `AC_Humanoid_Base` vẫn mang tên cũ (`Attack1/2/3`, `HeavyAttack`, `JumpAttack`, `SpellWind` = ô U, `SpellRain` = ô I, `SpellWave` = ô O, `Hit`, `Dodge`, `Climb`) và clip gốc của Thủy Tinh (`GS_Slash`, ...). `AOC_SonTinh_v2` thay từng clip đó bằng clip của Sơn Tinh (bảng trên); menu **Tools ▸ Son Tinh Thuy Tinh ▸ Build Son Tinh Combat** (`Assets/Editor/SonTinhCombatBuilder.cs`) nhập clip (Humanoid, avatar riêng cho từng file, cắt khung), điền override, dựng hiệu ứng, sinh dữ liệu `Assets/Data/Combat/SonTinh/` (`Attack_Punch`, `Attack_Kick`, `Attack_HurricaneKick`, `Attack_Uppercut`, `Attack_JumpAttack`, `Spell_RockLine`, `Spell_EarthZone`, `Spell_Earthquake`, `MoveSet_SonTinh`) và chỉnh `Player_SonTinh_v2` (gán `MoveSet`, thông số lăn, vệt tay chân). Rồi chạy **Set Up Climb** (đã làm cho cả 2 nhân vật). Chạy lại được nhiều lần; số cân bằng sửa trực tiếp trong các asset dữ liệu.
+
+**Hiệu ứng đất** (hệ hạt + cục đá là mesh khối lập phương, không dùng asset ngoài; `Assets/Editor/EarthVfxBuilder.cs`, prefab `VFX_Earth*` / `VFX_Earthquake` / `VFX_RockWave` trong `Assets/Prefabs/Combat/`, vật liệu `Mat_VfxRock` trong `Assets/Art/Combat/`): mảnh đá + bụi + chớp vàng khi trúng (`VFX_EarthHit`), vòng bụi và đá văng lên của đòn xoay / nặng / nhảy (`VFX_EarthShock`), địa chấn vòng rộng với đá bay lên (`VFX_Earthquake`, chạy bằng script `WindBlast`), bãi đất dâng với đá lơ lửng (`VFX_EarthZone`, `RainZone`), dải đá và bụi lăn tới (`VFX_RockWave`, `WaveProjectile`), và **4 vệt màu đất sau nắm tay và bàn chân** lúc đang vung (4 `TrailRenderer` trên xương tay / chân của `Player_SonTinh_v2` + `SwordTrail` ở gốc). Cục đá hơi vuông vức (chỉ là hạt đơn giản), chưa có âm thanh.
+
+**Đã kiểm khi chạy thật** (Play, `CombatSmokeTest` / `ClimbSmokeTest` / `MovesSmokeTest`, Sơn Tinh ở `Sandbox_Combat` bằng cách đổi `Fallback Character` tạm thời): **combo** vào `Attack1 → Attack2 → Attack3` đúng thứ tự (sát thương 10 + 9 + 20 = 39 đúng số liệu), **giữ J** → `HeavyAttack` (−30), **đòn nhảy** → `JumpAttack` (−22), **U / I / O** → ba phép đều trúng bia (dải đá −16, bãi đất làm bia đổi màu xanh và mất 2 mỗi nhịp, địa chấn trúng cả 4 bia), thời gian hồi chạy đúng, **lăn** 4,5 m, bị đánh → `Hit` (nhẹ rồi loạng choạng), **ô phép** hiện đủ 3 ô, **leo** cả 3 khối đúng đỉnh; chạy lại bài nhảy / trượt / chết cũ ở `Map_SonTinh` vẫn đúng. Ảnh chụp cho thấy các tư thế đấm / đá / xoay / nhảy / niệm phép, đá và bụi văng, vệt tay chân.
+
+### 9.15 Nâng cấp đồ hoạ hiệu ứng combat của Sơn Tinh và Thủy Tinh (06/10)
+
+Đã nâng cấp toàn diện hệ thống hiệu ứng thị giác (VFX) và ánh sáng va chạm (Dynamic Impact Lighting) cho cả 2 nhân vật (`Assets/Editor/CombatVfxBuilder.cs` và `Assets/Editor/EarthVfxBuilder.cs`), giúp các chiêu thức đạt chất lượng uy lực và bùng nổ theo định hướng game hành động:
+
+1. **Hệ thống ánh sáng va chạm (`Assets/Scripts/Combat/CombatLightFlash.cs`)**:
+   - Thêm component tạo chớp sáng Point Light tức thì theo màu nguyên tố (vàng hổ phách cho Sơn Tinh, xanh lam biển cho Thủy Tinh) với tầm rọi 6–14m và độ sáng suy giảm mượt mà trong 0,2–0,6s.
+   - Nhờ đó, mỗi cú đấm, chém, đập đất hay phóng sóng nước đều trực tiếp soi sáng nhân vật, kẻ địch và đấu trường trong thời gian thực.
+
+2. **Nâng cấp hiệu ứng Sơn Tinh (Hệ Thổ/Núi)**:
+   - **Mesh đá 3D chân thực**: Thay thế khối lập phương mặc định (`Cube.fbx`) bằng 2 mesh đá đa diện góc cạnh được tạo theo thuật toán: `rock_shard.asset` (mảnh đá núi góc cạnh bắt sáng sắc nét) và `rock_spike.asset` (cột chóp đá nhọn hoắt cao 2,3m).
+   - **Vết nứt mặt đất phát sáng**: Tự động sinh texture `vfx_crack.png` và material `Mat_VfxCrack.mat`. Các đòn nặng (`VFX_EarthShock`) và địa chấn (`VFX_Earthquake`) giờ đây để lại vết nứt đất rực sáng màu cam/vàng nung chảy lan rộng trên sàn đấu.
+   - **Chiêu U "Núi mọc" (`VFX_RockWave`)**: Thay dải hạt bay cũ bằng hàng cột đá nhọn (`rock_spike`) trồi liên tiếp từ lòng đất lao về phía trước, kèm theo bão bụi dày đặc và ánh sáng hổ phách.
+   - **Chiêu I "Núi dâng" (`VFX_EarthZone` & `RisingMountainZone.cs`)**: Thay vùng hạt bay phẳng cũ bằng **quần thể 7 ngọn núi đá 3D thật** trồi thẳng từ lòng đất lên cao 2,5–4m. Các ngọn núi có va chạm vật lý (MeshCollider convex) đứng vững trong 6s làm địa hình hiểm trở giam chân kẻ thù, nứt đất phát sáng và bão bụi nổ tung, rồi tự chìm lại xuống lòng đất khi hết chiêu. Đúng tinh thần truyền thuyết: "nước dâng bao nhiêu, núi cao bấy nhiêu".
+   - **Vệt quyền tay chân**: Tăng cường dải `TrailRenderer` phát sáng màu vàng kim rực rỡ theo từng đòn đấm đá.
+
+3. **Nâng cấp hiệu ứng Thủy Tinh (Hệ Thủy/Nước)**:
+   - **Texture giọt nước văng (`vfx_splash.png`)**: Sinh texture tia nước bắn và bọt nước, giúp các hạt nước không còn bị tròn phẳng.
+   - **Đòn chém & Finish (`VFX_HitSplash`, `VFX_SpinWave`)**: Nước bắn tung tóe đa tầng, sóng nước hình khuyên bung tỏa mạnh mẽ trên mặt đất kèm chớp sáng xanh lam.
+   - **Chiêu U "Gọi gió" (`VFX_Wind`)**: Tăng mật độ dòng nước xoáy ốc bốc lên cao và vòng xoáy hút vào tâm.
+   - **Chiêu I "Hô mưa" (`VFX_Rain`)**: Bổ sung tầng hạt bắn tung tóe trên mặt đất khi mưa chạm sàn kết hợp vòng sóng gợn nước loang rộng.
+   - **Chiêu O "Sóng nước" (`VFX_Wave`)**: Bổ sung bọt trắng (`Foam`) cuộn ở đỉnh sóng, dải sương nước lướt sàn và luồng sáng xanh lam rọi đường.
+   - **Vệt kiếm nước**: Tăng độ rực rỡ và phát sáng của vệt đại kiếm (`Mat_SwordTrail`) theo dải màu cyan biển sâu.
+
+4. **Lưỡi chém trăng khuyết 3D (Mesh Slash Arc)**:
+   - Tự động sinh mesh cánh cung 3D (`slash_arc.asset`), texture dải năng lượng (`vfx_slash_arc.png`) và script điều khiển mở rộng góc quét (`Assets/Scripts/Combat/SlashArcRunner.cs`).
+   - Thủy Tinh: Đòn chém thường (`Attack_Slash`) và đòn nặng (`Attack_Heavy`) quét ra lưỡi trăng khuyết nước khổng lồ (`VFX_SlashWater` / `VFX_SlashWaterHeavy`) phát sáng rực rỡ màu cyan.
+   - Sơn Tinh: Đòn đấm (`Attack_Punch`) và đấm móc (`Attack_Uppercut`) quét ra vòng cung năng lượng hoàng kim (`VFX_SlashEarth` / `VFX_SlashEarthHeavy`) kèm mảnh đá vỡ và chớp sáng vàng.
+
+5. **Shader méo không gian sóng xung kích (URP Shockwave Distortion)**:
+   - Viết shader chuyên dụng `Assets/Art/Combat/Shaders/ShockwaveDistortion.shader` đọc `_CameraOpaqueTexture` để khúc xạ và bẻ cong quang cảnh phía sau khi có sóng xung kích.
+   - Tích hợp vào `VFX_SpinWave` (Thủy Tinh) và `VFX_EarthShock`, `VFX_Earthquake` (Sơn Tinh), tạo vòng tròn bẻ cong không khí cực kỳ uy lực khi nổ chiêu.
+
+6. **Cấu hình hậu kỳ điện ảnh (URP Post-Processing Profile)**:
+   - Cập nhật `Assets/Settings/DefaultVolumeProfile.asset`:
+     - **Bloom**: Bật ngưỡng threshold 0.85, intensity 1.25, kích hoạt High Quality Filtering để các vệt chém, ánh sáng va chạm và vết nứt dung nham phát sáng rực rỡ.
+     - **Tonemapping**: Bật chuẩn điện ảnh ACES (mode 2) giúp màu sắc có chiều sâu và độ tương phản cao.
+     - **Vignette & Chromatic Aberration**: Bo tối nhẹ 4 góc (0.25) và quang sai viền thấu kính (0.12) mang lại cảm giác camera phim hành động.
+
+7. **Menu công cụ một chạm**:
+   - Thêm menu **Tools ▸ Son Tinh Thuy Tinh ▸ Rebuild All Combat VFX** (`Assets/Editor/RebuildAllVfx.cs`) cho phép tự động cập nhật lại toàn bộ VFX, moveset và prefab của cả 2 nhân vật chỉ với 1 cú click.
 
 ---
 Bảng việc chi tiết + phân người: [Claude Doc](https://claude.ai/code/artifact/9b63c56a-f193-4db3-a892-4930ebe64584)

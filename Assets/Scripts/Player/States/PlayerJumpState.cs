@@ -61,6 +61,10 @@ namespace SonTinhThuyTinh.Player.States
                 return;
             }
 
+            // attack button in the air: the jump attack (J / mouse buttons), for characters that have one
+            if (player.HasCombat && player.MoveSet.jumpAttack != null && (player.InputReader.ConsumeLight() || player.InputReader.ConsumeHeavy()))
+                if (player.TryAttack(player.MoveSet.jumpAttack, -1)) return;
+
             // steer with the stick; let go and the horizontal speed slowly bleeds off
             Vector3 wish = player.CameraRelative(player.InputReader.Move);
             if (wish.sqrMagnitude > 0.01f)

@@ -22,6 +22,7 @@ namespace SonTinhThuyTinh.Player.States
             Vector3 inputDirection = player.CameraRelative(player.InputReader.Move);
             direction = inputDirection.sqrMagnitude > 0.01f ? inputDirection.normalized : player.transform.forward;
             player.FaceTowards(direction, 360f);
+            player.SetAnimSpeed(player.Dodge.animationSpeed);
             player.Animator.CrossFadeInFixedTime(DodgeHash, 0.05f);
         }
 
@@ -44,6 +45,7 @@ namespace SonTinhThuyTinh.Player.States
         public void Exit()
         {
             player.IsInvulnerable = false;
+            player.SetAnimSpeed(1f);
             player.MatchSpeedToInput();
         }
     }

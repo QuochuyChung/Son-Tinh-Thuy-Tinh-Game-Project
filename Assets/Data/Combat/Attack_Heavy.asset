@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 857f5c0f9bcdf7d4db16a9b921cf3da2, type: 3}
+  m_Name: Attack_Heavy
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.AttackData
+  stateName: HeavyAttack
+  animSpeed: 0.9
+  duration: 1.6666667
+  hitStart: 0.44444448
+  hitEnd: 0.81111115
+  comboStart: 1.3333334
+  staminaCost: 25
+  damage: 30
+  heavy: 1
+  superArmor: 1
+  hitCenter: {x: 0, y: 1, z: 1.9}
+  hitSize: {x: 3.4, y: 2.4, z: 3.6}
+  hitAround: 0
+  knockback: 8
+  knockUp: 3
+  lungeDistance: 0
+  lungeStart: 0
+  lungeEnd: 0
+  hitStop: 0.1
+  shake: 0.6
+  swingEffect: {fileID: 1488770920618146754, guid: cb0db19039233824fa165c8fd5013be0, type: 3}
+  swingEffectTime: 0.42
+  swingEffectScale: 1.25
