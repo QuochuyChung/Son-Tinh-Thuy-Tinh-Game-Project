@@ -63,3 +63,6 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# Unity hidden scratch folder (test screenshots/scripts, ~ hides it from Unity)
+/[Aa]ssets/[Tt]emp~/
