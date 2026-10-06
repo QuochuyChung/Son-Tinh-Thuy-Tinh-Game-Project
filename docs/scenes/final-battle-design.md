@@ -201,7 +201,7 @@ Lý do tách 3 nút riêng (không gộp E tap/hold): input system dễ đọc, 
 3. Boss aggression (giãn cách 2 đòn, % chance ra E1/E2) **dùng chung 1 config** → khác biệt chỉ từ hình học skill, không từ AI.
 4. HP và env phải **cùng hướng logic**: spam E/R (không nạp chuỗi env) → boss vẫn mất máu → phase đổi sớm, trong khi env chưa dâng về phía bạn → bắt đầu phase mới ở thế bất lợi (tối thiểu -2 bậc) + đếm ngược 60s → trừng phạt lối chơi spam.
 
-**Test matrix (playtest mỗi lần đổi số):**
+**Test matrix (tham khảo — bỏ bắt buộc 07/10: user tự playtest, gặp lỗi → báo để fix):**
 
 | # | Setup | Check |
 |---|---|---|

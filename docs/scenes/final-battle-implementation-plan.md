@@ -8,7 +8,7 @@
 ## 0. Nguyên tắc commit
 
 - 1 commit = 1 ý có thể review độc lập; conventional commits (`docs:`, `feat(combat):`, `feat(env):`, `chore(render):`, `fix:`).
-- Milestone có **check** (test/playtest) → không sang milestone sau khi check fail.
+- ~~Milestone có **check** (test/playtest) → không sang milestone sau khi check fail.~~ **Bỏ playtest check (07/10)**: không chạy matrix T1–T8 — user tự chơi, gặp lỗi → báo lại để fix.
 - Commit code chỉ chạy sau khi user approve plan + thứ tự.
 - `docs/progress.md` **không đụng** (ngoài mọi commit).
 
@@ -92,11 +92,11 @@
 
 ---
 
-## 7. M6 — Tune & playtest
+## 7. M6 — Tune (bỏ playtest)
 
 | # | Commit | Nội dung | Check |
 |---|---|---|---|
-| C26 | `docs: chốt giá trị [tune] + playtest log T1–T8` | điền số mở (⌀28m, r14–15m, 40–60s/đoạn, timer 60s, choáng 1.5s, depth…) vào design doc; log kết quả matrix §8 | T1–T8 có kết quả, mirror lệch ≤30% (T2) |
+| C26 | `docs: bỏ playtest gate T1–T8` | bỏ yêu cầu playtest matrix §8 — user tự chơi, gặp lỗi → báo lại để fix; số `[tune]` giữ nguyên để tune tay sau | — |
 
 ---
 
