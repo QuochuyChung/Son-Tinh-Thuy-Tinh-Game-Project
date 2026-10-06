@@ -71,3 +71,39 @@ Do NOT re-run `transfer_weights.py` for Sơn Tinh v2 just to change something sm
 Gotchas found while building this: inspect with Blender before blaming Mixamo (loose-piece count: old characters had 19-25, the
 failing mesh had 193); after test-posing in Blender reset the armature object's location and pose before exporting; with Blender
 5.x actions need `animation_data.action_slot` set when you apply a Mixamo action to a different armature.
+
+## NPC: clothed body + separate cape, rig from a clip whose mesh has no UVs — Hùng Vương
+
+`fit_hung_vuong.py <idle.fbx> <body_textured.fbx> <cape_textured.fbx> <out_skinned.fbx> <preview_dir> [<clip.fbx> ...] [key=value ...]`
+(docstring has every option). Used for Hùng Vương (06/10, second version: the clothes are part of the Meshy body, the old separate
+pants/robe are gone):
+
+    blender -b --python tools/fit_hung_vuong.py -- ArtSource/Mixamo/HungVuong/hung_vuong_idle.fbx ArtSource/Meshy/HungVuong/hung_vuong_mesh.fbx ArtSource/Meshy/HungVuong/hung_vuong_cape_mesh.fbx ArtSource/Mixamo/HungVuong/hung_vuong_skinned.fbx <preview_dir> ArtSource/Mixamo/HungVuong/hung_vuong_talking.fbx ArtSource/Mixamo/HungVuong/hung_vuong_pointing.fbx ArtSource/Mixamo/HungVuong/hung_vuong_nod.fbx cdrop=-0.04 blend=<abs path>/ArtSource/Mixamo/HungVuong/hung_vuong_fit.blend
+
+(use absolute paths for `blend=` and for `pack_metallic_smoothness.py`: Blender changes its working directory.)
+
+- **Body**: Mixamo rigged the untextured Meshy export (`hung_vuong_generate.fbx`, no UVs); the textured export is the same mesh (8069
+  vertices, all with an exact twin), so it takes the rig's weights vertex by vertex. Two fixes on top: the fused Meshy fingers get their
+  finger weights averaged over the hand (`frad` 0.012 body heights; the webbing tore up to 5.6x when the hand opened), and the tabard
+  panel hanging between the legs shares both thighs equally near the middle (`pband` 0.06; it tore 2-4.7x when the legs parted).
+- **Cape**: scaled uniformly to `clen` 0.60 of the body height, collar ring centred on the Neck joint and raised `cdrop=-0.04` so the shoulder
+  drape sits on the shoulders. It is widened **row by row** (sideways and backwards separately, smoothed over the height) until it clears the
+  torso/legs, in T-pose and in the idle's first pose (arms down) - the old per-vertex push onto the skin crumpled the drape. Arms are not
+  taken into account (they move in front of it). Weights are rigid: collar/shoulders 100 % Spine2, the sheet on 5 x 3 `Cape_<c>_<s>` chains
+  under Spine2 (= rigid in every clip; `OutfitSpringBones` sways them in Unity).
+- **No collar** (06/10, second request: the hugging collar folded and crumpled round the neck in Unity, "drop the collar, just attach the
+  cape to the robe"): the dense stand-up collar band (top `ccut` 0.08 of the Meshy cape, 1840 verts) is deleted, so the sheet's top edge sits at
+  the base of the neck. That top edge (`ctop` 0.14 / `chug` 0.05 of the remaining cape) is laid onto the shoulders / upper back `cgap` 0.006
+  body heights off the robe and takes the robe's weights (arms -> that side's clavicle, neck / head -> Spine2), fading into the rigid / chain
+  weights below. Cape stretch: max 1.24 / 1.27 / 1.53 / 1.83 (Idle / Talking / Pointing / Nod), 1 and 5 edges over 1.3 (Pointing / Nod, at
+  the top edge over the shoulders). `ccut=0` brings the collar back.
+- Measured (edge length / bind length, every 3rd frame, `stretch.txt`): cape 1.000 before the collar change (see above); body 1.0 in T-pose, worst
+  2.35 / 2.77 / 2.45 / 1.78 (Idle / Talking / Pointing / Nod), all on tiny edges between the fused fingers (Mixamo's own finger
+  weights on a mitten hand); `CapeIn` (cape vertices inside the body) 2 in T-pose, at most 46-124 per frame in the clips (where the arms
+  and the hair touch it).
+Previews: `fit_tpose.png`, `pose_<clip>.png` (front + back three-quarter, 4 frames), `close_<clip>.png` (collar / shoulders, 3 views x 4 frames).
+Unity side: `Tools ▸ Son Tinh Thuy Tinh ▸ Build Hung Vuong NPC` (`Assets/Editor/HungVuongBuilder.cs`), or in batch mode
+`unity run . -- -executeMethod SonTinhThuyTinh.EditorTools.HungVuongBuilder.BuildBatch -hvShots <dir>` (also writes check images incl. close-ups;
+skinned meshes are skinned on the CPU for those because BakeMesh returns nothing in batch mode). Materials: body Render Face Front, cape Both.
+If the model or a clip is replaced by one with different bone lengths, delete its `.meta` first (only the builder's own prefab/controller
+reference them), otherwise the old avatar configuration gives "Avatar Rig Configuration mis-match".
