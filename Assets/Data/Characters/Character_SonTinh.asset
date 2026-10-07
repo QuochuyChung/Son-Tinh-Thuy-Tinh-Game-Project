@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bf07ed00955e844784eaf32cd206013, type: 3}
+  m_Name: Character_SonTinh
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Characters.CharacterDefinition
+  id: 0
+  displayName: "S\u01A1n Tinh"
+  epithet: "Th\u1EA7n n\xFAi T\u1EA3n Vi\xEAn"
+  description: "Ch\xFAa t\u1EC3 mi\u1EC1n non cao. Tay kh\xF4ng m\xE0 v\u1EEFng nh\u01B0
+    n\xFAi, m\u1ED7i c\xFA \u0111\xE1nh l\xE0m \u0111\u1EA5t \u0111\xE1 rung chuy\u1EC3n.
+    Ch\u1EA1y nhanh, xoay x\u1EDF linh ho\u1EA1t."
+  signatureMoves:
+  - "S\u1EE9c m\u1EA1nh c\u1EE7a n\xFAi non"
+  - "N\xFAi m\u1ECDc theo tay ch\u1EC9"
+  - "\u0110\u1EA5t d\xE2ng th\xE0nh b\xE3i"
+  portrait: {fileID: 21300000, guid: 7fc0563be0671684eac4e48cb650a1fb, type: 3}
+  playerPrefab: {fileID: 8660803594350561352, guid: 91e2c870c738a22468de257f00891ae9, type: 3}
+  giftBranchScene: Map_SonTinh

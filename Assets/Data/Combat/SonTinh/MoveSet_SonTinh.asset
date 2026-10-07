@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a12f4f1530d3554b854db43fce356f7, type: 3}
+  m_Name: MoveSet_SonTinh
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.MoveSet
+  lightCombo:
+  - {fileID: 11400000, guid: 5a9c71d783d61cd4894a4786e074d32b, type: 2}
+  - {fileID: 11400000, guid: 26ed9397ea1c24d40b4f84f1fe9fdf94, type: 2}
+  - {fileID: 11400000, guid: 5c2c5c37606e48a4ab485fbe978e0fc3, type: 2}
+  heavy: {fileID: 11400000, guid: 6afcc227ee50d234f89417c0469d3a98, type: 2}
+  jumpAttack: {fileID: 11400000, guid: 44fa6e24fe4b12c44a64d0b2b2199801, type: 2}
+  spells:
+  - {fileID: 11400000, guid: a1baebdd05366434a882f39d9ace11cd, type: 2}
+  - {fileID: 11400000, guid: 17cefde3d65faba4bbe255b753b4a4d7, type: 2}
+  - {fileID: 11400000, guid: 5245fd0a32eafbc48a8db125524d7668, type: 2}
+  hitLightSpeed: 1.5
+  hitLightDuration: 0.7
+  hitHeavySpeed: 0.9
+  hitHeavyDuration: 1.15
+  staggerDamage: 25
+  hitSplash: {fileID: 5814155843748786547, guid: 33648663b448a714d99c9cd207bc9da6, type: 3}
+  hudFont: {fileID: 11400000, guid: 8271b6aca9426b84180a405d69bc9448, type: 2}

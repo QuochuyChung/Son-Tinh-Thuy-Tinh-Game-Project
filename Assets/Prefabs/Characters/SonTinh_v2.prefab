@@ -1,0 +1,123 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &279606234590478518
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5767769907496179482, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5767769907496179482, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 98b88d1cb4fc9f24a9b571ca25cd5928, type: 2}
+    - target: {fileID: 919132149155446097, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: m_Name
+      value: SonTinh_v2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3199847840408453712, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3199847840408453712, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 737cdc3aeeffc204ba409a043a70f9db, type: 2}
+    - target: {fileID: 6952959153466121774, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6952959153466121774, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: d08647083c7def3498460dd3d18844dc, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2418960253365438083}
+  m_SourcePrefab: {fileID: 100100000, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+--- !u!1 &1089930150420495847 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 8b87071e37607dc4d9e6f453ea3d2c77, type: 3}
+  m_PrefabInstance: {fileID: 279606234590478518}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2418960253365438083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1089930150420495847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed50c917640d5d44e83f92c53f854c35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Characters.CapeSpringBones
+  groups:
+  - name: Cape
+    bonePrefix: Cape_
+    frequency: 5
+    dampingRatio: 0.7
+    drag: 5
+    gravity: 1
+    maxAngle: 8
+    inwardLimit: 0.06
+  - name: Skirt
+    bonePrefix: Skirt_
+    frequency: 6
+    dampingRatio: 0.7
+    drag: 4
+    gravity: 0.5
+    maxAngle: 10
+    inwardLimit: 0.05
+  ignoreRootRotation: 1
+  teleportDistance: 2
+  maxStep: 0.05

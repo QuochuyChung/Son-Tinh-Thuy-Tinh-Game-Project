@@ -1,11 +1,13 @@
-using SonTinhThuyTinh.Combat.Skills;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Interactions;
 
 namespace SonTinhThuyTinh.Player
 {
     public class PlayerInputReader : MonoBehaviour
     {
+        const int SpellCount = 3;
+
         [SerializeField] InputActionAsset actions;
         [Tooltip("A button press is remembered this long, so pressing slightly early still triggers the next action.")]
         [SerializeField] float bufferWindow = 0.2f;
@@ -15,17 +17,24 @@ namespace SonTinhThuyTinh.Player
         InputAction move;
         InputAction look;
         InputAction dodge;
-        float dodgePressedAt = float.NegativeInfinity;
+        InputAction sprint;
+        InputAction jump;
+        InputAction slide;
+        InputAction attack;        // J / gamepad West: a tap is a light attack, a hold is a heavy one
+        InputAction lightAttack;   // left mouse button
+        InputAction heavyAttack;   // right mouse button / gamepad North
+        readonly InputAction[] spells = new InputAction[SpellCount];
 
-        InputActionMap skillMap;
-        InputAction skillE1;
-        InputAction skillE2;
-        InputAction skillUlt;
-        float skillE1PressedAt = float.NegativeInfinity;
-        float skillE2PressedAt = float.NegativeInfinity;
-        float skillUltPressedAt = float.NegativeInfinity;
+        float dodgePressedAt = float.NegativeInfinity;
+        float jumpPressedAt = float.NegativeInfinity;
+        float slidePressedAt = float.NegativeInfinity;
+        float lightPressedAt = float.NegativeInfinity;
+        float heavyPressedAt = float.NegativeInfinity;
+        readonly float[] spellPressedAt = { float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity };
 
         public Vector2 Move => move.ReadValue<Vector2>();
+        // Held, not pressed: Shift (or left stick click) while moving makes the character sprint.
+        public bool SprintHeld => sprint.IsPressed();
         public Vector2 Look => look.ReadValue<Vector2>();
         public bool LookFromMouse => look.activeControl?.device is Pointer;
 
@@ -37,55 +46,90 @@ namespace SonTinhThuyTinh.Player
             move = map.FindAction("Move", throwIfNotFound: true);
             look = map.FindAction("Look", throwIfNotFound: true);
             dodge = map.FindAction("Dodge", throwIfNotFound: true);
-            skillMap = runtimeActions.FindActionMap("Skill", throwIfNotFound: true);
-            skillE1 = skillMap.FindAction("E1", throwIfNotFound: true);
-            skillE2 = skillMap.FindAction("E2", throwIfNotFound: true);
-            skillUlt = skillMap.FindAction("Ult", throwIfNotFound: true);
+            sprint = map.FindAction("Sprint", throwIfNotFound: true);
+            jump = map.FindAction("Jump", throwIfNotFound: true);
+            slide = map.FindAction("Slide", throwIfNotFound: true);
+            attack = map.FindAction("Attack", throwIfNotFound: true);
+            lightAttack = map.FindAction("LightAttack", throwIfNotFound: true);
+            heavyAttack = map.FindAction("HeavyAttack", throwIfNotFound: true);
+            for (int i = 0; i < SpellCount; i++) spells[i] = map.FindAction("Spell" + (i + 1), throwIfNotFound: true);
         }
 
         void OnEnable()
         {
             dodge.performed += OnDodge;
+            jump.performed += OnJump;
+            slide.performed += OnSlide;
+            attack.performed += OnAttack;
+            lightAttack.performed += OnLight;
+            heavyAttack.performed += OnHeavy;
+            for (int i = 0; i < SpellCount; i++) spells[i].performed += OnSpell;
             map.Enable();
-            skillE1.performed += OnSkillE1;
-            skillE2.performed += OnSkillE2;
-            skillUlt.performed += OnSkillUlt;
-            SkillGate.Changed += OnSkillGateChanged;
-            if (SkillGate.IsOpen) skillMap.Enable();
         }
 
         void OnDisable()
         {
             dodge.performed -= OnDodge;
+            jump.performed -= OnJump;
+            slide.performed -= OnSlide;
+            attack.performed -= OnAttack;
+            lightAttack.performed -= OnLight;
+            heavyAttack.performed -= OnHeavy;
+            for (int i = 0; i < SpellCount; i++) spells[i].performed -= OnSpell;
             map.Disable();
-            skillE1.performed -= OnSkillE1;
-            skillE2.performed -= OnSkillE2;
-            skillUlt.performed -= OnSkillUlt;
-            skillMap.Disable();
-            SkillGate.Changed -= OnSkillGateChanged;
         }
 
         void OnDestroy() => Destroy(runtimeActions);
 
         public bool ConsumeDodge() => Consume(ref dodgePressedAt);
 
-        public SkillSlot ConsumeSkill()
+        // Space / gamepad South. Becomes a running jump when the character is sprinting (decided by the locomotion state).
+        public bool ConsumeJump() => Consume(ref jumpPressedAt);
+
+        // C / gamepad right shoulder. Only slides while sprinting (decided by the locomotion state).
+        public bool ConsumeSlide() => Consume(ref slidePressedAt);
+
+        // A tap of J, or the left mouse button.
+        public bool ConsumeLight() => Consume(ref lightPressedAt);
+
+        // Holding J, or the right mouse button.
+        public bool ConsumeHeavy() => Consume(ref heavyPressedAt);
+
+        // U / I / O (index 0..2), gamepad D-pad left / up / right.
+        public bool ConsumeSpell(int index) => Consume(ref spellPressedAt[index]);
+
+        // Forgets presses that were made while the character could not act (so they do not fire the moment it lands).
+        public void ClearBuffered()
         {
-            if (Consume(ref skillE1PressedAt)) return SkillSlot.E1;
-            if (Consume(ref skillE2PressedAt)) return SkillSlot.E2;
-            if (Consume(ref skillUltPressedAt)) return SkillSlot.Ult;
-            return SkillSlot.None;
+            dodgePressedAt = float.NegativeInfinity;
+            jumpPressedAt = float.NegativeInfinity;
+            slidePressedAt = float.NegativeInfinity;
+            lightPressedAt = float.NegativeInfinity;
+            heavyPressedAt = float.NegativeInfinity;
+            for (int i = 0; i < SpellCount; i++) spellPressedAt[i] = float.NegativeInfinity;
         }
 
         void OnDodge(InputAction.CallbackContext _) => dodgePressedAt = Time.time;
-        void OnSkillE1(InputAction.CallbackContext _) => skillE1PressedAt = Time.time;
-        void OnSkillE2(InputAction.CallbackContext _) => skillE2PressedAt = Time.time;
-        void OnSkillUlt(InputAction.CallbackContext _) => skillUltPressedAt = Time.time;
 
-        void OnSkillGateChanged(bool open)
+        void OnJump(InputAction.CallbackContext _) => jumpPressedAt = Time.time;
+
+        void OnSlide(InputAction.CallbackContext _) => slidePressedAt = Time.time;
+
+        void OnLight(InputAction.CallbackContext _) => lightPressedAt = Time.time;
+
+        void OnHeavy(InputAction.CallbackContext _) => heavyPressedAt = Time.time;
+
+        // The Attack action has a Tap and a Hold interaction: whichever one completed tells the kind of attack.
+        void OnAttack(InputAction.CallbackContext context)
         {
-            if (open) skillMap.Enable();
-            else skillMap.Disable();
+            if (context.interaction is HoldInteraction) heavyPressedAt = Time.time;
+            else lightPressedAt = Time.time;
+        }
+
+        void OnSpell(InputAction.CallbackContext context)
+        {
+            for (int i = 0; i < SpellCount; i++)
+                if (context.action == spells[i]) spellPressedAt[i] = Time.time;
         }
 
         bool Consume(ref float pressedAt)

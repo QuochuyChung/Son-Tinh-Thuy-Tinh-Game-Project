@@ -1,4 +1,3 @@
-using SonTinhThuyTinh.Combat.Skills;
 using SonTinhThuyTinh.Core;
 using UnityEngine;
 
@@ -23,8 +22,8 @@ namespace SonTinhThuyTinh.Player.States
             Vector3 inputDirection = player.CameraRelative(player.InputReader.Move);
             direction = inputDirection.sqrMagnitude > 0.01f ? inputDirection.normalized : player.transform.forward;
             player.FaceTowards(direction, 360f);
+            player.SetAnimSpeed(player.Dodge.animationSpeed);
             player.Animator.CrossFadeInFixedTime(DodgeHash, 0.05f);
-            PerfectDodgeDetector.Instance?.NotifyDodgeStarted();
         }
 
         public void Tick(float deltaTime)
@@ -46,7 +45,7 @@ namespace SonTinhThuyTinh.Player.States
         public void Exit()
         {
             player.IsInvulnerable = false;
-            PerfectDodgeDetector.Instance?.NotifyDodgeEnded();
+            player.SetAnimSpeed(1f);
             player.MatchSpeedToInput();
         }
     }

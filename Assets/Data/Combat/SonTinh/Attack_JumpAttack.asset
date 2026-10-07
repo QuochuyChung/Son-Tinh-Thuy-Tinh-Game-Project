@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 857f5c0f9bcdf7d4db16a9b921cf3da2, type: 3}
+  m_Name: Attack_JumpAttack
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.AttackData
+  stateName: JumpAttack
+  animSpeed: 1.1
+  duration: 1.0909091
+  hitStart: 0.54545456
+  hitEnd: 0.77272725
+  comboStart: 0.8636363
+  staminaCost: 15
+  damage: 22
+  heavy: 1
+  superArmor: 0
+  hitCenter: {x: 0, y: 0.8, z: 1.5}
+  hitSize: {x: 3.2, y: 2.2, z: 3}
+  hitAround: 0
+  knockback: 7
+  knockUp: 2
+  lungeDistance: 2.5
+  lungeStart: 0.1
+  lungeEnd: 0.5
+  hitStop: 0.09
+  shake: 0.5
+  swingEffect: {fileID: 3338702312129493281, guid: 7c2d42e0f55c57047bd2caf1ed2006e7, type: 3}
+  swingEffectTime: 0.6
+  swingEffectScale: 0.8

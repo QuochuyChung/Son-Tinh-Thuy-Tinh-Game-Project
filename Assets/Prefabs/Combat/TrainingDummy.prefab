@@ -133,7 +133,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9106741054025687357}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed916ff6455c1b34ab1b510921e31f1c, type: 3}
+  m_Script: {fileID: 11500000, guid: 43f8c9b2294dce546985cd477fa01022, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.TrainingDummy
   maxHp: 100

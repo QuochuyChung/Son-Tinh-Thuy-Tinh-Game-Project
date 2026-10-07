@@ -1,0 +1,73 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_Prologue
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: 
+    text: "\u0110\u1EDDi H\xF9ng V\u01B0\u01A1ng th\u1EE9 m\u01B0\u1EDDi t\xE1m,
+      n\u01B0\u1EDBc V\u0103n Lang th\xE1i b\xECnh, l\xFAa t\u1ED1t \u0111\u1EA7y
+      \u0111\u1ED3ng."
+    illustration: {fileID: 21300000, guid: 18d30b455203acf4ba7fe4c099e66319, type: 3}
+  - speaker: 
+    text: "Vua c\xF3 m\u1ED9t ng\u01B0\u1EDDi con g\xE1i t\xEAn l\xE0 M\u1ECB N\u01B0\u01A1ng,
+      dung nhan tuy\u1EC7t tr\u1EA7n, t\xEDnh n\u1EBFt hi\u1EC1n d\u1ECBu. Vua cha
+      y\xEAu th\u01B0\u01A1ng n\xE0ng h\u1EBFt m\u1EF1c."
+    illustration: {fileID: 21300000, guid: 15b736b989e583141a83886407bdf037, type: 3}
+  - speaker: 
+    text: "M\u1ECB N\u01B0\u01A1ng \u0111\xE3 \u0111\u1EBFn tu\u1ED5i l\u1EA5y ch\u1ED3ng.
+      H\xF9ng V\u01B0\u01A1ng mu\u1ED1n t\xECm cho con m\u1ED9t ng\u01B0\u1EDDi ch\u1ED3ng
+      th\u1EADt x\u1EE9ng \u0111\xE1ng."
+    illustration: {fileID: 0}
+  - speaker: "H\xF9ng V\u01B0\u01A1ng"
+    text: "Truy\u1EC1n l\u1EC7nh kh\u1EAFp b\u1ED1n ph\u01B0\u01A1ng: ai c\xF3 t\xE0i
+      l\u1EA1 h\u01A1n ng\u01B0\u1EDDi, h\xE3y v\u1EC1 kinh th\xE0nh Phong Ch\xE2u
+      c\u1EA7u h\xF4n c\xF4ng ch\xFAa!"
+    illustration: {fileID: 21300000, guid: 2e30df85db2200848ac9f0d461eba3ef, type: 3}
+  - speaker: 
+    text: "Tin truy\u1EC1n \u0111i kh\u1EAFp n\u01A1i. Ng\u01B0\u1EDDi t\u1EDBi c\u1EA7u
+      h\xF4n \u0111\xF4ng v\xF4 k\u1EC3, nh\u01B0ng ch\u1EC9 c\xF3 hai ch\xE0ng khi\u1EBFn
+      c\u1EA3 tri\u1EC1u \u0111\xECnh ph\u1EA3i kinh ng\u1EA1c."
+    illustration: {fileID: 0}
+  - speaker: "S\u01A1n Tinh"
+    text: "Ta l\xE0 S\u01A1n Tinh, ch\xFAa mi\u1EC1n non cao T\u1EA3n Vi\xEAn. Tay
+      ta ch\u1EC9 t\u1EDBi \u0111\xE2u, \u0111\u1EA5t d\xE2ng th\xE0nh b\xE3i, n\xFAi
+      m\u1ECDc th\xE0nh d\xE3y t\u1EDBi \u0111\xF3."
+    illustration: {fileID: 21300000, guid: bf9a70768fbb2b344a65fa36894aab91, type: 3}
+  - speaker: "Th\u1EE7y Tinh"
+    text: "Ta l\xE0 Th\u1EE7y Tinh, ch\xFAa mi\u1EC1n bi\u1EC3n c\u1EA3. Ta g\u1ECDi
+      gi\xF3 l\xE0 gi\xF3 t\u1EDBi, h\xF4 m\u01B0a l\xE0 m\u01B0a v\u1EC1. S\xF3ng
+      n\u01B0\u1EDBc mu\xF4n n\u01A1i \u0111\u1EC1u nghe l\u1EC7nh ta."
+    illustration: {fileID: 21300000, guid: 20340439dc1911b49aff005c1a360773, type: 3}
+  - speaker: 
+    text: "M\u1ED9t ng\u01B0\u1EDDi l\xE0 ch\xFAa non cao, m\u1ED9t ng\u01B0\u1EDDi
+      l\xE0 ch\xFAa n\u01B0\u1EDBc th\u1EB3m. T\xE0i n\u0103ng ngang nhau, H\xF9ng
+      V\u01B0\u01A1ng kh\xF4ng bi\u1EBFt n\xEAn ch\u1ECDn ai."
+    illustration: {fileID: 21300000, guid: ac156f4b7f9c9664fa4fc1829136fe57, type: 3}
+  - speaker: "H\xF9ng V\u01B0\u01A1ng"
+    text: "C\u1EA3 hai \u0111\u1EC1u x\u1EE9ng \u0111\xE1ng l\xE0m r\u1EC3 ta. Nh\u01B0ng
+      M\u1ECB N\u01B0\u01A1ng ch\u1EC9 c\xF3 m\u1ED9t, v\u1EADy ta \u0111\u1EB7t
+      ra th\u1EED th\xE1ch."
+    illustration: {fileID: 0}
+  - speaker: "H\xF9ng V\u01B0\u01A1ng"
+    text: "S\xEDnh l\u1EC5 g\u1ED3m voi ch\xEDn ng\xE0, g\xE0 ch\xEDn c\u1EF1a, ng\u1EF1a
+      ch\xEDn h\u1ED3ng mao. Ai mang \u0111\u1EE7 t\u1EDBi tr\u01B0\u1EDBc, ta g\u1EA3
+      M\u1ECB N\u01B0\u01A1ng cho ng\u01B0\u1EDDi \u1EA5y."
+    illustration: {fileID: 21300000, guid: d64bba4f82703d04386947261d9ae6ed, type: 3}
+  - speaker: 
+    text: "Hai v\u1ECB th\u1EA7n l\u1EADp t\u1EE9c l\xEAn \u0111\u01B0\u1EDDng, m\u1ED7i
+      ng\u01B0\u1EDDi m\u1ED9t ng\u1EA3. Cu\u1ED9c \u0111ua gi\xE0nh M\u1ECB N\u01B0\u01A1ng
+      b\u1EAFt \u0111\u1EA7u."
+    illustration: {fileID: 21300000, guid: 3d32c1eb5ba02c24ab8c71d01e7e0f8b, type: 3}
+  - speaker: 
+    text: "C\xF2n ng\u01B0\u1EDDi, s\u1EBD b\u01B0\u1EDBc v\xE0o vai ai?"
+    illustration: {fileID: 0}

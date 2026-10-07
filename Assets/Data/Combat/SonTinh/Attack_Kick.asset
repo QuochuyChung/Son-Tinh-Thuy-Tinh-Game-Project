@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 857f5c0f9bcdf7d4db16a9b921cf3da2, type: 3}
+  m_Name: Attack_Kick
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.AttackData
+  stateName: Attack2
+  animSpeed: 1.2
+  duration: 1
+  hitStart: 0.18333332
+  hitEnd: 0.41666666
+  comboStart: 0.4833333
+  staminaCost: 8
+  damage: 9
+  heavy: 0
+  superArmor: 0
+  hitCenter: {x: 0, y: 0.9, z: 1.4}
+  hitSize: {x: 2, y: 1.8, z: 2}
+  hitAround: 0
+  knockback: 6.5
+  knockUp: 0
+  lungeDistance: 0.5
+  lungeStart: 0.05
+  lungeEnd: 0.3
+  hitStop: 0.05
+  shake: 0.25
+  swingEffect: {fileID: 0}
+  swingEffectTime: 0
+  swingEffectScale: 1

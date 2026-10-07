@@ -1,0 +1,111 @@
+// Cape cloth setup for Assets/Prefabs/Characters/SonTinh_v2.prefab -- paste each part into Unity_RunCommand (Unity MCP) or an editor script.
+// Saved as .txt on purpose so it does not compile inside the project. Both parts were run and tested on 02/10/2026.
+// Run PART 1, then PART 2 (the cloth only knows its vertices after the prefab is saved).
+//
+// Why two parts / what to know about Unity Cloth on this model:
+//  * Unity welds coincident vertices, so the cloth has 4514 vertices (the Blender count) although the mesh has 8078 (UV seams).
+//    cloth.coefficients / cloth.vertices use the cloth's OWN order, not the mesh order.
+//  * cloth.vertices are expressed as (world position - skinnedMeshRenderer.rootBone.position). Match cloth vertices to mesh
+//    vertices by position: meshWorld = smr.transform.TransformPoint(mesh.vertices[i]);  clothWorld = cv[i] + smr.rootBone.position.
+//  * Colliders are triggers so the CharacterController / physics queries ignore them; Cloth still collides with them.
+
+// ============================== PART 1: Cloth component + colliders ==============================
+using UnityEngine;
+using UnityEditor;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+
+internal class CommandScript : IRunCommand
+{
+    // bone, child bone (gives the length), world radius in metres
+    static readonly (string bone, string child, float radius)[] Capsules = {
+        ("mixamorig:Hips", "mixamorig:Spine1", 0.17f), ("mixamorig:Spine1", "mixamorig:Spine2", 0.15f), ("mixamorig:Spine2", "mixamorig:Neck", 0.15f),
+        ("mixamorig:LeftArm", "mixamorig:LeftForeArm", 0.075f), ("mixamorig:RightArm", "mixamorig:RightForeArm", 0.075f),
+        ("mixamorig:LeftForeArm", "mixamorig:LeftHand", 0.07f), ("mixamorig:RightForeArm", "mixamorig:RightHand", 0.07f),
+        ("mixamorig:LeftUpLeg", "mixamorig:LeftLeg", 0.12f), ("mixamorig:RightUpLeg", "mixamorig:RightLeg", 0.12f),
+        ("mixamorig:LeftLeg", "mixamorig:LeftFoot", 0.09f), ("mixamorig:RightLeg", "mixamorig:RightFoot", 0.09f),
+    };
+
+    public void Execute(ExecutionResult result)
+    {
+        string path = "Assets/Prefabs/Characters/SonTinh_v2.prefab";
+        var root = PrefabUtility.LoadPrefabContents(path);
+        var smr = root.GetComponentInChildren<SkinnedMeshRenderer>();
+        foreach (var old in smr.GetComponents<Cloth>()) Object.DestroyImmediate(old);
+        foreach (var old in root.GetComponentsInChildren<Transform>().Where(t => t.name.StartsWith("ClothCol_")).ToList()) Object.DestroyImmediate(old.gameObject);
+        var cloth = smr.gameObject.AddComponent<Cloth>();
+        cloth.useGravity = true; cloth.stretchingStiffness = 1f; cloth.bendingStiffness = 0.35f; cloth.damping = 0.3f; cloth.friction = 0.3f;
+        cloth.worldVelocityScale = 0.6f; cloth.worldAccelerationScale = 0.6f;   // raise these for a more windswept cape
+        cloth.useTethers = true; cloth.useContinuousCollision = 0.5f; cloth.sleepThreshold = 0.05f; cloth.selfCollisionDistance = 0f;
+        smr.updateWhenOffscreen = true;
+        float s = root.transform.lossyScale.x;      // bones inherit the model scale (2.1351)
+        Transform Find2(string n) => root.GetComponentsInChildren<Transform>().First(t => t.name == n);
+        var caps = new List<CapsuleCollider>();
+        foreach (var (bone, child, radius) in Capsules)
+        {
+            var b = Find2(bone); var c = Find2(child); float d = Vector3.Distance(b.position, c.position);
+            var go = new GameObject("ClothCol_" + bone.Replace("mixamorig:", "")); go.transform.SetParent(b, false);
+            var cc = go.AddComponent<CapsuleCollider>(); cc.isTrigger = true; cc.direction = 1;      // bone local Y runs along the limb
+            cc.radius = radius / s; cc.height = (d + 2 * radius) / s; cc.center = new Vector3(0, d / (2 * s), 0);
+            caps.Add(cc);
+        }
+        var spheres = new List<ClothSphereColliderPair>();
+        foreach (var hand in new[] { "mixamorig:LeftHand", "mixamorig:RightHand" })
+        {
+            var go = new GameObject("ClothCol_" + hand.Replace("mixamorig:", "")); go.transform.SetParent(Find2(hand), false);
+            var sc = go.AddComponent<SphereCollider>(); sc.isTrigger = true; sc.radius = 0.09f / s; sc.center = new Vector3(0, 0.06f / s, 0);
+            spheres.Add(new ClothSphereColliderPair(sc));
+        }
+        cloth.capsuleColliders = caps.ToArray(); cloth.sphereColliders = spheres.ToArray();
+        PrefabUtility.SaveAsPrefabAsset(root, path); PrefabUtility.UnloadPrefabContents(root);
+        result.Log("cloth + " + caps.Count + " capsules + " + spheres.Count + " spheres added");
+    }
+}
+
+// ============================== PART 2: which cloth vertices are the cape, and how free they are ==============================
+using UnityEngine;
+using UnityEditor;
+using System.Text;
+using System.Collections.Generic;
+using System.Linq;
+
+internal class CommandScript : IRunCommand
+{
+    public void Execute(ExecutionResult result)
+    {
+        string path = "Assets/Prefabs/Characters/SonTinh_v2.prefab";
+        var root = PrefabUtility.LoadPrefabContents(path);
+        var smr = root.GetComponentInChildren<SkinnedMeshRenderer>(); var cloth = root.GetComponentInChildren<Cloth>();
+        var mesh = smr.sharedMesh; var mv = mesh.vertices; var tris = mesh.triangles;
+        var world = mv.Select(v => smr.transform.TransformPoint(v)).ToArray();
+        // the cape is the welded component that is tall (> 1.4 m) and wide (> 0.9 m)
+        var map = new Dictionary<(int, int, int), int>(); var rep = new int[mv.Length];
+        for (int i = 0; i < mv.Length; i++) { var key = (Mathf.RoundToInt(mv[i].x * 1e6f), Mathf.RoundToInt(mv[i].y * 1e6f), Mathf.RoundToInt(mv[i].z * 1e6f)); if (!map.TryGetValue(key, out int r)) { r = map.Count; map[key] = r; } rep[i] = r; }
+        var parent = Enumerable.Range(0, map.Count).ToArray();
+        int Find(int x) { while (parent[x] != x) { parent[x] = parent[parent[x]]; x = parent[x]; } return x; }
+        for (int t = 0; t < tris.Length; t += 3) { int a = Find(rep[tris[t]]); parent[Find(rep[tris[t + 1]])] = a; parent[Find(rep[tris[t + 2]])] = a; }
+        var comps = new Dictionary<int, List<int>>();
+        for (int i = 0; i < mv.Length; i++) { int r = Find(rep[i]); if (!comps.ContainsKey(r)) comps[r] = new List<int>(); comps[r].Add(i); }
+        List<int> capeList = null;
+        foreach (var kv in comps) { if (kv.Value.Count < 300) continue; var ys = kv.Value.Select(i => world[i].y); var xs = kv.Value.Select(i => world[i].x); if (ys.Max() - ys.Min() > 1.4f && xs.Max() - xs.Min() > 0.9f) capeList = kv.Value; }
+        var capeKeys = new HashSet<(int, int, int)>();
+        foreach (int i in capeList) capeKeys.Add((Mathf.RoundToInt(world[i].x * 2000f), Mathf.RoundToInt(world[i].y * 2000f), Mathf.RoundToInt(world[i].z * 2000f)));
+        Vector3 off = smr.rootBone.position;
+        var cv = cloth.vertices; var coef = new ClothSkinningCoefficient[cv.Length];
+        float yTop = 0.52f, yFree = 0.05f, maxFree = 0.9f;     // fixed above yTop (the shoulders), up to maxFree metres of travel at the hem
+        int capeCount = 0;
+        for (int i = 0; i < cv.Length; i++)
+        {
+            var w = cv[i] + off;
+            bool isCape = capeKeys.Contains((Mathf.RoundToInt(w.x * 2000f), Mathf.RoundToInt(w.y * 2000f), Mathf.RoundToInt(w.z * 2000f)));
+            if (!isCape) continue;                                // body stays fixed (maxDistance 0 = follows the skin)
+            capeCount++;
+            float t = Mathf.Clamp01((yTop - w.y) / (yTop - yFree));
+            coef[i].maxDistance = Mathf.Lerp(0f, maxFree, t * t * (3 - 2 * t)); coef[i].collisionSphereDistance = 0.02f;
+        }
+        cloth.coefficients = coef;
+        PrefabUtility.SaveAsPrefabAsset(root, path); PrefabUtility.UnloadPrefabContents(root);
+        result.Log("cape cloth vertices=" + capeCount + " (expected 454)");
+    }
+}

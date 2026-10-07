@@ -8,6 +8,8 @@
 **Flow tổng thể:**
 
 ```
+Prologue: Vua Hùng muốn gả Mị Nương, mở cuộc kén rể, ra điều kiện sính lễ
+        ↓
 Character Select (Sơn Tinh / Thủy Tinh)
         ↓
 Nhánh lấy sính lễ (riêng theo nhân vật đã chọn)

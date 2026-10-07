@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ffec3c3c57507d40aab01d905fa7511, type: 3}
+  m_Name: Spell_Wind
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.SpellData
+  stateName: SpellWind
+  animSpeed: 1.3
+  duration: 0.823077
+  hitStart: 0
+  hitEnd: 0
+  comboStart: 0.5
+  staminaCost: 0
+  damage: 6
+  heavy: 0
+  superArmor: 1
+  hitCenter: {x: 0, y: 1, z: 1.4}
+  hitSize: {x: 2.4, y: 2, z: 2.4}
+  hitAround: 0
+  knockback: 3
+  knockUp: 0
+  lungeDistance: 0
+  lungeStart: 0
+  lungeEnd: 0
+  hitStop: 0
+  shake: 0.3
+  swingEffect: {fileID: 0}
+  swingEffectTime: 0
+  swingEffectScale: 1
+  displayName: "G\u1ECDi gi\xF3"
+  color: {r: 0.8, g: 0.95, b: 1, a: 1}
+  kind: 0
+  cooldown: 8
+  effectPrefab: {fileID: 4404422519363820822, guid: 484b4e25fd296d94cb694f7c1450185e, type: 3}
+  effectTime: 0.20769233
+  radius: 8
+  range: 10
+  speed: 9
+  knockUpSpeed: 7
+  effectDuration: 1.4
+  tickDamage: 2
+  tickInterval: 0.5
+  slowFactor: 0.5

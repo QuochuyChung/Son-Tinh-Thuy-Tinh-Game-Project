@@ -44,10 +44,7 @@ GameObject:
   - component: {fileID: 3158032658237045630}
   - component: {fileID: 9176130151006239417}
   - component: {fileID: 8660803594350561352}
-  - component: {fileID: 1932283731026104823}
-  - component: {fileID: 8464104445890404543}
-  - component: {fileID: 8422372604404759931}
-  - component: {fileID: 1815150168706469790}
+  - component: {fileID: 8243714584150594544}
   m_Layer: 0
   m_Name: Player_SonTinh
   m_TagString: Untagged
@@ -142,7 +139,8 @@ MonoBehaviour:
   input: {fileID: 3158032658237045630}
   animator: {fileID: 5452162895647399340}
   stamina: {fileID: 9176130151006239417}
-  skills: {fileID: 1932283731026104823}
+  health: {fileID: 8243714584150594544}
+  cameraTarget: {fileID: 5553189815450662509}
   cameraTransform: {fileID: 0}
   walkSpeed: 2.007
   runSpeed: 6.655
@@ -179,8 +177,7 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  faction: 0
---- !u!114 &1932283731026104823
+--- !u!114 &8243714584150594544
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -189,58 +186,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 4653189492081580265}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 584e5f392c9a44146ad18f7ad2fb6f6a, type: 3}
+  m_Script: {fileID: 11500000, guid: b7bafa886d25d8b438b0909de7e335e9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.Skills.SkillCaster
-  e1: {fileID: 11400000, guid: 6af3ebbc865c6714b80c5e75fa7cabe3, type: 2}
-  e2: {fileID: 11400000, guid: 11850c5366df1b340ae2e7fddfad0f1c, type: 2}
-  ult: {fileID: 11400000, guid: 366c2fdf61916344caf482fb89d5d4e5, type: 2}
---- !u!114 &8464104445890404543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4653189492081580265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3bfa0e0e77ca2904ea41e37b2628a72f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Player.PlayerHealth
-  maxHp: 100
---- !u!114 &8422372604404759931
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4653189492081580265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 859fc882d7ae7ae469adafad6fe71a3c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.Skills.UltMeter
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.Health
   max: 100
-  lightHitGain: 3
-  heavyHitGain: 8
-  perfectDodgeGain: 12
---- !u!114 &1815150168706469790
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4653189492081580265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 540a9cd47229d874b835871fbb71c84c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.Skills.PerfectDodgeDetector
-  perfectWindow: 0.3
-  ghostDuration: 0.35
-  hitstopSeconds: 0.25
-  hitstopTimeScale: 0.05
-  ghostPrefab: {fileID: 9097111344592583044, guid: 176445746ff843e4189c529cbc1ac378, type: 3}
 --- !u!1001 &9136588076136944658
 PrefabInstance:
   m_ObjectHideFlags: 0
