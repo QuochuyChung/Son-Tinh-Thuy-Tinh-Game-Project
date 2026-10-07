@@ -15,13 +15,15 @@ using UnityEngine.Timeline;
 using Cue = SonTinhThuyTinh.Cutscene.JudgementCutsceneDirector.Cue;
 using Shot = SonTinhThuyTinh.Cutscene.JudgementCutsceneDirector.Shot;
 using KingAction = SonTinhThuyTinh.Cutscene.JudgementCutsceneDirector.KingAction;
+using MnAction = SonTinhThuyTinh.Cutscene.JudgementCutsceneDirector.MiNuongAction;
 
 namespace SonTinhThuyTinh.EditorTools
 {
     // Builds Assets/Scenes/Cutscene_PhanXu.unity, Hùng Vương's judgement (game flow: Map_HungVuong -> this -> Sandbox_Combat until the arena exists).
     // The set is a copy of Map_HungVuong (plateau, palace, avenue, lighting) without the gameplay objects; Hùng Vương (prefab HungVuong) stands
-    // at the foot of the palace steps, the two suitors (the visual part of their player prefabs, placed at runtime) face him on the avenue.
-    // The dialogue UI is the Prologue's (moved over from that scene), Mị Nương appears as her Prologue illustration on her line.
+    // at the foot of the palace steps with Mị Nương (prefab MiNuong, if built) at his side, the two suitors (the visual part of their player prefabs, placed at runtime) face him on the avenue.
+    // The dialogue UI is the Prologue's (moved over from that scene). Mị Nương (prefab MiNuong) stands beside the king and gets her own close-up;
+    // without that prefab her lines fall back to her Prologue illustration.
     // Intro: Timeline with a Cinemachine track (crane over the avenue down to the wide shot); then JudgementCutsceneDirector cuts cameras and
     // starts the king's gestures line by line. Two dialogues, one per chosen character. Rebuilds everything on every run.
     public static class JudgementCutsceneBuilder
@@ -30,6 +32,7 @@ namespace SonTinhThuyTinh.EditorTools
         const string MapPath = "Assets/Scenes/Map_HungVuong.unity";
         const string ProloguePath = "Assets/Scenes/Prologue.unity";
         const string KingPrefab = "Assets/Prefabs/Characters/HungVuong.prefab";
+        const string MiNuongPrefab = "Assets/Prefabs/Characters/MiNuong.prefab";   // optional: without it her lines show her illustration
         const string RosterPath = "Assets/Data/Characters/CharacterRoster.asset";
         const string MiNuongSprite = "Assets/Art/Story/02_mi_nuong.jpg";
         const string DialogueDir = "Assets/Data/Dialogue";
@@ -37,6 +40,7 @@ namespace SonTinhThuyTinh.EditorTools
 
         // the set, in Map_HungVuong coordinates: palace front (steps) at z = 36, avenue along +z, plateau top at y = 14
         static readonly Vector3 KingPos = new(0f, 14f, 33.6f);
+        static readonly Vector3 MiNuongPos = new(-1.7f, 14f, 34.1f);   // at the king's right hand, a little behind him
         static readonly Vector3 SonTinhPos = new(-2.3f, 14f, 25.6f);
         static readonly Vector3 ThuyTinhPos = new(2.3f, 14f, 25.6f);
         const float Eye = 1.72f;   // head height of the 1.9 m characters
@@ -54,11 +58,13 @@ namespace SonTinhThuyTinh.EditorTools
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo()) return;
             string previous = SceneManager.GetActiveScene().path;
 
-            var dialogues = BuildDialogues();
+            bool miNuong3d = AssetDatabase.LoadAssetAtPath<GameObject>(MiNuongPrefab) != null;
+            var dialogues = BuildDialogues(miNuong3d);
             var timeline = BuildTimelineAsset();
 
-            AssetDatabase.DeleteAsset(ScenePath);
-            AssetDatabase.CopyAsset(MapPath, ScenePath);
+            // a fresh copy of the map, written over the old scene file so the scene keeps its GUID (Build Settings, references)
+            if (!File.Exists(ScenePath)) AssetDatabase.CopyAsset(MapPath, ScenePath);
+            else { File.Copy(MapPath, ScenePath, true); AssetDatabase.ImportAsset(ScenePath, ImportAssetOptions.ForceUpdate); }
             var scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
 
             foreach (var root in scene.GetRootGameObjects())
@@ -75,7 +81,8 @@ namespace SonTinhThuyTinh.EditorTools
             brain.DefaultBlend = new CinemachineBlendDefinition(CinemachineBlendDefinition.Styles.EaseInOut, 0.7f);
 
             var set = new GameObject("Cutscene").transform;
-            var king = PlaceKing(set);
+            var king = Place(set, KingPrefab, KingPos, KingPos + new Vector3(0f, 0f, -1f));
+            Animator miNuong = miNuong3d ? Place(set, MiNuongPrefab, MiNuongPos, new Vector3(0f, 14f, 25.6f)) : null;
             var sonMark = Mark(set, "Mark_SonTinh", SonTinhPos, KingPos);
             var thuyMark = Mark(set, "Mark_ThuyTinh", ThuyTinhPos, KingPos);
 
@@ -89,6 +96,9 @@ namespace SonTinhThuyTinh.EditorTools
             var sonClose = Cam(cams, "CM_SonTinh", new Vector3(-1.0f, 15.85f, 28.6f), sonHead + Vector3.down * 0.15f, 32f);
             var thuyClose = Cam(cams, "CM_ThuyTinh", new Vector3(1.0f, 15.85f, 28.6f), thuyHead + Vector3.down * 0.15f, 32f);
             var suitors = Cam(cams, "CM_Suitors", new Vector3(1.3f, 16.3f, 35.4f), new Vector3(0f, 15.3f, 25.6f), 40f);
+            // Mị Nương is 1.70 m: her eyes are ~0.18 m lower than the men's
+            Vector3 mnHead = MiNuongPos + Vector3.up * (Eye - 0.18f);
+            var mnCam = miNuong3d ? Cam(cams, "CM_MiNuong", new Vector3(-1.0f, 15.55f, 31.2f), mnHead + Vector3.down * 0.3f, 22f) : null;
             wide.Priority = 10;   // live before the director takes over (and if the intro is missing)
 
             var directorGo = new GameObject("JudgementDirector"); directorGo.transform.SetParent(set);
@@ -108,6 +118,8 @@ namespace SonTinhThuyTinh.EditorTools
             so.FindProperty("sonTinhMark").objectReferenceValue = sonMark;
             so.FindProperty("thuyTinhMark").objectReferenceValue = thuyMark;
             so.FindProperty("king").objectReferenceValue = king;
+            so.FindProperty("miNuong").objectReferenceValue = miNuong;
+            so.FindProperty("miNuongCamera").objectReferenceValue = mnCam;
             so.FindProperty("wide").objectReferenceValue = wide;
             so.FindProperty("kingCamera").objectReferenceValue = kingCam;
             so.FindProperty("kingLow").objectReferenceValue = kingLow;
@@ -128,6 +140,7 @@ namespace SonTinhThuyTinh.EditorTools
                 {
                     cues.GetArrayElementAtIndex(c).FindPropertyRelative("shot").enumValueIndex = (int)dialogues[i].cues[c].shot;
                     cues.GetArrayElementAtIndex(c).FindPropertyRelative("king").enumValueIndex = (int)dialogues[i].cues[c].king;
+                    cues.GetArrayElementAtIndex(c).FindPropertyRelative("miNuong").enumValueIndex = (int)dialogues[i].cues[c].miNuong;
                 }
             }
             so.ApplyModifiedPropertiesWithoutUndo();
@@ -144,11 +157,13 @@ namespace SonTinhThuyTinh.EditorTools
 
         struct Built { public CharacterId player; public string path; public Cue[] cues; }
 
-        static Cue C(Shot shot, KingAction king = KingAction.Keep) => new Cue { shot = shot, king = king };
+        static Cue C(Shot shot, KingAction king = KingAction.Keep, MnAction mn = MnAction.Keep) => new Cue { shot = shot, king = king, miNuong = mn };
 
-        static List<Built> BuildDialogues()
+        // With her 3D model Mị Nương's lines cut to her close-up; without it they show her Prologue illustration over the king's shot.
+        static List<Built> BuildDialogues(bool miNuong3d)
         {
-            var miNuong = AssetDatabase.LoadAssetAtPath<Sprite>(MiNuongSprite);
+            var miNuong = miNuong3d ? null : AssetDatabase.LoadAssetAtPath<Sprite>(MiNuongSprite);
+            var mnShot = miNuong3d ? Shot.MiNuong : Shot.King;
             var result = new List<Built>();
             foreach (CharacterId player in new[] { CharacterId.SonTinh, CharacterId.ThuyTinh })
             {
@@ -162,17 +177,18 @@ namespace SonTinhThuyTinh.EditorTools
                     : "Thần xin tuân lệnh. Biển cả rộng lớn, chẳng ngọn núi nào chặn nổi.";
                 var lines = new (string speaker, string text, Sprite pic, Cue cue)[]
                 {
-                    ("", "Sáng sớm hôm sau, trước sân rồng thành Phong Châu, cả triều đình nín thở. Hai chàng trai đã đứng chờ, lễ vật bày đủ sau lưng.", null, C(Shot.Wide, KingAction.Idle)),
-                    (King, "Hôm qua ta đã nói: voi chín ngà, gà chín cựa, ngựa chín hồng mao. Ai mang đủ đến trước, người ấy được rước Mị Nương.", null, C(Shot.King, KingAction.Talk)),
+                    ("", "Sáng sớm hôm sau, trước sân rồng thành Phong Châu, cả triều đình nín thở. Hai chàng trai đã đứng chờ, lễ vật bày đủ sau lưng.", null, C(Shot.Wide, KingAction.Idle, MnAction.Idle)),
+                    (King, "Hôm qua ta đã nói: voi chín ngà, gà chín cựa, ngựa chín hồng mao. Ai mang đủ đến trước, người ấy được rước Mị Nương.", null, C(Shot.King, KingAction.Talk, MnAction.Shy)),
                     (me, $"Muôn tâu bệ hạ, thần là {me}. Voi chín ngà, gà chín cựa, ngựa chín hồng mao, thần đã tìm đủ, xin dâng lên bệ hạ.", null, C(Shot.Player, KingAction.Idle)),
                     (rival, $"Thần là {rival}. Lễ vật của thần cũng đã bày đủ trước sân rồng, chẳng thiếu một món.", null, C(Shot.Opponent)),
                     (King, "Lạ thay... Hai người cùng đến một lúc, lễ vật như nhau, chẳng ai kém ai.", null, C(Shot.Suitors, KingAction.Talk)),
-                    (MiNuong, "Phụ vương... con xin nghe theo lời cha định đoạt.", miNuong, C(Shot.King, KingAction.Idle)),
-                    (King, "Lời vua đã nói ra thì không thể rút lại. Nhưng con gái ta chỉ có một.", null, C(Shot.King, KingAction.Talk)),
+                    (MiNuong, "Phụ vương... con xin nghe theo lời cha định đoạt.", miNuong, C(mnShot, KingAction.Idle, MnAction.Talk)),
+                    (King, "Lời vua đã nói ra thì không thể rút lại. Nhưng con gái ta chỉ có một.", null, C(Shot.King, KingAction.Talk, MnAction.Bow)),
                     (King, "Vậy hãy để trời đất làm chứng! Ra đàn tế sau cung điện, hai người đấu một trận. Ai thắng, người ấy rước Mị Nương về.", null, C(Shot.KingLow, KingAction.Point)),
                     (rival, rivalTaunt, null, C(Shot.Opponent, KingAction.Idle)),
                     (me, myAnswer, null, C(Shot.Player)),
-                    (King, "Được! Trời đất chứng giám. Bắt đầu!", null, C(Shot.Wide, KingAction.Nod)),
+                    (MiNuong, "Xin hai chàng giữ lời, đấu cho công bằng. Thiếp sẽ chờ người chiến thắng.", null, C(mnShot, KingAction.Keep, MnAction.Talk)),
+                    (King, "Được! Trời đất chứng giám. Bắt đầu!", null, C(Shot.Wide, KingAction.Nod, MnAction.Bow)),
                 };
 
                 string path = $"{DialogueDir}/Dialogue_PhanXu_{(son ? "SonTinh" : "ThuyTinh")}.asset";
@@ -201,9 +217,10 @@ namespace SonTinhThuyTinh.EditorTools
         static TimelineAsset BuildTimelineAsset()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(TimelinePath));
-            AssetDatabase.DeleteAsset(TimelinePath);
-            var timeline = ScriptableObject.CreateInstance<TimelineAsset>();
-            AssetDatabase.CreateAsset(timeline, TimelinePath);
+            // emptied and refilled rather than deleted, so the asset keeps its GUID
+            var timeline = AssetDatabase.LoadAssetAtPath<TimelineAsset>(TimelinePath);
+            if (timeline == null) { timeline = ScriptableObject.CreateInstance<TimelineAsset>(); AssetDatabase.CreateAsset(timeline, TimelinePath); }
+            foreach (var old in timeline.GetRootTracks().ToList()) timeline.DeleteTrack(old);
             var track = timeline.CreateTrack<CinemachineTrack>(null, "Cameras");
             // crane high over the avenue -> lower and closer -> the wide shot behind the suitors; overlaps are the blends
             AddShot(track, "Crane high", 0.0, 3.4);
@@ -230,11 +247,12 @@ namespace SonTinhThuyTinh.EditorTools
 
         // ---------- set ----------
 
-        static Animator PlaceKing(Transform set)
+        static Animator Place(Transform set, string prefab, Vector3 pos, Vector3 lookAt)
         {
-            var go = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(KingPrefab));
+            var go = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(prefab));
             go.transform.SetParent(set);
-            go.transform.SetPositionAndRotation(KingPos, Quaternion.LookRotation(new Vector3(0f, 0f, -1f)));
+            Vector3 dir = lookAt - pos; dir.y = 0f;
+            go.transform.SetPositionAndRotation(pos, Quaternion.LookRotation(dir));
             return go.GetComponentInChildren<Animator>();
         }
 
