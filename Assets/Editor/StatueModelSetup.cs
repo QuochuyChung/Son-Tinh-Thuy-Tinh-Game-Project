@@ -13,11 +13,11 @@ namespace SonTinhThuyTinh.EditorTools
         const string StoneDir = BaseDir + "StoneSovereign/";
         const string FeatheredDir = BaseDir + "FeatheredSovereign/";
 
-        public const string StoneModelPath = StoneDir + "Meshy_AI_Stone_Sovereign_of_th_1007024642_texture.fbx";
+        public const string StoneModelPath = StoneDir + "stone_sovereign_mesh.fbx";
         public const string StonePrefabPath = StoneDir + "Statue_StoneSovereign.prefab";
         public const string StoneMatPath = StoneDir + "M_Statue_StoneSovereign.mat";
 
-        public const string FeatheredModelPath = FeatheredDir + "Meshy_AI_Feathered_Sovereign_1007024652_texture.fbx";
+        public const string FeatheredModelPath = FeatheredDir + "feathered_sovereign_mesh.fbx";
         public const string FeatheredPrefabPath = FeatheredDir + "Statue_FeatheredSovereign.prefab";
         public const string FeatheredMatPath = FeatheredDir + "M_Statue_FeatheredSovereign.mat";
 
@@ -27,8 +27,8 @@ namespace SonTinhThuyTinh.EditorTools
                 StoneModelPath,
                 StonePrefabPath,
                 StoneMatPath,
-                StoneDir + "Meshy_AI_Stone_Sovereign_of_th_1007024642_texture.png",
-                StoneDir + "Meshy_AI_Stone_Sovereign_of_th_1007024642_texture_normal.png",
+                StoneDir + "stone_sovereign_basecolor.png",
+                StoneDir + "stone_sovereign_normal.png",
                 "Statue_StoneSovereign",
                 new Color(0.85f, 0.85f, 0.82f) // slightly warm weathered stone tint
             );
@@ -37,8 +37,8 @@ namespace SonTinhThuyTinh.EditorTools
                 FeatheredModelPath,
                 FeatheredPrefabPath,
                 FeatheredMatPath,
-                FeatheredDir + "Meshy_AI_Feathered_Sovereign_1007024652_texture.png",
-                FeatheredDir + "Meshy_AI_Feathered_Sovereign_1007024652_texture_normal.png",
+                FeatheredDir + "feathered_sovereign_basecolor.png",
+                FeatheredDir + "feathered_sovereign_normal.png",
                 "Statue_FeatheredSovereign",
                 new Color(0.80f, 0.84f, 0.88f) // slightly cool weathered sea stone tint
             );

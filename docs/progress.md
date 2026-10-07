@@ -35,7 +35,7 @@
 
 ### Vũ khí
 
-- **Kiếm của Thủy Tinh**: `Assets/Prefabs/Weapons/Sword.prefab` (mesh `Assets/Art/sword/sword_lowpoly.fbx` + texture trong `Assets/Art/sword/`, material `Mat_Sword`). Dài 1.5m, scale đều 3 trục đúng tỷ lệ ảnh concept `ArtSource/Concept/kiem_cua_thuy_tinh.jpg`. Gốc prefab đặt ở tay cầm (20% chiều dài tính từ chuôi), mũi kiếm hướng +Y. **Mesh đã giảm từ 238.840 xuống 7.000 tam giác** (05/10, Decimate của Blender chạy ngầm, giữ nguyên tỷ lệ nên toạ độ tay cầm không đổi; file `.fbx` 20 MB cũ đã xoá, bản gốc 239.000 mặt vẫn ở `ArtSource/Meshy/sword`). Prefab gồm gốc `Sword` + con `Mesh` + 2 điểm đặt vệt kiếm.
+- **Kiếm của Thủy Tinh**: `Assets/Prefabs/Weapons/Sword.prefab` (mesh `Assets/Art/Weapons/Sword/sword_mesh.fbx` + texture trong `Assets/Art/Weapons/Sword/`, material `M_Sword`). Dài 1.5m, scale đều 3 trục đúng tỷ lệ ảnh concept `ArtSource/Concept/kiem_cua_thuy_tinh.jpg`. Gốc prefab đặt ở tay cầm (20% chiều dài tính từ chuôi), mũi kiếm hướng +Y. **Mesh đã giảm từ 238.840 xuống 7.000 tam giác** (05/10, Decimate của Blender chạy ngầm, giữ nguyên tỷ lệ nên toạ độ tay cầm không đổi; file `.fbx` 20 MB cũ đã xoá, bản gốc 239.000 mặt vẫn ở `ArtSource/Meshy/sword`). Prefab gồm gốc `Sword` + con `Mesh` + 2 điểm đặt vệt kiếm.
 - Kiếm gắn vào xương `mixamorig:RightHand` **bên trong prefab** `Player_ThuyTinh_v2` (không gắn trong scene; chép toạ độ cầm từ bản v1, do `CombatSetupBuilder` làm), nên dùng prefab ở scene nào cũng có kiếm. Trục kiếm đo từ vị trí 2 bàn tay trong animation Great Sword Idle, cạnh lưỡi cùng hướng đốt ngón tay.
 - Đinh Ba cũ (`Assets/Prefabs/Weapons/DinhBa.prefab`) đã gỡ khỏi Thủy Tinh, file vẫn giữ lại nhưng không còn dùng.
 
@@ -335,7 +335,7 @@ Commit chưa push lúc đó nặng ~299 MB (chủ yếu `ArtSource`), sau khi d�
 - **Đã làm lại commit chưa push** bằng `git reset origin/main` rồi `git add -A`, vì chỉ xoá file mà commit cũ còn nằm đó thì lúc push các file nặng vẫn bị đẩy lên.
 - **`.gitignore`** thêm `*.slnx`, `__pycache__/`, `*.pyc`; `son_tinh_thuy_tinh.slnx` được bỏ theo dõi.
 - **Quy tắc từ giờ**: không commit thư mục `_old` hay file `.zip` tải từ Meshy (giải nén rồi đổi tên là đủ); không để gói có `.git` riêng trong `Packages/`.
-- **Cố ý giữ dù chưa ai dùng**: `Assets/Art/sword` + `Sword.prefab` (còn phải gắn kiếm vào Thủy Tinh v2), `SceneTransitionTrigger.cs` (map sính lễ sẽ dùng), `Assets/InputSystem_Actions.inputactions` (đang đặt làm project-wide actions), mesh nguồn v2 trong `ArtSource/Meshy` (đầu vào của pipeline Blender/Mixamo).
+- **Cố ý giữ dù chưa ai dùng**: `Assets/Art/Weapons/Sword` + `Sword.prefab` (còn phải gắn kiếm vào Thủy Tinh v2), `SceneTransitionTrigger.cs` (map sính lễ sẽ dùng), `Assets/InputSystem_Actions.inputactions` (đang đặt làm project-wide actions), mesh nguồn v2 trong `ArtSource/Meshy` (đầu vào của pipeline Blender/Mixamo).
 - **Còn dọn thêm được** (đều đã nằm sẵn trên GitHub nên xoá không làm push nhẹ hơn, chỉ gọn thư mục): Thủy Tinh v1 (`Assets/Art/Characters/ThuyTinh`, `Assets/Animations/ThuyTinh`, `ThuyTinh.prefab`, `Player_ThuyTinh.prefab`, `AOC_ThuyTinh`), Sơn Tinh v1 (`Assets/Art/Characters/SonTinh`, `Assets/Animations/SonTinh`, `SonTinh.prefab`, `Player_SonTinh.prefab`), Đinh Ba (`Assets/Art/Weapons/DinhBa`, `DinhBa.prefab`), `Assets/Scenes/SampleScene.unity` (scene mẫu của template, chỉ nó còn dùng Sơn Tinh v1), `Assets/TutorialInfo`, `Assets/Readme.asset`, `Assets/Animations/ThuyTinh_v2/thuy_tinh_v2_idle.fbx` (idle 251 khung cũ) và `ProjectSettings/McpUnitySettings.json` (mồ côi từ gói đã xoá). Các mục này đã kiểm tra là không còn scene/prefab/script nào tham chiếu.
 
 **Dọn lần 2 (05/10, trước khi push các map mới):**
@@ -597,5 +597,17 @@ Scene `Assets/Scenes/Map_FinalBattle.unity` (`SceneNames.FinalBattle`), dựng b
 **Còn lại**: chưa có AI boss, cutscene vào trận, âm thanh, hiệu ứng bờ nước và bọt quanh bệ; chưa chỉnh camera cho trận đánh cuối (camera đi theo thường, tượng bị cắt ngọn khi nhìn thẳng); địa hình dùng vật liệu đá mặc định của gói nên mặt vách hơi giãn dọc.
 
 - **Nối vào luồng game**: `JudgementCutsceneDirector.cs` đã chuyển `nextScene` từ `Sandbox_Combat` sang `Map_FinalBattle`; scene đã nằm trong Build Settings.
+
+### 9.17 Dọn repo trước khi push git (07/10)
+
+Chỉ đổi tên / xoá file, **không đổi GUID** (đã dời cả file `.meta` cùng file) nên prefab và scene vẫn trỏ đúng.
+
+- **Xoá file thừa**: `Assets/_Recovery/` (scene tự lưu của Unity), `Assets/TutorialInfo/` + `Assets/Readme.asset` (mẫu của template URP), `Assets/Scenes/SampleScene.unity` (scene mẫu, không nằm trong Build Settings), 2 file zip Meshy ở gốc `ArtSource/` (đã giải nén sẵn trong `ArtSource/Statues/`, tiết kiệm ~40 MB), thư mục `tools/__pycache__`.
+- **Đổi tên cho đồng bộ** (snake_case cho file, `M_` cho material, đúng kiểu `dinh_ba_mesh.fbx` / `M_DinhBa.mat` có sẵn):
+  - `Assets/Art/sword/` → `Assets/Art/Weapons/Sword/` (cùng chỗ với Đinh Ba): `sword_mesh.fbx`, `sword_basecolor|metallic|normal.png`, `M_Sword.mat`.
+  - `Assets/Art/Statues/*Sovereign/Meshy_AI_..._texture*` → `stone_sovereign_*` / `feathered_sovereign_*` (`_mesh.fbx`, `_basecolor`, `_normal`, `_metallic`, `_roughness`). Đã sửa đường dẫn trong `Assets/Editor/StatueModelSetup.cs`.
+  - `ArtSource/Concept/179*.jpg` (tên băm của trình duyệt) và `ArtSource/0af16....jpg` → `concept_ref_00..13.jpg` (chưa biết nội dung từng ảnh nên đặt tên chung).
+- **Cần làm khi mở lại Unity**: đợi import xong, kiểm tra Console không có lỗi, mở thử `Map_FinalBattle` (tượng) và prefab `Player_ThuyTinh_v2` (kiếm), rồi commit.
+- **Lưu ý khi push**: các gói Asset Store (`Houidisoft technology`, `Idyllic Fantasy Nature`, `TriForge Assets`, `WaterWorks`) đang bị `.gitignore` chặn nên **không lên git**; ai clone về phải tự cài lại các gói này, nếu không scene sẽ thiếu model.
 
 
