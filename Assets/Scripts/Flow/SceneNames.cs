@@ -10,6 +10,7 @@ namespace SonTinhThuyTinh.Flow
         public const string ThuyTinhMap = "Map_ThuyTinh";
         public const string PalaceMap = "Map_HungVuong";
         public const string JudgementCutscene = "Cutscene_PhanXu";
+        public const string FinalBattle = "Map_FinalBattle";
         public const string Sandbox = "Sandbox_Combat";
     }
 }
