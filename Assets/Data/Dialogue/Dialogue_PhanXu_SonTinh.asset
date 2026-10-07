@@ -41,7 +41,7 @@ MonoBehaviour:
   - speaker: "M\u1ECB N\u01B0\u01A1ng"
     text: "Ph\u1EE5 v\u01B0\u01A1ng... con xin nghe theo l\u1EDDi cha \u0111\u1ECBnh
       \u0111o\u1EA1t."
-    illustration: {fileID: 21300000, guid: 15b736b989e583141a83886407bdf037, type: 3}
+    illustration: {fileID: 0}
   - speaker: "H\xF9ng V\u01B0\u01A1ng"
     text: "L\u1EDDi vua \u0111\xE3 n\xF3i ra th\xEC kh\xF4ng th\u1EC3 r\xFAt l\u1EA1i.
       Nh\u01B0ng con g\xE1i ta ch\u1EC9 c\xF3 m\u1ED9t."
@@ -60,6 +60,10 @@ MonoBehaviour:
   - speaker: "S\u01A1n Tinh"
     text: "Th\u1EA7n xin tu\xE2n l\u1EC7nh. N\xFAi T\u1EA3n Vi\xEAn ch\u01B0a t\u1EEBng
       ch\u1ECBu l\xF9i tr\u01B0\u1EDBc s\xF3ng n\u01B0\u1EDBc n\xE0o."
+    illustration: {fileID: 0}
+  - speaker: "M\u1ECB N\u01B0\u01A1ng"
+    text: "Xin hai ch\xE0ng gi\u1EEF l\u1EDDi, \u0111\u1EA5u cho c\xF4ng b\u1EB1ng.
+      Thi\u1EBFp s\u1EBD ch\u1EDD ng\u01B0\u1EDDi chi\u1EBFn th\u1EAFng."
     illustration: {fileID: 0}
   - speaker: "H\xF9ng V\u01B0\u01A1ng"
     text: "\u0110\u01B0\u1EE3c! Tr\u1EDDi \u0111\u1EA5t ch\u1EE9ng gi\xE1m. B\u1EAFt
