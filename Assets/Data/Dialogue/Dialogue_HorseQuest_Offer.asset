@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_HorseQuest_Offer
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: "Ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a"
+    text: "Ch\xE0o ch\xE0ng trai! D\xE1ng \u0111i v\u1EEFng nh\u01B0 n\xFAi th\u1EBF
+      kia, ch\u1EAFc ch\xE0ng l\xE0 S\u01A1n Tinh, ch\xFAa v\xF9ng non cao ph\u1EA3i
+      kh\xF4ng?"
+    illustration: {fileID: 0}
+  - speaker: "S\u01A1n Tinh"
+    text: "\u0110\xFAng v\u1EADy. Ta \u0111ang t\xECm ng\u1EF1a ch\xEDn h\u1ED3ng
+      mao \u0111\u1EC3 d\xE2ng vua H\xF9ng l\xE0m s\xEDnh l\u1EC5, c\u1EA7u h\xF4n
+      M\u1ECB N\u01B0\u01A1ng."
+    illustration: {fileID: 0}
+  - speaker: "Ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a"
+    text: "Th\u1EBF th\xEC ch\xE0ng \u0111\u1EBFn \u0111\xFAng nh\xE0 r\u1ED3i! Con
+      ng\u1EF1a ch\xEDn h\u1ED3ng mao \u0111ang \u0103n c\u1ECF trong chu\u1ED3ng
+      nh\xE0 t\xF4i \u0111\u1EA5y. T\xF4i nu\xF4i n\xF3 t\u1EEB khi n\xF3 c\xF2n
+      l\xE0 con ng\u1EF1a non."
+    illustration: {fileID: 0}
+  - speaker: "Ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a"
+    text: "C\xF3 \u0111i\u1EC1u m\u1EA5y h\xF4m tr\u01B0\u1EDBc n\xFAi l\u1EDF, t\xF4i
+      ch\u1EA1y v\u1ED9i n\xEAn \u0111\xE1nh r\u01A1i chi\u1EBFc chu\xF4ng \u0111\u1ED3ng
+      \xF4ng n\u1ED9i \u0111\u1EC3 l\u1EA1i tr\xEAn \u0111\u01B0\u1EDDng n\xFAi ph\xEDa
+      tr\xEAn. Kh\xF4ng c\xF3 ti\u1EBFng chu\xF4ng \u1EA5y, n\xF3 ch\u1EB3ng ch\u1ECBu
+      theo ai."
+    illustration: {fileID: 0}
+  - speaker: "Ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a"
+    text: "Ch\xE0ng t\xECm gi\xFAp t\xF4i chi\u1EBFc chu\xF4ng nh\xE9. Mang \u0111\u01B0\u1EE3c
+      v\u1EC1 \u0111\xE2y, t\xF4i xin g\u1EEDi ch\xE0ng con ng\u1EF1a qu\xFD."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "Nhi\u1EC7m v\u1EE5: t\xECm chu\xF4ng \u0111\u1ED3ng gia truy\u1EC1n c\u1EE7a
+      ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a. N\u01A1i chu\xF4ng r\u01A1i \u0111\xE3
+      c\xF3 c\u1ED9t s\xE1ng \u0111\xE1nh d\u1EA5u tr\xEAn \u0111\u01B0\u1EDDng n\xFAi."
+    illustration: {fileID: 0}

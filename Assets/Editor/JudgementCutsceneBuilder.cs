@@ -126,7 +126,7 @@ namespace SonTinhThuyTinh.EditorTools
             so.FindProperty("sonTinhClose").objectReferenceValue = sonClose;
             so.FindProperty("thuyTinhClose").objectReferenceValue = thuyClose;
             so.FindProperty("suitors").objectReferenceValue = suitors;
-            so.FindProperty("nextScene").stringValue = SceneNames.Sandbox;   // the arena (section 8.8) replaces this later
+            so.FindProperty("nextScene").stringValue = SceneNames.FinalBattle;   // the final duel arena (docs/progress.md 9.16)
             var scripts = so.FindProperty("scripts");
             scripts.arraySize = dialogues.Count;
             for (int i = 0; i < dialogues.Count; i++)

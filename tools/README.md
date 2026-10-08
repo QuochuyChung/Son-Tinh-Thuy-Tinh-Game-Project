@@ -133,3 +133,19 @@ averaged). Used with the defaults:
 - Unity: `Tools ▸ Son Tinh Thuy Tinh ▸ Build Mi Nuong NPC` (`Assets/Editor/MiNuongBuilder.cs`, 1.70 m, triggers Idle / Talk / Bow / Shy / Happy /
   Walk; Shy plays Thankful until a Shy clip exists). `HungVuongBuilder` and `MiNuongBuilder` are now two specs for `NpcBuilder.cs`, which keeps the
   controller / scene / timeline GUIDs when it rebuilds them. When the model's extra bones change, delete `mi_nuong.fbx.meta` before rebuilding.
+
+## Quadruped rigged by hand (no Mixamo) — Ngựa Chín Hồng Mao
+
+`rig_ngua.py <gray_generate.fbx> <textured.fbx> <out_skinned.fbx> <preview_dir> [blend=<abs path>] [gz=0.40] [gmax=60]` (07/10):
+
+    blender -b --python tools/rig_ngua.py -- ArtSource/Meshy/NguaChinHongMao/ngua_generate.fbx ArtSource/Meshy/NguaChinHongMao/ngua_mesh.fbx ArtSource/Rig/NguaChinHongMao/ngua_skinned.fbx <preview_dir> blend=<abs path>/ArtSource/Rig/NguaChinHongMao/ngua_rig.blend
+
+- The skeleton (33 bones, Generic) is placed from landmarks measured on the mesh: height slices give the four leg clusters (front / back by
+  a gap in y, left / right by x sign), the head (frontmost high vertices), the ears (highest vertices in front of y -0.40: the mane's crest
+  rises as high as the ears further back), the tail hanging behind.
+- Weights on the gray mesh (no UVs), copied 1:1 to the textured one (same vertices): nearest bone segments of the vertex's region (legs by
+  quadrant only, tassels below the belly on the body, tail strands on the tail chain), smoothed along the edges; small loose pieces rigid.
+- Clips are keyed in Blender (`EatGrass`, `Idle`, `LookUp`) and exported in the same FBX (all actions); Unity splits them by take name
+  (`Assets/Editor/HorseBuilder.cs`). The grazing pose is searched, not guessed: the neck is short, so the muzzle aims at the hay trough
+  height (`gz`) with the neck joint under `gmax` degrees (aiming at the ground folded the head behind the mane).
+- Preview folder: `rest.png`, `clip_<name>.png` (key frames, side + three-quarter) and `stretch.txt`.

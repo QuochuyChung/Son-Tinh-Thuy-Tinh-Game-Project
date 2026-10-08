@@ -36,9 +36,9 @@ namespace SonTinhThuyTinh.EditorTools
         const float ValleyHalfWidth = 30f;
         // The last stretch of the route climbs up to the gate to the palace plateau (the world map shows both routes going "up").
         internal const float ClimbStart = 262f, ClimbEnd = 292f, ClimbHeight = 7f;
-        static readonly float[] StopZ = { 85f, 175f, 250f };   // horse (traversal), rooster (arena), elephant (altar)
+        internal static readonly float[] StopZ = { 85f, 175f, 250f };   // horse (traversal), rooster (arena), elephant (altar)
         // z along the path, lateral offset from the path (negative = left), radius of the flat floor
-        static readonly Vector3[] Bays = { new(45f, -36f, 12f), new(130f, 38f, 11f), new(212f, -37f, 12f) };   // village, stone circle, grove
+        internal static readonly Vector3[] Bays = { new(45f, -36f, 12f), new(130f, 38f, 11f), new(212f, -37f, 12f) };   // village, stone circle, grove
 
         internal static System.Random rng;
         static float slabTop;   // world height of the altar slab at the third stop, measured after it is placed
@@ -74,6 +74,7 @@ namespace SonTinhThuyTinh.EditorTools
             BuildExit(root);
             SetupGiftPickups();
             BuildMapHud();
+            SonTinhMapDressing.Dress(terrain);
 
             RegisterScene();
             EditorSceneManager.MarkSceneDirty(scene);
@@ -91,31 +92,36 @@ namespace SonTinhThuyTinh.EditorTools
         }
 
         // Centre line of the path, straight for the first ~20 m then swinging left and right.
-        static float PathX(float z)
+        internal static float PathX(float z)
         {
             float ramp = Smooth(0f, 50f, z);
             return ramp * (15f * Mathf.Sin(z * 0.021f) + 6f * Mathf.Sin(z * 0.058f + 1.3f));
         }
 
-        static Vector2 Stop(int i) => new(PathX(StopZ[i]), StopZ[i]);
+        internal static Vector2 Stop(int i) => new(PathX(StopZ[i]), StopZ[i]);
 
-        static Vector2 Bay(int i) => new(PathX(Bays[i].x) + Bays[i].y, Bays[i].x);
+        internal static Vector2 Bay(int i) => new(PathX(Bays[i].x) + Bays[i].y, Bays[i].x);
 
         // The village and the grove each have a waterfall pouring down the wall behind them into a pool on a flat pad.
-        static readonly int[] FallBays = { 0, 2 };
+        internal static readonly int[] FallBays = { 0, 2 };
 
         static Vector2 FallFoot(int bay) => Bay(bay) + new Vector2(Mathf.Sign(Bays[bay].y) * 17f, 0f);
 
         // The Mystic Grove (the stone circle, bay 1) has a small pond beside the glowing stone, in the gap between two standing stones.
-        const float PondRadius = 3.1f;
-        static Vector2 PondCentre => Bay(1) + new Vector2(1.7f, 4.0f);
+        internal const float PondRadius = 3.1f;
+        internal static Vector2 PondCentre => Bay(1) + new Vector2(1.7f, 4.0f);
+
+        // A lotus pond beside the path between the stone circle and the arena (water, lilies and reeds: SonTinhMapDressing).
+        internal const float LotusPondRadius = 4.2f;
+        internal static Vector2 LotusPondCentre => new(PathX(150f) - 12f, 150f);
+        internal static float LotusPondLevel => 3f + LotusPondCentre.y * 0.018f - 0.2f;   // water surface: the valley floor there, a bit lower
 
         static float PadHeight(int bay) => 3f + Bays[bay].x * 0.018f;   // the base height of the valley floor at that z
 
         // Where each waterfall's pool lies (indexed like Bays). Planned before the terrain exists, because the basin is dug into the terrain.
-        static Vector2[] poolCenters;
+        internal static Vector2[] poolCenters;
 
-        static void PlanPools()
+        internal static void PlanPools()
         {
             poolCenters = null;   // GroundHeight must not see half-planned pools
             var centres = new Vector2[Bays.Length];
@@ -130,7 +136,7 @@ namespace SonTinhThuyTinh.EditorTools
         // Direction of the path (x, z) at height z, unit length.
         static Vector2 Tangent(float z) => new Vector2((PathX(z + 1f) - PathX(z - 1f)) / 2f, 1f).normalized;
 
-        static float GroundHeight(float x, float z)
+        internal static float GroundHeight(float x, float z)
         {
             float d = Mathf.Abs(x - PathX(z));
             var p = new Vector2(x, z);
@@ -154,6 +160,11 @@ namespace SonTinhThuyTinh.EditorTools
             foreach (int i in FallBays) h = Mathf.Lerp(h, PadHeight(i), 1f - Smooth(5f, 9f, Vector2.Distance(p, FallFoot(i))));
             if (poolCenters != null)   // and the basin dug into the pad for the pool
                 foreach (int i in FallBays) h = Mathf.Lerp(h, PadHeight(i) - 0.9f, 1f - Smooth(2.4f, 4.0f, Vector2.Distance(p, poolCenters[i])));
+
+            // the lotus pond: a flat pad, the basin dug into it (the same shape as the grove pond)
+            float rl = Vector2.Distance(p, LotusPondCentre), lotusFloor = LotusPondLevel + 0.2f;
+            h = Mathf.Lerp(h, lotusFloor, 1f - Smooth(LotusPondRadius + 1f, LotusPondRadius + 5f, rl));
+            h = Mathf.Lerp(h, lotusFloor - 0.9f, 1f - Smooth(LotusPondRadius - 1.1f, LotusPondRadius + 0.3f, rl));
 
             // steep walls on both sides keep the player in the valley, the closed ends do the same (right behind the exit gate)
             float wobble = (Mathf.PerlinNoise(x * 0.05f, z * 0.05f + 50f) - 0.5f) * 2f * 4f;
@@ -334,13 +345,14 @@ namespace SonTinhThuyTinh.EditorTools
             return go;
         }
 
-        static bool InClearing(float x, float z, float extra)
+        internal static bool InClearing(float x, float z, float extra)
         {
             var p = new Vector2(x, z);
             for (int i = 0; i < Bays.Length; i++)
                 if (Vector2.Distance(p, Bay(i)) < Bays[i].z + 2f + extra) return true;
             return Vector2.Distance(p, Stop(0)) < 8f + extra || Vector2.Distance(p, Stop(1)) < 15f + extra
-                || Vector2.Distance(p, Stop(2)) < 12f + extra || (z > PathEnd - 8f && z < PathEnd + 8f && Mathf.Abs(x - PathX(z)) < 12f + extra);
+                || Vector2.Distance(p, Stop(2)) < 12f + extra || Vector2.Distance(p, LotusPondCentre) < LotusPondRadius + 3f + extra
+                || (z > PathEnd - 8f && z < PathEnd + 8f && Mathf.Abs(x - PathX(z)) < 12f + extra);
         }
 
         static void ScatterProps(Terrain terrain, Transform root)
@@ -626,7 +638,7 @@ namespace SonTinhThuyTinh.EditorTools
         }
 
         // The pool uses our own copy of the "Simple stylized water" sample, clearer and greener than the marsh water.
-        static Material EnsurePoolMaterial()
+        internal static Material EnsurePoolMaterial()
         {
             const string path = DataDir + "/Mat_Pool.mat";
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
