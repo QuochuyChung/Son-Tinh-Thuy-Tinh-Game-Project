@@ -79,6 +79,8 @@ __pycache__/
 /Assets/WaterWorks.meta
 /Assets/Idyllic Fantasy Nature/
 /Assets/Idyllic Fantasy Nature.meta
+/Assets/Fantasy Forest Environment Free Sample/
+/Assets/Fantasy Forest Environment Free Sample.meta
 
 # Meshy downloads come as zips next to their unzipped copy: keep only the unzipped files (docs/progress.md 9.5)
 /ArtSource/Meshy/*.zip

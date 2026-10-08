@@ -178600,7 +178600,7 @@ MonoBehaviour:
   thuyTinhClose: {fileID: 308129265}
   suitors: {fileID: 689434315}
   miNuongCamera: {fileID: 1863908037}
-  nextScene: Sandbox_Combat
+  nextScene: Map_FinalBattle
   fallbackPlayer: 0
 --- !u!320 &1491667080
 PlayableDirector:

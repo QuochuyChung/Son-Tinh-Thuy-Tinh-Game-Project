@@ -55,7 +55,6 @@ namespace SonTinhThuyTinh.Cutscene
         [SerializeField] CinemachineCamera thuyTinhClose;
         [SerializeField] CinemachineCamera suitors;
         [SerializeField] CinemachineCamera miNuongCamera;
-        [SerializeField] string nextScene = SceneNames.Sandbox;
         [SerializeField] string nextScene = SceneNames.FinalBattle;
         [Tooltip("Used when the scene is played on its own, without character select.")]
         [SerializeField] CharacterId fallbackPlayer = CharacterId.SonTinh;

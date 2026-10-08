@@ -15,3 +15,4 @@ MonoBehaviour:
   displayName: "Ng\u1EF1a ch\xEDn h\u1ED3ng mao"
   description: "Ng\u1EF1a qu\xFD c\xF3 b\u1EDDm ch\xEDn h\u1ED3ng mao."
   icon: {fileID: 0}
+  receivedMessage: "B\u1EA1n \u0111\xE3 nh\u1EADn \u0111\u01B0\u1EE3c {0}"
