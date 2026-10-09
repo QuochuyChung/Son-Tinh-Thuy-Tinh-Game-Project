@@ -107,3 +107,65 @@ Unity side: `Tools ▸ Son Tinh Thuy Tinh ▸ Build Hung Vuong NPC` (`Assets/Edi
 skinned meshes are skinned on the CPU for those because BakeMesh returns nothing in batch mode). Materials: body Render Face Front, cape Both.
 If the model or a clip is replaced by one with different bone lengths, delete its `.meta` first (only the builder's own prefab/controller
 reference them), otherwise the old avatar configuration gives "Avatar Rig Configuration mis-match".
+
+## NPC: clothed body + front cloth panel — Mị Nương
+
+`fit_mi_nuong.py <idle.fbx> <body_textured.fbx> <drape_textured.fbx> <out_skinned.fbx> <preview_dir> [<clip.fbx> ...] [key=value ...]` (07/10).
+Same body steps as Hùng Vương (copied from `fit_hung_vuong.py`: weights 1:1 from the rig mesh, all 7866 vertices have a twin; finger weights
+averaged). Used with the defaults:
+
+    blender -b --python tools/fit_mi_nuong.py -- ArtSource/Mixamo/MiNuong/mi_nuong_idle.fbx ArtSource/Meshy/MiNuong/mi_nuong_mesh.fbx ArtSource/Meshy/MiNuong/mi_nuong_drape_mesh.fbx ArtSource/Mixamo/MiNuong/mi_nuong_skinned.fbx <preview_dir> ArtSource/Mixamo/MiNuong/mi_nuong_talking.fbx ArtSource/Mixamo/MiNuong/mi_nuong_thankful.fbx ArtSource/Mixamo/MiNuong/mi_nuong_happy.fbx ArtSource/Mixamo/MiNuong/mi_nuong_walk.fbx blend=<abs path>/ArtSource/Mixamo/MiNuong/mi_nuong_fit.blend
+
+- **Skirt**: the long skirt is one piece with the legs (the body mesh has one big part), and Mixamo gave each panel the weights of the nearest
+  leg, so the back panels shredded as soon as a leg moved. Below `swaist` 0.61 everything further than `sfar` 0.035 body heights from the thigh /
+  shin bones follows the hips plus an equal share of both thighs (up to `sthigh` 0.35 at the hem), blended in over `ssoft` 0.06; inside the
+  blend the shin / foot weights are first moved to the thigh (knees bend), then averaged over `swrad` 0.03 so the layers move together.
+- **Front panel**: the Meshy "banner" (a long narrow cloth with a cord loop and two tassels) is the front panel of the skirt in the owner's
+  reference (a first version used it twice as shoulder drapes down the back, that was a misreading). It hangs **flat and straight down** from
+  the belt (`atop` 0.585 of the body height, cord loop on the belt) to the shins (`alen` 0.44), decorated face out, keeping its own shape: the
+  whole panel moves forward by one distance (the `apct` 0.75 percentile of the rows' clearance in T-pose and the idle's first pose, measured
+  with rays, plus `agap` 0.012 body heights; 0.181 here). A row-by-row clearance bent it into the skirt and was dropped. Weights: top 16 %
+  rigid on Hips, below one chain of 3 bones `Cape_0_*` under Hips for OutfitSpringBones.
+- Measured (edge length / bind length, every 3rd frame): panel 1.000 in every clip; body max 3.1 / 3.3 / 4.0 (Idle / Talking / Thankful),
+  4.5 Happy, 6.7 Walk, all at the skirt hem next to the boots and where the skirt meets the thighs (skirt fused to the legs). `CapeIn` (panel
+  vertices behind the body surface in front of them, ray test) 0 in T-pose / Idle / Talking, 12 Thankful, 20 Happy, 132 Walk (a knee
+  comes forward through the panel).
+- Unity: `Tools ▸ Son Tinh Thuy Tinh ▸ Build Mi Nuong NPC` (`Assets/Editor/MiNuongBuilder.cs`, 1.70 m, triggers Idle / Talk / Bow / Shy / Happy /
+  Walk; Shy plays Thankful until a Shy clip exists). `HungVuongBuilder` and `MiNuongBuilder` are now two specs for `NpcBuilder.cs`, which keeps the
+  controller / scene / timeline GUIDs when it rebuilds them. When the model's extra bones change, delete `mi_nuong.fbx.meta` before rebuilding.
+
+## Quadruped rigged by hand (no Mixamo) — Ngựa Chín Hồng Mao
+
+`rig_ngua.py <gray_generate.fbx> <textured.fbx> <out_skinned.fbx> <preview_dir> [blend=<abs path>] [gz=0.40] [gmax=60]` (07/10):
+
+    blender -b --python tools/rig_ngua.py -- ArtSource/Meshy/NguaChinHongMao/ngua_generate.fbx ArtSource/Meshy/NguaChinHongMao/ngua_mesh.fbx ArtSource/Rig/NguaChinHongMao/ngua_skinned.fbx <preview_dir> blend=<abs path>/ArtSource/Rig/NguaChinHongMao/ngua_rig.blend
+
+- The skeleton (33 bones, Generic) is placed from landmarks measured on the mesh: height slices give the four leg clusters (front / back by
+  a gap in y, left / right by x sign), the head (frontmost high vertices), the ears (highest vertices in front of y -0.40: the mane's crest
+  rises as high as the ears further back), the tail hanging behind.
+- Weights on the gray mesh (no UVs), copied 1:1 to the textured one (same vertices): nearest bone segments of the vertex's region (legs by
+  quadrant only, tassels below the belly on the body, tail strands on the tail chain), smoothed along the edges; small loose pieces rigid.
+- Clips are keyed in Blender (`EatGrass`, `Idle`, `LookUp`) and exported in the same FBX (all actions); Unity splits them by take name
+  (`Assets/Editor/HorseBuilder.cs`). The grazing pose is searched, not guessed: the neck is short, so the muzzle aims at the hay trough
+  height (`gz`) with the neck joint under `gmax` degrees (aiming at the ground folded the head behind the mane).
+- Preview folder: `rest.png`, `clip_<name>.png` (key frames, side + three-quarter) and `stretch.txt`.
+
+## Quadruped boss with a fan of tails — Sấu Chín Đuôi
+
+`rig_sau.py <gray_generate.fbx> <textured.fbx> <out_skinned.fbx> <preview_dir> [blend=<abs path>]` (09/10), same recipe as `rig_ngua.py`:
+
+    blender -b --python tools/rig_sau.py -- ArtSource/Meshy/SauChinDuoi/sau_generate.fbx ArtSource/Meshy/SauChinDuoi/sau_mesh.fbx ArtSource/Rig/SauChinDuoi/sau_skinned.fbx <preview_dir> blend=<abs path>/ArtSource/Rig/SauChinDuoi/sau_rig.blend
+
+Then copy `sau_skinned.fbx` to `Assets/Art/Characters/SauChinDuoi/sau_chin_duoi.fbx` and run `Build Sau Chin Duoi (boss model)` + `Build Thuy Tinh Map`
+(batch: `unity run . -- -executeMethod SonTinhThuyTinh.EditorTools.SauChinDuoiBuilder.BuildAllBatch -sauShots <dir>`).
+
+- 56 bones: body chain, jaw (the mouth is modelled open; the lower jaw is cut by height below the mouth gap), four sprawled legs (the toes spread
+  far from the foot bone, so everything near the ground goes to the nearest leg), nine tails. The tails are found by k-means on the angle of
+  the fan's vertices round a hub; the hub is the least-squares meeting point of the nine tail axes. Each fan vertex follows only its own tail.
+- Each tail: `Tail<k>A`, `Tail<k>B` keyed in the clips, then `Tail_<k>_0/1` for OutfitSpringBones (it overwrites anything a clip writes on
+  its chains, so keyed and spring bones must have different names).
+- Poses are written in world axes and converted to each bone's local rotation (`wq` / `set_pose`): +pitch tips a forward bone down and a
+  standing tail forward, +yaw turns to +X, roll about Y opens or closes the fan. The tail hub sits low behind the hips, so the slam opens the
+  fan down to the ground all round instead of bringing the tails forward (that passes through the back).
+- Stretch (`stretch.txt`): legs ≤ 3.1 (Walk), jaw corner up to 9.7 (Roar, mouth wide), tail root up to 13.6 (TailSlam, the nine roots meet in
+  one small hub). Preview: `rest.png`, `weights.png`, `clip_<name>.png`.

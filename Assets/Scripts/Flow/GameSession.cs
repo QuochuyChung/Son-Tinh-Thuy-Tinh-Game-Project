@@ -13,6 +13,7 @@ namespace SonTinhThuyTinh.Flow
         {
             SelectedCharacter = null;
             GiftTracker.Reset();
+            HorseQuest.Reset();
         }
 
         // Keeps state clean when Enter Play Mode Options skip the domain reload.

@@ -1,0 +1,247 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8405685214937853860
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 217993139216990563}
+  - component: {fileID: 2960173061132340670}
+  - component: {fileID: 1653758177840235688}
+  - component: {fileID: 8225191197201471639}
+  m_Layer: 0
+  m_Name: SauChinDuoi
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &217993139216990563
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8405685214937853860}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1900212566273317828}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &2960173061132340670
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8405685214937853860}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.3
+  m_Height: 4.520394
+  m_Direction: 2
+  m_Center: {x: 0, y: 1.4, z: 1.3739822}
+--- !u!114 &1653758177840235688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8405685214937853860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7bafa886d25d8b438b0909de7e335e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.Health
+  max: 600
+--- !u!114 &8225191197201471639
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8405685214937853860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64d49b6f945780249ba48429e0393d13, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.SauChinDuoiBoss
+  animator: {fileID: 5530074642221990334}
+  renderers:
+  - {fileID: 3743806958873012192}
+  bar: {fileID: 0}
+  displayName: "S\u1EA5u Ch\xEDn \u0110u\xF4i"
+  reward: {fileID: 11400000, guid: fdeb107ff50e39249b01a91bd01b3fb2, type: 2}
+  warningMaterial: {fileID: 2100000, guid: 03389220c36ed014a81bd54a39d8b494, type: 2}
+  spitMaterial: {fileID: 2100000, guid: 4ba49f4d8d2cd3e42a78a95c6e49712d, type: 2}
+  arenaCenter: {fileID: 0}
+  lair: {fileID: 0}
+  playerRespawn: {fileID: 0}
+  arenaRadius: 14.5
+  wakeRadius: 13
+  leashRadius: 26
+  walkSpeed: 2.4
+  chargeSpeed: 9
+  turnSpeed: 110
+  biteDamage: 16
+  biteRange: 4.6
+  biteReach: 3
+  biteRadius: 2.3
+  sweepDamage: 20
+  sweepRadius: 7
+  spitDamage: 12
+  spitSpeed: 16
+  slamDamage: 28
+  slamRadius: 8.5
+  slamSmallRadius: 2.6
+  chargeDamage: 18
+  phase2Speedup: 1.3
+--- !u!1001 &2149431156306164783
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 217993139216990563}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 7.1339836
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 7.1339836
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 7.1339836
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.6351864
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.35509247
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5899437711499207729, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_UpdateWhenOffscreen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -5899437711499207729, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 67a098d0b1b084b44aaf80a8297569c4, type: 2}
+    - target: {fileID: 919132149155446097, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_Name
+      value: Model
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 7aff47fd301d0d447b071ead89741a15, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2951947134236745634}
+  m_SourcePrefab: {fileID: 100100000, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+--- !u!1 &1230953769546809726 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+  m_PrefabInstance: {fileID: 2149431156306164783}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2951947134236745634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1230953769546809726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed50c917640d5d44e83f92c53f854c35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Characters.OutfitSpringBones
+  groups:
+  - name: Tails
+    bonePrefix: Tail_
+    frequency: 3
+    dampingRatio: 0.5
+    drag: 2
+    gravity: 0.3
+    maxAngle: 14
+    inwardLimit: 0.3
+  ignoreRootRotation: 1
+  teleportDistance: 2
+  maxStep: 0.05
+--- !u!4 &1900212566273317828 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+  m_PrefabInstance: {fileID: 2149431156306164783}
+  m_PrefabAsset: {fileID: 0}
+--- !u!137 &3743806958873012192 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -5899437711499207729, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+  m_PrefabInstance: {fileID: 2149431156306164783}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &5530074642221990334 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 3454debc8c254674db5cce226641f44b, type: 3}
+  m_PrefabInstance: {fileID: 2149431156306164783}
+  m_PrefabAsset: {fileID: 0}

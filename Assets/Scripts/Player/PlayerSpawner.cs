@@ -2,6 +2,7 @@ using SonTinhThuyTinh.CameraSystem;
 using SonTinhThuyTinh.Characters;
 using SonTinhThuyTinh.DevTools;
 using SonTinhThuyTinh.Flow;
+using SonTinhThuyTinh.Quest;
 using SonTinhThuyTinh.UI;
 using SonTinhThuyTinh.UI.Map;
 using Unity.Cinemachine;
@@ -53,6 +54,8 @@ namespace SonTinhThuyTinh.Player
             if (gameplayHud != null) gameplayHud.Bind(Player, character);
             if (mapHud != null) mapHud.Bind(Player, character);
             if (debugHud != null) debugHud.Bind(Player);
+            foreach (GiftTrackerHUD gifts in FindObjectsByType<GiftTrackerHUD>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                gifts.SetQuest(character.GiftQuest);   // each suitor's own sính lễ
 
             // fighting characters: the camera shakes with their hits, and their spell slots show at the bottom of the screen
             if (Player.HasCombat)

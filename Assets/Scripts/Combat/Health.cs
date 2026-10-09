@@ -32,6 +32,13 @@ namespace SonTinhThuyTinh.Combat
             return true;
         }
 
+        public void SetMax(float newMax, bool healToFull = true)
+        {
+            max = Mathf.Max(1f, newMax);
+            if (healToFull || Current > max) Current = max;
+            Changed?.Invoke(Current, max);
+        }
+
         public void Heal(float amount)
         {
             if (IsDead || amount <= 0f) return;

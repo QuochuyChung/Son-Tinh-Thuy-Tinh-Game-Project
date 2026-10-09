@@ -20,14 +20,10 @@ MonoBehaviour:
       sau l\u01B0ng."
     illustration: {fileID: 0}
   - speaker: "H\xF9ng V\u01B0\u01A1ng"
-    text: "H\xF4m qua ta \u0111\xE3 n\xF3i: voi ch\xEDn ng\xE0, g\xE0 ch\xEDn c\u1EF1a,
-      ng\u1EF1a ch\xEDn h\u1ED3ng mao. Ai mang \u0111\u1EE7 \u0111\u1EBFn tr\u01B0\u1EDBc,
-      ng\u01B0\u1EDDi \u1EA5y \u0111\u01B0\u1EE3c r\u01B0\u1EDBc M\u1ECB N\u01B0\u01A1ng."
+    text: "H\u00F4m qua ta \u0111\u00E3 n\u00F3i: ai mang \u0111\u1EE7 s\u00EDnh l\u1EC5 \u0111\u1EBFn tr\u01B0\u1EDBc, ng\u01B0\u1EDDi \u1EA5y \u0111\u01B0\u1EE3c r\u01B0\u1EDBc M\u1ECB N\u01B0\u01A1ng."
     illustration: {fileID: 0}
   - speaker: "S\u01A1n Tinh"
-    text: "Mu\xF4n t\xE2u b\u1EC7 h\u1EA1, th\u1EA7n l\xE0 S\u01A1n Tinh. Voi ch\xEDn
-      ng\xE0, g\xE0 ch\xEDn c\u1EF1a, ng\u1EF1a ch\xEDn h\u1ED3ng mao, th\u1EA7n
-      \u0111\xE3 t\xECm \u0111\u1EE7, xin d\xE2ng l\xEAn b\u1EC7 h\u1EA1."
+    text: "Mu\u00F4n t\u00E2u b\u1EC7 h\u1EA1, th\u1EA7n l\u00E0 S\u01A1n Tinh. S\u00EDnh l\u1EC5 b\u1EC7 h\u1EA1 \u0111\u00F2i, th\u1EA7n \u0111\u00E3 t\u00ECm \u0111\u1EE7, xin d\u00E2ng l\u00EAn b\u1EC7 h\u1EA1."
     illustration: {fileID: 0}
   - speaker: "Th\u1EE7y Tinh"
     text: "Th\u1EA7n l\xE0 Th\u1EE7y Tinh. L\u1EC5 v\u1EADt c\u1EE7a th\u1EA7n c\u0169ng
@@ -41,7 +37,7 @@ MonoBehaviour:
   - speaker: "M\u1ECB N\u01B0\u01A1ng"
     text: "Ph\u1EE5 v\u01B0\u01A1ng... con xin nghe theo l\u1EDDi cha \u0111\u1ECBnh
       \u0111o\u1EA1t."
-    illustration: {fileID: 21300000, guid: 15b736b989e583141a83886407bdf037, type: 3}
+    illustration: {fileID: 0}
   - speaker: "H\xF9ng V\u01B0\u01A1ng"
     text: "L\u1EDDi vua \u0111\xE3 n\xF3i ra th\xEC kh\xF4ng th\u1EC3 r\xFAt l\u1EA1i.
       Nh\u01B0ng con g\xE1i ta ch\u1EC9 c\xF3 m\u1ED9t."
@@ -60,6 +56,10 @@ MonoBehaviour:
   - speaker: "S\u01A1n Tinh"
     text: "Th\u1EA7n xin tu\xE2n l\u1EC7nh. N\xFAi T\u1EA3n Vi\xEAn ch\u01B0a t\u1EEBng
       ch\u1ECBu l\xF9i tr\u01B0\u1EDBc s\xF3ng n\u01B0\u1EDBc n\xE0o."
+    illustration: {fileID: 0}
+  - speaker: "M\u1ECB N\u01B0\u01A1ng"
+    text: "Xin hai ch\xE0ng gi\u1EEF l\u1EDDi, \u0111\u1EA5u cho c\xF4ng b\u1EB1ng.
+      Thi\u1EBFp s\u1EBD ch\u1EDD ng\u01B0\u1EDDi chi\u1EBFn th\u1EAFng."
     illustration: {fileID: 0}
   - speaker: "H\xF9ng V\u01B0\u01A1ng"
     text: "\u0110\u01B0\u1EE3c! Tr\u1EDDi \u0111\u1EA5t ch\u1EE9ng gi\xE1m. B\u1EAFt

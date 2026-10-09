@@ -22,17 +22,38 @@ namespace SonTinhThuyTinh.Quest
         void OnEnable()
         {
             GiftTracker.Collected += OnCollected;
+            GiftTracker.Notice += ShowNotice;
             banner.alpha = 0f;
             Refresh();
         }
 
-        void OnDisable() => GiftTracker.Collected -= OnCollected;
+        void OnDisable()
+        {
+            GiftTracker.Collected -= OnCollected;
+            GiftTracker.Notice -= ShowNotice;
+        }
+
+        // The spawned character's own gift list (PlayerSpawner), in place of the one set in the scene.
+        public void SetQuest(GiftQuest characterQuest)
+        {
+            if (characterQuest == null) return;
+            quest = characterQuest;
+            if (isActiveAndEnabled) Refresh();
+        }
+
+        void ShowNotice(string message)
+        {
+            if (bannerRoutine != null) StopCoroutine(bannerRoutine);
+            bannerRoutine = StartCoroutine(ShowBanner(message));
+        }
 
         void OnCollected(GiftItem gift)
         {
             Refresh();
 
-            string message = $"Đã có <b>{gift.DisplayName}</b>";
+            string message = string.IsNullOrEmpty(gift.ReceivedMessage)
+                ? $"Đã có <b>{gift.DisplayName}</b>"
+                : string.Format(gift.ReceivedMessage, $"<b>{gift.DisplayName}</b>");
             if (quest.IsComplete) message += "\nĐã đủ sính lễ!";
 
             if (bannerRoutine != null) StopCoroutine(bannerRoutine);
