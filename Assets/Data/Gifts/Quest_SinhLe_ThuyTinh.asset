@@ -15,5 +15,5 @@ MonoBehaviour:
   title: "S\xEDnh l\u1EC5 Th\u1EE7y Tinh"
   requiredGifts:
   - {fileID: 11400000, guid: 739e94a46c604239ae4ff5b9f66df4ad, type: 2}
-  - {fileID: 11400000, guid: 839a6b2ba8d410443ad48dacab16c5d9, type: 2}
+  - {fileID: 11400000, guid: 5d433c1ef0d3552498614e60d1ea23a9, type: 2}
   - {fileID: 11400000, guid: 17aa350935c751a45bcc7c1c8f98155e, type: 2}

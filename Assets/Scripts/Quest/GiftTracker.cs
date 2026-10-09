@@ -7,17 +7,19 @@ namespace SonTinhThuyTinh.Quest
     // Gifts collected in this playthrough. Static so progress survives scene loads between branch maps.
     public static class GiftTracker
     {
-        static readonly HashSet<GiftItem> collected = new();
+        // Store the asset name rather than the ScriptableObject reference. This keeps
+        // progress stable when a runtime Resources copy represents the same gift.
+        static readonly HashSet<string> collected = new();
 
         public static event Action<GiftItem> Collected;
 
         public static int Count => collected.Count;
 
-        public static bool Has(GiftItem gift) => collected.Contains(gift);
+        public static bool Has(GiftItem gift) => gift != null && collected.Contains(gift.name);
 
         public static bool Collect(GiftItem gift)
         {
-            if (gift == null || !collected.Add(gift)) return false;
+            if (gift == null || !collected.Add(gift.name)) return false;
 
             Collected?.Invoke(gift);
             return true;

@@ -79,6 +79,7 @@ namespace SonTinhThuyTinh.EditorTools
             BuildExit(root);
             SetupGiftPickups();
             ManyFinnedSharkSetup.AddToMap(root);
+            NineLeggedTurtleSetup.AddToMap(root);
             BuildMapHud();
 
             RegisterScene();
@@ -647,7 +648,10 @@ namespace SonTinhThuyTinh.EditorTools
             Transform firstPickup = container.transform.Find("Pickup_Map9Vay") ?? container.transform.Find("Pickup_NguaChinHongMao");
             if (firstPickup != null) firstPickup.name = "Pickup_Map9Vay";
 
-            string[] names = { "Pickup_Map9Vay", "Pickup_GaChinCua", "Pickup_VoiChinNga" };
+            Transform turtlePickup = container.transform.Find("Pickup_Rua9Chan") ?? container.transform.Find("Pickup_GaChinCua");
+            if (turtlePickup != null) turtlePickup.name = "Pickup_Rua9Chan";
+
+            string[] names = { "Pickup_Map9Vay", "Pickup_Rua9Chan", "Pickup_VoiChinNga" };
             for (int i = 0; i < names.Length; i++)
             {
                 Transform pickup = container.transform.Find(names[i]);
@@ -687,7 +691,7 @@ namespace SonTinhThuyTinh.EditorTools
             MapHudBuilder.Build("THỦY TINH  ·  ĐƯỜNG THỦY", new Color(0.25f, 0.82f, 1f), WorldMapLayout.ThuyTinh, new[]
             {
                 (Gift("Map9Vay"), Stop(0)),
-                (Gift("GaChinCua"), Stop(1)),
+                (Gift("Rua9Chan"), Stop(1)),
                 (Gift("VoiChinNga"), Stop(2)),
             });
         }

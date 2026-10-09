@@ -25338,19 +25338,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 110367531}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68090c0e10518414daa7e6dfaabd5b1b, type: 3}
+  m_Script: {fileID: 11500000, guid: 3a72d9c52a2e4ba4aa7d2e1a10000101, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Quest.GiftPickup
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Quest.VoiChinNgaEncounterTrigger
   gift: {fileID: 11400000, guid: 17aa350935c751a45bcc7c1c8f98155e, type: 2}
-  visual: {fileID: 649563037}
-  bobHeight: 0
-  bobSpeed: 0.65
-  spinSpeed: 0
-  collectEffect: {fileID: 0}
-  collectSound: {fileID: 0}
-  collected:
-    m_PersistentCalls:
-      m_Calls: []
+  battleScene: Battle_VoiChinNga
+  returnClearance: 2.5
 --- !u!135 &110367534
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -156766,7 +156759,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1657787609}
+  - {fileID: 1347587774}
   m_Father: {fileID: 110367532}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &649871272
@@ -317152,6 +317145,68 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5479967985554036895, guid: 5b0f1568669869047a7a124bd3c0dd48, type: 3}
   m_PrefabInstance: {fileID: 1346698131}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1347587773
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 649563037}
+    m_Modifications:
+    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1940549740565881776, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
+      propertyPath: m_Name
+      value: VoiChinNga_Model
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
+--- !u!4 &1347587774 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
+  m_PrefabInstance: {fileID: 1347587773}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1348073835
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -378582,68 +378637,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 8657211003174660626, guid: 4effbb598921d434f8a5485874752215, type: 3}
   m_PrefabInstance: {fileID: 1657753470}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &1657787608
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 649563037}
-    m_Modifications:
-    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1940549740565881776, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
-      propertyPath: m_Name
-      value: VoiChinNga_Model
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
---- !u!4 &1657787609 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71, type: 3}
-  m_PrefabInstance: {fileID: 1657787608}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1659099570
 PrefabInstance:

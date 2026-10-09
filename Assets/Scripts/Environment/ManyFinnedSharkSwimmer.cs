@@ -8,7 +8,7 @@ namespace SonTinhThuyTinh.Environment
     {
         [SerializeField] Transform visual;
         [SerializeField] Material sharkMaterial;
-        [SerializeField, Min(0.1f)] float sharkScale = 3f;
+        [SerializeField, Min(0.1f)] float sharkScale = 4.5f;
         [SerializeField, Min(0.1f)] float swimSpeed = 2.4f;
         [SerializeField, Min(1f)] float patrolRadiusX = 2.5f;
         [SerializeField, Min(1f)] float patrolRadiusZ = 3.5f;

@@ -87,7 +87,7 @@ namespace SonTinhThuyTinh.EditorTools
         // Entry point used by command-line validation/setup.
         public static void SetupAndPlaceBatch() => SetupAndPlace();
 
-        static void SetupAndPlaceAdditive()
+        public static void SetupAndPlaceAdditive()
         {
             Scene scene = SceneManager.GetSceneByPath(ScenePath);
             bool wasAlreadyOpen = scene.IsValid() && scene.isLoaded;
@@ -126,16 +126,28 @@ namespace SonTinhThuyTinh.EditorTools
             if (gift == null) throw new FileNotFoundException("Map 9 Vay gift asset was not found.", GiftPath);
 
             GiftPickup giftPickup = pickup.GetComponent<GiftPickup>();
-            if (giftPickup == null) throw new InvalidOperationException(PickupName + " has no GiftPickup component.");
-            var pickupObject = new SerializedObject(giftPickup);
-            Transform oldVisual = pickupObject.FindProperty("visual").objectReferenceValue as Transform;
-            pickupObject.FindProperty("gift").objectReferenceValue = gift;
-            pickupObject.FindProperty("visual").objectReferenceValue = null;
-            pickupObject.FindProperty("bobHeight").floatValue = 0f;
-            pickupObject.FindProperty("spinSpeed").floatValue = 0f;
-            pickupObject.ApplyModifiedPropertiesWithoutUndo();
+            Transform oldVisual = null;
+            if (giftPickup != null)
+            {
+                var pickupObject = new SerializedObject(giftPickup);
+                oldVisual = pickupObject.FindProperty("visual").objectReferenceValue as Transform;
+                UnityEngine.Object.DestroyImmediate(giftPickup);
+            }
             if (oldVisual != null && oldVisual.parent == pickup)
                 UnityEngine.Object.DestroyImmediate(oldVisual.gameObject);
+
+            ManyFinnedSharkEncounterTrigger encounter = pickup.GetComponent<ManyFinnedSharkEncounterTrigger>();
+            if (encounter == null) encounter = pickup.gameObject.AddComponent<ManyFinnedSharkEncounterTrigger>();
+            var encounterObject = new SerializedObject(encounter);
+            encounterObject.FindProperty("gift").objectReferenceValue = gift;
+            encounterObject.FindProperty("battleScene").stringValue = SceneNames.ManyFinnedSharkBattle;
+            encounterObject.FindProperty("returnClearance").floatValue = 2.5f;
+            encounterObject.ApplyModifiedPropertiesWithoutUndo();
+
+            SphereCollider trigger = pickup.GetComponent<SphereCollider>();
+            if (trigger == null) trigger = pickup.gameObject.AddComponent<SphereCollider>();
+            trigger.isTrigger = true;
+            trigger.radius = 2.8f;
 
             Transform oldGiftShark = pickup.Find(SharkName) ?? pickup.Find(OldSharkName);
             if (oldGiftShark != null) UnityEngine.Object.DestroyImmediate(oldGiftShark.gameObject);
@@ -324,7 +336,7 @@ namespace SonTinhThuyTinh.EditorTools
             model.name = "Model";
             model.transform.SetParent(root.transform, false);
             model.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-            model.transform.localScale = Vector3.one * 3f;
+            model.transform.localScale = Vector3.one * 4.5f;
 
             foreach (Renderer modelRenderer in model.GetComponentsInChildren<Renderer>(true))
             {
@@ -343,7 +355,7 @@ namespace SonTinhThuyTinh.EditorTools
             var serializedSwimmer = new SerializedObject(swimmer);
             serializedSwimmer.FindProperty("visual").objectReferenceValue = model.transform;
             serializedSwimmer.FindProperty("sharkMaterial").objectReferenceValue = material;
-            serializedSwimmer.FindProperty("sharkScale").floatValue = 3f;
+            serializedSwimmer.FindProperty("sharkScale").floatValue = 4.5f;
             serializedSwimmer.FindProperty("swimSpeed").floatValue = 2.4f;
             serializedSwimmer.FindProperty("patrolRadiusX").floatValue = 2.5f;
             serializedSwimmer.FindProperty("patrolRadiusZ").floatValue = 3.5f;

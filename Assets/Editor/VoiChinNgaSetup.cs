@@ -385,16 +385,18 @@ namespace SonTinhThuyTinh.EditorTools
                 visual.position += Vector3.up * (pickup.position.y - lowestPoint);
             }
 
+            // The elephant must no longer be collected merely by touching it. Replace the
+            // generic pickup with an encounter trigger; the arena awards this GiftItem on win.
+            GiftItem gift = AssetDatabase.LoadAssetAtPath<GiftItem>(GiftPath);
             GiftPickup giftPickup = pickup.GetComponent<GiftPickup>();
-            if (giftPickup != null)
-            {
-                var serializedPickup = new SerializedObject(giftPickup);
-                serializedPickup.FindProperty("visual").objectReferenceValue = visual;
-                serializedPickup.FindProperty("bobHeight").floatValue = 0f;
-                serializedPickup.FindProperty("bobSpeed").floatValue = 0.65f;
-                serializedPickup.FindProperty("spinSpeed").floatValue = 0f;
-                serializedPickup.ApplyModifiedPropertiesWithoutUndo();
-            }
+            if (giftPickup != null) UnityEngine.Object.DestroyImmediate(giftPickup);
+            VoiChinNgaEncounterTrigger encounter = pickup.GetComponent<VoiChinNgaEncounterTrigger>();
+            if (encounter == null) encounter = pickup.gameObject.AddComponent<VoiChinNgaEncounterTrigger>();
+            var serializedEncounter = new SerializedObject(encounter);
+            serializedEncounter.FindProperty("gift").objectReferenceValue = gift;
+            serializedEncounter.FindProperty("battleScene").stringValue = SonTinhThuyTinh.Flow.SceneNames.VoiChinNgaBattle;
+            serializedEncounter.FindProperty("returnClearance").floatValue = 2.5f;
+            serializedEncounter.ApplyModifiedPropertiesWithoutUndo();
 
             SphereCollider trigger = pickup.GetComponent<SphereCollider>();
             if (trigger != null)
