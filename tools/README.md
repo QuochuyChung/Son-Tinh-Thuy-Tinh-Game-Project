@@ -149,3 +149,23 @@ averaged). Used with the defaults:
   (`Assets/Editor/HorseBuilder.cs`). The grazing pose is searched, not guessed: the neck is short, so the muzzle aims at the hay trough
   height (`gz`) with the neck joint under `gmax` degrees (aiming at the ground folded the head behind the mane).
 - Preview folder: `rest.png`, `clip_<name>.png` (key frames, side + three-quarter) and `stretch.txt`.
+
+## Quadruped boss with a fan of tails — Sấu Chín Đuôi
+
+`rig_sau.py <gray_generate.fbx> <textured.fbx> <out_skinned.fbx> <preview_dir> [blend=<abs path>]` (09/10), same recipe as `rig_ngua.py`:
+
+    blender -b --python tools/rig_sau.py -- ArtSource/Meshy/SauChinDuoi/sau_generate.fbx ArtSource/Meshy/SauChinDuoi/sau_mesh.fbx ArtSource/Rig/SauChinDuoi/sau_skinned.fbx <preview_dir> blend=<abs path>/ArtSource/Rig/SauChinDuoi/sau_rig.blend
+
+Then copy `sau_skinned.fbx` to `Assets/Art/Characters/SauChinDuoi/sau_chin_duoi.fbx` and run `Build Sau Chin Duoi (boss model)` + `Build Thuy Tinh Map`
+(batch: `unity run . -- -executeMethod SonTinhThuyTinh.EditorTools.SauChinDuoiBuilder.BuildAllBatch -sauShots <dir>`).
+
+- 56 bones: body chain, jaw (the mouth is modelled open; the lower jaw is cut by height below the mouth gap), four sprawled legs (the toes spread
+  far from the foot bone, so everything near the ground goes to the nearest leg), nine tails. The tails are found by k-means on the angle of
+  the fan's vertices round a hub; the hub is the least-squares meeting point of the nine tail axes. Each fan vertex follows only its own tail.
+- Each tail: `Tail<k>A`, `Tail<k>B` keyed in the clips, then `Tail_<k>_0/1` for OutfitSpringBones (it overwrites anything a clip writes on
+  its chains, so keyed and spring bones must have different names).
+- Poses are written in world axes and converted to each bone's local rotation (`wq` / `set_pose`): +pitch tips a forward bone down and a
+  standing tail forward, +yaw turns to +X, roll about Y opens or closes the fan. The tail hub sits low behind the hips, so the slam opens the
+  fan down to the ground all round instead of bringing the tails forward (that passes through the back).
+- Stretch (`stretch.txt`): legs ≤ 3.1 (Walk), jaw corner up to 9.7 (Roar, mouth wide), tail root up to 13.6 (TailSlam, the nine roots meet in
+  one small hub). Preview: `rest.png`, `weights.png`, `clip_<name>.png`.

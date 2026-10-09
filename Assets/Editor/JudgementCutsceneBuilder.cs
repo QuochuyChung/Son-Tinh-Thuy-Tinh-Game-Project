@@ -178,8 +178,8 @@ namespace SonTinhThuyTinh.EditorTools
                 var lines = new (string speaker, string text, Sprite pic, Cue cue)[]
                 {
                     ("", "Sáng sớm hôm sau, trước sân rồng thành Phong Châu, cả triều đình nín thở. Hai chàng trai đã đứng chờ, lễ vật bày đủ sau lưng.", null, C(Shot.Wide, KingAction.Idle, MnAction.Idle)),
-                    (King, "Hôm qua ta đã nói: voi chín ngà, gà chín cựa, ngựa chín hồng mao. Ai mang đủ đến trước, người ấy được rước Mị Nương.", null, C(Shot.King, KingAction.Talk, MnAction.Shy)),
-                    (me, $"Muôn tâu bệ hạ, thần là {me}. Voi chín ngà, gà chín cựa, ngựa chín hồng mao, thần đã tìm đủ, xin dâng lên bệ hạ.", null, C(Shot.Player, KingAction.Idle)),
+                    (King, "Hôm qua ta đã nói: ai mang đủ sính lễ đến trước, người ấy được rước Mị Nương.", null, C(Shot.King, KingAction.Talk, MnAction.Shy)),
+                    (me, $"Muôn tâu bệ hạ, thần là {me}. Sính lễ bệ hạ đòi, thần đã tìm đủ, xin dâng lên bệ hạ.", null, C(Shot.Player, KingAction.Idle)),
                     (rival, $"Thần là {rival}. Lễ vật của thần cũng đã bày đủ trước sân rồng, chẳng thiếu một món.", null, C(Shot.Opponent)),
                     (King, "Lạ thay... Hai người cùng đến một lúc, lễ vật như nhau, chẳng ai kém ai.", null, C(Shot.Suitors, KingAction.Talk)),
                     (MiNuong, "Phụ vương... con xin nghe theo lời cha định đoạt.", miNuong, C(mnShot, KingAction.Idle, MnAction.Talk)),
