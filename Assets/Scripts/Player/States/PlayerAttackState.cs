@@ -119,7 +119,7 @@ namespace SonTinhThuyTinh.Player.States
                 away.y = 0f;
                 away = away.sqrMagnitude > 0.01f ? away.normalized : t.forward;
 
-                var info = new DamageInfo(data.damage, player.gameObject, point, data.heavy);
+                var info = new DamageInfo(data.damage, player.gameObject, point, data.heavy, isNormalAttack: true);
                 if (!target.TakeDamage(info)) continue;
 
                 target.GetComponentInParent<IHitReceiver>()?.OnHit(info, away * data.knockback + Vector3.up * data.knockUp);

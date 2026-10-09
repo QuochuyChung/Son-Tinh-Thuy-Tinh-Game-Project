@@ -235,7 +235,7 @@ namespace SonTinhThuyTinh.EditorTools
             waterRoot.transform.SetParent(root, false);
             waterTransform = waterRoot.transform;
 
-            Material waterMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/Art/Maps/ThuyTinh/Mat_WaterWorks.mat");
+            Material waterMat = ThuyTinhMapBuilder.WaterMaterial();   // WaterWorks when imported, else Simple water (never the magenta copy)
             if (waterMat == null) waterMat = AssetDatabase.LoadAssetAtPath<Material>("Assets/Art/Maps/SonTinh/Mat_Pool.mat");
             if (waterMat == null) waterMat = MapDecor.Lit("Mat_Water_Fallback", new Color(0.12f, 0.42f, 0.52f, 0.8f), 0.1f, 0.95f);
 

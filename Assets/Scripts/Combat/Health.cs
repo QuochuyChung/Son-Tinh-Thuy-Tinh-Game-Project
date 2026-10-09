@@ -16,6 +16,8 @@ namespace SonTinhThuyTinh.Combat
         public event Action<float, float> Changed;
         public event Action<DamageInfo> Damaged;
         public event Action<DamageInfo> Died;
+        // Asked before a hit is taken: true = the hit is blocked (no damage, TakeDamage returns false so the attacker skips its effects).
+        public Func<DamageInfo, bool> Guard;
 
         void Awake() => Current = max;
 
@@ -23,6 +25,7 @@ namespace SonTinhThuyTinh.Combat
         public bool TakeDamage(DamageInfo damage)
         {
             if (IsDead || IsInvulnerable || damage.Amount <= 0f) return false;
+            if (Guard != null && Guard(damage)) return false;
 
             Current = Mathf.Max(0f, Current - damage.Amount);
             Changed?.Invoke(Current, max);

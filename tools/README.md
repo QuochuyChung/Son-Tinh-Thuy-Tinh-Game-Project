@@ -169,3 +169,18 @@ Then copy `sau_skinned.fbx` to `Assets/Art/Characters/SauChinDuoi/sau_chin_duoi.
   fan down to the ground all round instead of bringing the tails forward (that passes through the back).
 - Stretch (`stretch.txt`): legs ≤ 3.1 (Walk), jaw corner up to 9.7 (Roar, mouth wide), tail root up to 13.6 (TailSlam, the nine roots meet in
   one small hub). Preview: `rest.png`, `weights.png`, `clip_<name>.png`.
+
+## Mixamo-rigged NPC with a separate textured mesh — Ninja
+
+`skin_ninja.py <mixamo_clip.fbx> <textured.fbx> <out_skinned.fbx> <preview_dir>` (09/10): the Mixamo download already carries the rig and the
+untextured mesh; the Meshy textured mesh gets each vertex's weights from the nearest Mixamo vertex (they differ by one merged vertex), and
+armature + `Ninja_Body` are exported in bind pose for `NpcBuilder` (Humanoid). The clips stay in their own Mixamo files.
+
+    blender -b --python tools/skin_ninja.py -- ArtSource/Mixamo/Ninja/ninja_sword_and_shield_idle.fbx ArtSource/Meshy/Ninja/ninja_mesh.fbx ArtSource/Rig/Ninja/ninja_skinned.fbx <preview_dir>
+
+`pose_ninja_hold.py <mixamo_idle.fbx> <out_clip.fbx> <preview_dir>`: a clip Mixamo does not have (holding the rooster): the Idle with its arm
+curves removed and the arms aimed every frame by world direction (`aim`: turns a pose bone so head->tail points along a vector), exported like
+a Mixamo clip so Unity imports it with its own avatar.
+
+Gotchas: `AnimationMode` (edit-mode sampling for check images) undoes hierarchy changes made before sampling, and edit mode cannot reparent
+inside a prefab instance: unpack the instance and reparent after `EndSampling` (otherwise every "sword in hand" picture shows it on the back).

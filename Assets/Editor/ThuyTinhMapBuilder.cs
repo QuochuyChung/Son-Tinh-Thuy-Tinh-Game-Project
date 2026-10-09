@@ -18,7 +18,7 @@ namespace SonTinhThuyTinh.EditorTools
     // it guards (Minh châu đáy vực, Quest_SinhLe_ThuyTinh): the three walk-in pickups of the Sơn Tinh gifts are switched off here.
     // Same recipe as SonTinhMapBuilder (copy of Sandbox_Combat plus generated terrain, props, lighting, exit), with water instead of mountains.
     // Needs the Asset Store packs from docs/progress.md 9.6.
-    public static class ThuyTinhMapBuilder
+    public static partial class ThuyTinhMapBuilder
     {
         const string ScenePath = "Assets/Scenes/Map_ThuyTinh.unity";
         const string SandboxPath = "Assets/Scenes/Sandbox_Combat.unity";
@@ -83,6 +83,7 @@ namespace SonTinhThuyTinh.EditorTools
             BuildExit(root);
             SetupGiftPickups();
             BuildBoss(root);
+            Dress(terrain);
             BuildMapHud();
 
             RegisterScene();
@@ -237,11 +238,11 @@ namespace SonTinhThuyTinh.EditorTools
         static Material EnsureWaterWorksMaterial()
         {
             const string path = DataDir + "/Mat_WaterWorks.mat";
+            var sample = AssetDatabase.LoadAssetAtPath<Material>(WaterWorksMaterial);
+            if (sample == null) return null;   // the pack is not imported (our copy would render magenta: no shader)
             var material = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (material == null)
             {
-                var sample = AssetDatabase.LoadAssetAtPath<Material>(WaterWorksMaterial);
-                if (sample == null) return null;
                 Directory.CreateDirectory(DataDir);
                 material = new Material(sample);
                 AssetDatabase.CreateAsset(material, path);
@@ -285,8 +286,7 @@ namespace SonTinhThuyTinh.EditorTools
             plane.transform.localScale = new Vector3(Width / 10f * 1.2f, 1f, Length / 10f * 1.2f);
             Object.DestroyImmediate(plane.GetComponent<Collider>());   // water is only a surface, nothing to stand on
             var renderer = plane.GetComponent<MeshRenderer>();
-            Material material = preferWaterWorks ? EnsureWaterWorksMaterial() : null;
-            if (material == null) material = EnsureWaterMaterial();
+            Material material = preferWaterWorks ? WaterMaterial() : EnsureWaterMaterial();
             if (material != null) renderer.sharedMaterial = material;
             renderer.shadowCastingMode = ShadowCastingMode.Off;
             renderer.receiveShadows = false;
