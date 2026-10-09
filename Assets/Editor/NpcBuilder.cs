@@ -242,7 +242,7 @@ namespace SonTinhThuyTinh.EditorTools
             Object.DestroyImmediate(root);
         }
 
-        static Mesh SkinToWorld(SkinnedMeshRenderer smr)
+        internal static Mesh SkinToWorld(SkinnedMeshRenderer smr)
         {
             Mesh src = smr.sharedMesh;
             Matrix4x4[] bind = src.bindposes;

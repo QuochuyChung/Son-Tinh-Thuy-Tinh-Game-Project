@@ -12,8 +12,10 @@ using static SonTinhThuyTinh.EditorTools.SonTinhMapBuilder;
 
 namespace SonTinhThuyTinh.EditorTools
 {
-    // Builds Assets/Scenes/Map_ThuyTinh.unity: a causeway winding through a marsh, ~200 m long, with three gift stops (docs/progress.md 8.3):
-    // a river crossing on a raft of floating logs (horse), an island in the middle of a lake (rooster) and a flooded shrine (elephant).
+    // Builds Assets/Scenes/Map_ThuyTinh.unity: a causeway winding through a marsh, ~200 m long, with three landmarks (docs/progress.md 8.3):
+    // a river crossing on a raft of floating logs, an island in the middle of a deep lake and a flooded shrine. Since 09/10 the island is the
+    // arena of Sấu Chín Đuôi, the nine-tailed crocodile (SauChinDuoiBuilder, docs/task-sau-chin-duoi.md), and this map's only gift is the pearl
+    // it guards (Minh châu đáy vực, Quest_SinhLe_ThuyTinh): the three walk-in pickups of the Sơn Tinh gifts are switched off here.
     // Same recipe as SonTinhMapBuilder (copy of Sandbox_Combat plus generated terrain, props, lighting, exit), with water instead of mountains.
     // Needs the Asset Store packs from docs/progress.md 9.6.
     public static class ThuyTinhMapBuilder
@@ -32,7 +34,9 @@ namespace SonTinhThuyTinh.EditorTools
         const float ValleyHalfWidth = 30f;                        // the marsh spreads this far on each side of the path before the walls start
         const float WaterY = 2.4f;                                // water surface; the path stays about 0.75 m above it
         const float ChannelStart = 62f, ChannelEnd = 82f;         // the river crossing
-        static readonly float[] StopZ = { 92f, 175f, 252f };      // bank beyond the raft (horse), island (rooster), flooded shrine (elephant)
+        static readonly float[] StopZ = { 92f, 175f, 252f };      // bank beyond the raft, the crocodile's island, flooded shrine
+        const float IslandRadius = 16f;                           // flat dry top of the island (the arena); the shore slopes down to 19.5 m
+        const float ArenaRadius = 14.5f;                          // how far from the centre the crocodile may go
         // z along the path, lateral offset (negative = left), radius of the dry islet. Each carries a stilt house or a cluster of stones.
         static readonly Vector3[] Bays = { new(40f, -30f, 9f), new(135f, 32f, 9f), new(215f, -31f, 9f) };
 
@@ -78,6 +82,7 @@ namespace SonTinhThuyTinh.EditorTools
             BuildTheme(root);
             BuildExit(root);
             SetupGiftPickups();
+            BuildBoss(root);
             BuildMapHud();
 
             RegisterScene();
@@ -111,8 +116,8 @@ namespace SonTinhThuyTinh.EditorTools
             // marsh floor: deeper around the island, with grassy hummocks away from the path, the crossing and the stops
             float crossing = Smooth(ChannelStart - 12f, ChannelStart - 4f, z) * (1f - Smooth(ChannelEnd + 4f, ChannelEnd + 12f, z));
             float hummock = Smooth(0.52f, 0.72f, Mathf.PerlinNoise(x * 0.05f + 20f, z * 0.05f + 40f)) * 2.7f
-                          * Smooth(7f, 11f, d) * Smooth(18f, 26f, r1) * Smooth(16f, 24f, r2) * (1f - crossing);
-            float floor = WaterY - 1.5f + 0.25f * n1 - 0.6f * (1f - Smooth(14f, 30f, r1)) + hummock;
+                          * Smooth(7f, 11f, d) * Smooth(26f, 34f, r1) * Smooth(16f, 24f, r2) * (1f - crossing);
+            float floor = WaterY - 1.5f + 0.25f * n1 - 0.9f * (1f - Smooth(22f, 38f, r1)) + hummock;   // the deep lake round the island
 
             float pathHeight = WaterY + 0.75f + 0.1f * n1;
             float h = Mathf.Lerp(pathHeight, floor, Smooth(3f, 8f, d));
@@ -121,7 +126,7 @@ namespace SonTinhThuyTinh.EditorTools
             float channel = Smooth(ChannelStart - 6f, ChannelStart + 4f, z) * (1f - Smooth(ChannelEnd - 4f, ChannelEnd + 6f, z));
             h = Mathf.Lerp(h, Mathf.Min(h, WaterY - 1.7f), channel);
 
-            h = Mathf.Max(h, WaterY + 0.8f - 3.8f * Smooth(10.5f, 14f, r1));   // the island
+            h = Mathf.Max(h, WaterY + 0.8f - 3.8f * Smooth(IslandRadius, IslandRadius + 3.5f, r1));   // the island (the crocodile's arena)
             h = Mathf.Lerp(h, WaterY - 0.55f, 1f - Smooth(10f, 16f, r2));      // the flooded shrine, knee deep
 
             // dry islets in the marsh, and the walls step back around them
@@ -349,7 +354,7 @@ namespace SonTinhThuyTinh.EditorTools
             bool crossing = z > ChannelStart - 10f && z < StopZ[0] + 8f && Mathf.Abs(x - PathX(z)) < 24f + extra;
             for (int i = 0; i < Bays.Length; i++)
                 if (Vector2.Distance(p, Bay(i)) < Bays[i].z + 3f + extra) return true;
-            return crossing || Vector2.Distance(p, Stop(1)) < 17f + extra || Vector2.Distance(p, Stop(2)) < 17f + extra
+            return crossing || Vector2.Distance(p, Stop(1)) < IslandRadius + 7f + extra || Vector2.Distance(p, Stop(2)) < 17f + extra
                 || (z > PathEnd - 8f && z < PathEnd + 8f && Mathf.Abs(x - PathX(z)) < 12f + extra);
         }
 
@@ -443,17 +448,8 @@ namespace SonTinhThuyTinh.EditorTools
                 PlaceWithTop(rock, p.x, p.y, StandingTop(p.x, p.y, 6.5f), R(0f, 360f), new Vector3(2.4f, 6.5f, 2.4f), group);
             }
 
-            // 2: the island, a ring of boulders with the causeway entering and leaving
-            Vector2 s1 = Stop(1), t1 = Tangent(StopZ[1]);
-            for (int i = 0; i < 20; i++)
-            {
-                float a = i * 18f * Mathf.Deg2Rad;
-                Vector2 dir = new(Mathf.Sin(a), Mathf.Cos(a));
-                if (Mathf.Abs(Vector2.Dot(dir, t1)) > Mathf.Cos(30f * Mathf.Deg2Rad)) continue;
-                Vector2 p = s1 + dir * 9.5f;
-                float s = R(3.5f, 5.2f);
-                Place(rock, new Vector3(p.x, GroundHeight(p.x, p.y) - 0.5f, p.y), R(0f, 360f), new Vector3(s, s * R(0.8f, 1.1f), s), group, false);
-            }
+            // 2: the crocodile's island, a ring of boulders on its shore with the causeway entering and leaving, and a gap on the lair side
+            BuildIsland(group, rock);
 
             // 3: the flooded shrine, a slab with four pillars and two gate stones
             Vector2 s2 = Stop(2), t2 = Tangent(StopZ[2]), side2 = new(t2.y, -t2.x);
@@ -486,9 +482,14 @@ namespace SonTinhThuyTinh.EditorTools
                 MapDecor.Torch(decor, Beside(ChannelEnd + 7f, side * 3.2f));
                 MapDecor.Torch(decor, Beside(PathEnd - 4f, side * 5.2f));
             }
-            foreach (float dz in new[] { -6f, 6f })
-                foreach (float side in new[] { -1f, 1f })
-                    MapDecor.Torch(decor, Ground(PathX(StopZ[1] + dz) + side * 5f, StopZ[1] + dz));
+            // four torches round the arena, at the diagonals (clear of the causeway and of the lair)
+            Vector2 c1 = Stop(1), t1 = Tangent(StopZ[1]), n1 = new(t1.y, -t1.x);
+            foreach (float a in new[] { 45f, 135f, 225f, 315f })
+            {
+                Vector2 dir = t1 * Mathf.Cos(a * Mathf.Deg2Rad) + n1 * Mathf.Sin(a * Mathf.Deg2Rad);
+                Vector2 p = c1 + dir * (IslandRadius - 0.8f);
+                MapDecor.Torch(decor, Ground(p.x, p.y));
+            }
 
             BuildBays(decor);
             BuildBridges(decor);
@@ -623,7 +624,7 @@ namespace SonTinhThuyTinh.EditorTools
             var trigger = gate.gameObject.AddComponent<SceneTransitionTrigger>();
             var so = new SerializedObject(trigger);
             so.FindProperty("sceneName").stringValue = SceneNames.PalaceMap;   // the plateau of King Hung's palace (PalaceMapBuilder)
-            so.FindProperty("requiredQuest").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GiftQuest>("Assets/Data/Gifts/Quest_SinhLe.asset");
+            so.FindProperty("requiredQuest").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GiftQuest>(SauChinDuoiBuilder.QuestPath);
             so.ApplyModifiedProperties();
 
             MapDecor.Gate(root, center - Vector3.up * 0.3f, Mathf.Atan2(tangent.x, tangent.z) * Mathf.Rad2Deg, 8f, new Color(0.10f, 0.45f, 0.55f));
@@ -636,6 +637,62 @@ namespace SonTinhThuyTinh.EditorTools
             }
         }
 
+        // ---------------------------------------------------------------- the crocodile's island
+
+        // Lair side of the island: the deep water away from the waterfall at z 185 (which falls on the +x side).
+        static Vector2 LairSide() { Vector2 t = Tangent(StopZ[1]); return -new Vector2(t.y, -t.x); }
+
+        static void BuildIsland(Transform group, GameObject rock)
+        {
+            Vector2 c = Stop(1), t = Tangent(StopZ[1]), lair = LairSide();
+            Transform island = Group(group, "CrocodileIsland");
+            // boulders round the shore, open where the causeway comes in and goes out and towards the lair (the crocodile climbs out there)
+            for (int i = 0; i < 30; i++)
+            {
+                float a = i * 12f * Mathf.Deg2Rad;
+                Vector2 dir = new(Mathf.Sin(a), Mathf.Cos(a));
+                if (Mathf.Abs(Vector2.Dot(dir, t)) > Mathf.Cos(24f * Mathf.Deg2Rad) || Vector2.Dot(dir, lair) > Mathf.Cos(28f * Mathf.Deg2Rad)) continue;
+                Vector2 p = c + dir * (IslandRadius + 0.9f);   // on the rim: further out the shore drops under the water
+                float s = R(3.6f, 5.6f);
+                Place(rock, new Vector3(p.x, GroundHeight(p.x, p.y) - 0.4f, p.y), R(0f, 360f), new Vector3(s, s * R(0.8f, 1.2f), s), island, false);
+            }
+            // two tall stones either side of the lair gap, like a gate the crocodile comes through, and pale-blue crystals (the pearl's
+            // glow) at their feet
+            Vector2 side = new(lair.y, -lair.x);
+            foreach (float sign in new[] { -1f, 1f })
+            {
+                Vector2 p = c + lair * (IslandRadius - 0.5f) + side * sign * 6.5f;
+                PlaceWithTop(rock, p.x, p.y, StandingTop(p.x, p.y, 9f), R(0f, 360f), new Vector3(2.6f, 9f, 2.6f), island);
+                Vector2 q = c + lair * (IslandRadius - 2.6f) + side * sign * 4.6f;
+                MapDecor.Crystals(island, Ground(q.x, q.y) - Vector3.up * 0.05f, 6, new Color(0.45f, 0.75f, 1f), 1.2f);
+            }
+            // reeds standing in the shallows round the island, a few stones on its rim
+            GameObject grass = Load("P_fwOF_Grass_M_1.prefab"), stone = Load("P_fwOF_Stone_01.prefab");
+            for (int i = 0; i < 70 && grass != null; i++)
+            {
+                float a = R(0f, 360f) * Mathf.Deg2Rad, r = R(IslandRadius + 4f, IslandRadius + 13f);
+                Vector2 p = c + new Vector2(Mathf.Sin(a), Mathf.Cos(a)) * r;
+                if (Mathf.Abs(Vector2.Dot((p - c).normalized, t)) > 0.85f) continue;
+                Place(grass, new Vector3(p.x, GroundHeight(p.x, p.y), p.y), R(0f, 360f), Vector3.one * R(2.4f, 3.6f), island, true);
+            }
+            for (int i = 0; i < 18 && stone != null; i++)
+            {
+                float a = R(0f, 360f) * Mathf.Deg2Rad;
+                Vector2 p = c + new Vector2(Mathf.Sin(a), Mathf.Cos(a)) * R(IslandRadius - 1.2f, IslandRadius + 0.5f);
+                if (Mathf.Abs(Vector2.Dot((p - c).normalized, t)) > 0.9f) continue;
+                Place(stone, new Vector3(p.x, GroundHeight(p.x, p.y), p.y), R(0f, 360f), Vector3.one * R(1.2f, 2.2f), island, true);
+            }
+            MapDecor.Fireflies(island, Ground(c.x, c.y) + Vector3.up * 2f, new Vector3(30f, 3f, 30f), new Color(0.6f, 0.95f, 1f));
+        }
+
+        static void BuildBoss(Transform root)
+        {
+            Vector2 c = Stop(1), t = Tangent(StopZ[1]), lair = LairSide();
+            SauChinDuoiBuilder.BuildArena(root, Ground(c.x, c.y), new Vector3(t.x, 0f, t.y), new Vector3(lair.x, 0f, lair.y), WaterY, ArenaRadius);
+        }
+
+        // The three Sơn Tinh gifts' walk-in pickups that came with the copy of Sandbox_Combat are switched off: on this map the only gift is
+        // the crocodile's pearl, given when it is beaten.
         static void SetupGiftPickups()
         {
             GameObject container = GameObject.Find("GiftPickups (test)");
@@ -649,6 +706,7 @@ namespace SonTinhThuyTinh.EditorTools
                 Transform pickup = container.transform.Find(names[i]);
                 if (pickup == null) { Debug.LogWarning("Missing " + names[i]); continue; }
 
+                pickup.gameObject.SetActive(false);
                 Vector2 s = Stop(i);
                 float y = i == 2 ? slabTop : GroundHeight(s.x, s.y);
                 pickup.position = new Vector3(s.x, y, s.y);
@@ -682,9 +740,7 @@ namespace SonTinhThuyTinh.EditorTools
             static GiftItem Gift(string name) => AssetDatabase.LoadAssetAtPath<GiftItem>("Assets/Data/Gifts/Gift_" + name + ".asset");
             MapHudBuilder.Build("THỦY TINH  ·  ĐƯỜNG THỦY", new Color(0.25f, 0.82f, 1f), WorldMapLayout.ThuyTinh, new[]
             {
-                (Gift("NguaChinHongMao"), Stop(0)),
-                (Gift("GaChinCua"), Stop(1)),
-                (Gift("VoiChinNga"), Stop(2)),
+                (Gift("MinhChauDayVuc"), Stop(1)),   // the crocodile's island
             });
         }
 

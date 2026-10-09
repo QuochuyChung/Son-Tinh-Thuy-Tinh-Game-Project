@@ -33,6 +33,14 @@ namespace SonTinhThuyTinh.Quest
             GiftTracker.Notice -= ShowNotice;
         }
 
+        // The spawned character's own gift list (PlayerSpawner), in place of the one set in the scene.
+        public void SetQuest(GiftQuest characterQuest)
+        {
+            if (characterQuest == null) return;
+            quest = characterQuest;
+            if (isActiveAndEnabled) Refresh();
+        }
+
         void ShowNotice(string message)
         {
             if (bannerRoutine != null) StopCoroutine(bannerRoutine);
