@@ -1,6 +1,7 @@
 using SonTinhThuyTinh.Characters;
 using SonTinhThuyTinh.Combat;
 using SonTinhThuyTinh.Flow;
+using SonTinhThuyTinh.UI;
 using UnityEngine;
 
 namespace SonTinhThuyTinh.Combat
@@ -17,12 +18,15 @@ namespace SonTinhThuyTinh.Combat
         [SerializeField] Transform bossSpawnPoint;
         [SerializeField] FinalBattleArenaManager arenaManager;
         [SerializeField] float bossMaxHealth = 500f;
+        [Tooltip("Boss health bar at the top of the screen; built by Assets/Editor/FinalBattleBossBarBuilder.cs.")]
+        [SerializeField] BossHealthBar bar;
 
         [Header("Runtime State")]
         [SerializeField] CharacterId activeBossId;
         [SerializeField] Health bossHealth;
         [SerializeField] GameObject bossInstance;
         [SerializeField] BossAI bossAi;
+        [SerializeField] bool phase2Entered;
 
         public CharacterId ActiveBossId => activeBossId;
         public Health BossHealth => bossHealth;
@@ -34,6 +38,8 @@ namespace SonTinhThuyTinh.Combat
 
         public void SpawnBoss()
         {
+            UnbindHealth();
+
             if (bossInstance != null)
                 Destroy(bossInstance);
 
@@ -75,6 +81,29 @@ namespace SonTinhThuyTinh.Combat
             bossAi.Begin(spawner != null && spawner.Player != null ? spawner.Player.transform : null);
 
             bossHealth.Damaged += OnBossDamaged;
+            bossHealth.Died += OnBossDied;
+
+            // Show the boss bar for this fight: both phase dots lit, full HP.
+            phase2Entered = false;
+            if (bar != null)
+            {
+                bar.Bind(bossHealth, bossDef.DisplayName);
+                bar.Show(true);
+            }
+        }
+
+        void UnbindHealth()
+        {
+            if (bossHealth == null) return;
+            bossHealth.Damaged -= OnBossDamaged;
+            bossHealth.Died -= OnBossDied;
+            bossHealth = null;
+        }
+
+        void OnBossDied(DamageInfo info)
+        {
+            // Fight over: the bar just fades away through the existing Show(false) alpha tween.
+            if (bar != null) bar.Show(false);
         }
 
         void OnBossDamaged(DamageInfo info)
@@ -84,9 +113,15 @@ namespace SonTinhThuyTinh.Combat
                 : (bossInstance != null ? bossInstance.transform.position : transform.position) + Vector3.up * 3f,
                 Mathf.RoundToInt(info.Amount).ToString(), info.IsHeavy ? new Color(1f, 0.55f, 0.2f) : Color.white);
 
-            if (arenaManager != null && !arenaManager.IsPhase2Active && bossHealth != null)
+            if (!phase2Entered && bossHealth != null && bossHealth.Current <= bossHealth.Max * 0.5f)
             {
-                if (bossHealth.Current <= bossHealth.Max * 0.5f)
+                // Single 50% crossing: flip the bar (dot 1 grays, fill goes purple, "Cuồng nộ")
+                // and put the AI into phase 2 in the same moment the arena env reacts.
+                phase2Entered = true;
+                if (bar != null) bar.SetPhase2(true);
+                if (bossAi != null) bossAi.SetPhase(2);
+
+                if (arenaManager != null && !arenaManager.IsPhase2Active)
                 {
                     ArenaBossType type = (activeBossId == CharacterId.ThuyTinh)
                         ? ArenaBossType.ThuyTinh
@@ -98,8 +133,7 @@ namespace SonTinhThuyTinh.Combat
 
         void OnDestroy()
         {
-            if (bossHealth != null)
-                bossHealth.Damaged -= OnBossDamaged;
+            UnbindHealth();
         }
     }
 }
