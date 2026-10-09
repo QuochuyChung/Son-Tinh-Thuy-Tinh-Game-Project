@@ -18,7 +18,6 @@ namespace SonTinhThuyTinh.Combat
         public float Current { get; private set; }
         public float Max => max;
         public bool IsExhausted => Time.time < exhaustedUntil;
-        public float RegenMultiplier { get; set; } = 1f;
 
         public event Action<float, float> Changed;
         public event Action Exhausted;
@@ -48,7 +47,7 @@ namespace SonTinhThuyTinh.Combat
         {
             if (Current >= max || Time.time < regenBlockedUntil) return;
 
-            Current = Mathf.Min(max, Current + regenPerSecond * RegenMultiplier * Time.deltaTime);
+            Current = Mathf.Min(max, Current + regenPerSecond * Time.deltaTime);
             Changed?.Invoke(Current, max);
         }
     }
