@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 9176130151006239417}
   - component: {fileID: 8660803594350561352}
   - component: {fileID: 8243714584150594544}
+  - component: {fileID: 1483029571064823772}
   m_Layer: 0
   m_Name: Player_ThuyTinh_v2
   m_TagString: Untagged
@@ -961,3 +962,23 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1576296019405764318, guid: 98932d403fdd33c429d6b520818e4d6c, type: 3}
   m_PrefabInstance: {fileID: 7791323792563616600}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1483029571064823772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4653189492081580265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 203e42b842714e03957d4a0444aa4461, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.BossAI
+  target: {fileID: 0}
+  stopDistance: 1.9
+  sprintDistance: 8
+  attackRange: 2.6
+  attackInterval: 0.15
+  spellMinRange: 4
+  spellMaxRange: 12
+  spellGate: 3
