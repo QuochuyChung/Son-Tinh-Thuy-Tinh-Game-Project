@@ -10,9 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0150af9b7511ec942a27b9d2f3a361c7, type: 3}
-  m_Name: Gift_VoiChinNga
+  m_Name: Gift_Map9Vay
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Quest.GiftItem
-  displayName: "Voi ch\xEDn ng\xE0"
-  description: "Voi qu\xFD c\xF3 ch\xEDn chi\u1EBFc ng\xE0, s\xEDnh l\u1EC5 H\xF9ng
-    V\u01B0\u01A1ng \u0111\xF2i."
-  icon: {fileID: 21300000, guid: c2f5c736f54a7774f817dbcd27bec9d7, type: 3}
+  displayName: "M\u1EADp 9 V\xE2y"
+  description: "C\xE1 m\u1EADp th\u1EA7n c\xF3 ch\xEDn chi\u1EBFc v\xE2y, canh gi\u1EEF v\xF9ng n\u01B0\u1EDBc c\u1EE7a Th\u1EE7y Tinh."
+  icon: {fileID: 0}

@@ -72,6 +72,9 @@ namespace SonTinhThuyTinh.Flow
         {
             instance = null;
             IsLoading = false;
+            // Enter Play Mode can preserve static/runtime state when domain reload is disabled.
+            // Never let a previous paused gameplay session freeze the opening menu.
+            Time.timeScale = 1f;
         }
     }
 }

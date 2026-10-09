@@ -2,7 +2,8 @@ using UnityEngine;
 
 namespace SonTinhThuyTinh.Quest
 {
-    // One sính lễ (voi chín ngà, gà chín cựa, ngựa chín hồng mao). Both characters' branches use the same assets.
+    // One collectible offered as a sính lễ. Most gifts are shared by both branches;
+    // Thủy Tinh's first stop uses Mập 9 Vây instead of Ngựa chín hồng mao.
     [CreateAssetMenu(menuName = "Son Tinh Thuy Tinh/Gift Item", fileName = "Gift_")]
     public class GiftItem : ScriptableObject
     {

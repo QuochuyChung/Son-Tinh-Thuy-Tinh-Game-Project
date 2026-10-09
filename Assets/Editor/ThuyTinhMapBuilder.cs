@@ -13,7 +13,7 @@ using static SonTinhThuyTinh.EditorTools.SonTinhMapBuilder;
 namespace SonTinhThuyTinh.EditorTools
 {
     // Builds Assets/Scenes/Map_ThuyTinh.unity: a causeway winding through a marsh, ~200 m long, with three gift stops (docs/progress.md 8.3):
-    // a river crossing on a raft of floating logs (horse), an island in the middle of a lake (rooster) and a flooded shrine (elephant).
+    // a river crossing guarded by Map 9 Vay, an island in the middle of a lake (rooster) and a flooded shrine (elephant).
     // Same recipe as SonTinhMapBuilder (copy of Sandbox_Combat plus generated terrain, props, lighting, exit), with water instead of mountains.
     // Needs the Asset Store packs from docs/progress.md 9.6.
     public static class ThuyTinhMapBuilder
@@ -32,7 +32,7 @@ namespace SonTinhThuyTinh.EditorTools
         const float ValleyHalfWidth = 30f;                        // the marsh spreads this far on each side of the path before the walls start
         const float WaterY = 2.4f;                                // water surface; the path stays about 0.75 m above it
         const float ChannelStart = 62f, ChannelEnd = 82f;         // the river crossing
-        static readonly float[] StopZ = { 92f, 175f, 252f };      // bank beyond the raft (horse), island (rooster), flooded shrine (elephant)
+        static readonly float[] StopZ = { 92f, 175f, 252f };      // bank beyond the raft (Map 9 Vay), island (rooster), flooded shrine (elephant)
         // z along the path, lateral offset (negative = left), radius of the dry islet. Each carries a stilt house or a cluster of stones.
         static readonly Vector3[] Bays = { new(40f, -30f, 9f), new(135f, 32f, 9f), new(215f, -31f, 9f) };
 
@@ -78,6 +78,7 @@ namespace SonTinhThuyTinh.EditorTools
             BuildTheme(root);
             BuildExit(root);
             SetupGiftPickups();
+            ManyFinnedSharkSetup.AddToMap(root);
             BuildMapHud();
 
             RegisterScene();
@@ -623,7 +624,7 @@ namespace SonTinhThuyTinh.EditorTools
             var trigger = gate.gameObject.AddComponent<SceneTransitionTrigger>();
             var so = new SerializedObject(trigger);
             so.FindProperty("sceneName").stringValue = SceneNames.PalaceMap;   // the plateau of King Hung's palace (PalaceMapBuilder)
-            so.FindProperty("requiredQuest").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GiftQuest>("Assets/Data/Gifts/Quest_SinhLe.asset");
+            so.FindProperty("requiredQuest").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GiftQuest>("Assets/Data/Gifts/Quest_SinhLe_ThuyTinh.asset");
             so.ApplyModifiedProperties();
 
             MapDecor.Gate(root, center - Vector3.up * 0.3f, Mathf.Atan2(tangent.x, tangent.z) * Mathf.Rad2Deg, 8f, new Color(0.10f, 0.45f, 0.55f));
@@ -643,7 +644,10 @@ namespace SonTinhThuyTinh.EditorTools
             if (container == null) { Debug.LogWarning("No GiftPickups object in the scene."); return; }
             container.name = "GiftPickups";
 
-            string[] names = { "Pickup_NguaChinHongMao", "Pickup_GaChinCua", "Pickup_VoiChinNga" };
+            Transform firstPickup = container.transform.Find("Pickup_Map9Vay") ?? container.transform.Find("Pickup_NguaChinHongMao");
+            if (firstPickup != null) firstPickup.name = "Pickup_Map9Vay";
+
+            string[] names = { "Pickup_Map9Vay", "Pickup_GaChinCua", "Pickup_VoiChinNga" };
             for (int i = 0; i < names.Length; i++)
             {
                 Transform pickup = container.transform.Find(names[i]);
@@ -682,7 +686,7 @@ namespace SonTinhThuyTinh.EditorTools
             static GiftItem Gift(string name) => AssetDatabase.LoadAssetAtPath<GiftItem>("Assets/Data/Gifts/Gift_" + name + ".asset");
             MapHudBuilder.Build("THỦY TINH  ·  ĐƯỜNG THỦY", new Color(0.25f, 0.82f, 1f), WorldMapLayout.ThuyTinh, new[]
             {
-                (Gift("NguaChinHongMao"), Stop(0)),
+                (Gift("Map9Vay"), Stop(0)),
                 (Gift("GaChinCua"), Stop(1)),
                 (Gift("VoiChinNga"), Stop(2)),
             });
