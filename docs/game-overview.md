@@ -28,10 +28,13 @@ Ending theo kết quả trận đấu
 - **Kết thúc không cố định theo truyền thuyết gốc** — ai thắng trận đấu, người đó được Mị Nương. Có 2 đoạn epilogue khác nhau tùy kết quả, để cả 2 lựa chọn nhân vật đều công bằng với người chơi.
 
 ### Trận đánh cuối — chi tiết đã chốt
+> Chi tiết đầy đủ (trục môi trường Đất↔Nước, HP boss 3 đoạn, skill, phase, checklist asset, implementation): **[docs/scenes/final-battle-design.md](scenes/final-battle-design.md)**
+
 - Combat theo phong cách Black Myth Wukong: combo đòn thường/mạnh, dodge, lock-on target, hit reaction
 - VFX tương phản 2 nguyên tố: đất/đá (Sơn Tinh) vs nước (Thủy Tinh) — điểm nhấn thị giác chính
 - Đây là scene được đầu tư polish nhiều nhất (lighting, camera cinematic, VFX) thay vì dàn trải đều cho cả game
-- Gợi ý (chưa chốt): cơ chế môi trường động theo đúng truyền thuyết — nước dâng dần / địa hình núi cao lên theo thời gian trận đấu, thay vì arena tĩnh
+- **Cơ chế lõi (rev 2.2)**: môi trường **luân phiên** nước↔đất theo truyền thuyết — chuỗi đòn liên tiếp dâng env phe mình, **bị trúng trừ -1 env**; lợi thế env = **tốc độ + hồi stamina** cho phe env đó (**đất dâng = lợi Sơn Tinh / hại Thủy Tinh; nước dâng = lợi Thủy Tinh / hại Sơn Tinh** — không buff dmg, bảng tường minh ở §3.3 tài liệu trên); **boss có HP 3 đoạn** (không còn thanh nộ): hết 1 đoạn → đổi phase + **hồi đầy HP** + env lật về bất lợi người chơi + **đếm ngược ~60s giành lại env**, hết đoạn 3 → boss cạn kiệt → finisher. Thua: hết HP người chơi **hoặc** hết giờ giành lại env. **Đã cắt adds + đê (29/09)**: trận cuối = 1v1 thuần; ult Sơn Tinh = **Hùm Voi Báo** (bỏ Giáp, §5.2)
+- Các skill nguyên tố riêng của trận cuối (E/R/F) **không dùng ở nhánh sính lễ** — nhánh giữ nguyên skill cơ bản (xem §9 tài liệu trên)
 
 ### Combat spec — đã chốt (Phase 1)
 
@@ -39,6 +42,7 @@ Ending theo kết quả trận đấu
 - **Đòn thường** (light attack): combo 3 hit, đòn cuối gây stagger nhẹ
 - **Đòn mạnh** (heavy attack): chậm hơn, không nối combo với đòn thường, nhưng phá giáp (poise break) — dùng để ngắt đòn boss
 - **Dodge/né**: có i-frame ngắn. Không làm parry (parry thật khó tune, dễ bug với animation không chuyên game action)
+- *Bổ sung riêng cho trận đánh cuối (chỉ enable trong scene boss):* **E** — kỹ nhanh, **R** — kỹ dịch/đột biến, **F** — Đại Pháp (ultimate: **Hùm Voi Báo** với Sơn Tinh / **Hà Bá Giận** với Thủy Tinh) — xem `docs/scenes/final-battle-design.md` §4
 
 **Resource — Stamina:** dùng chung cho đòn đánh và dodge; hết stamina → "vulnerable" 1-2s. Rẻ để code (1 float + cooldown) nhưng tạo cảm giác risk/reward kiểu Soulslike/Wukong.
 
@@ -49,9 +53,10 @@ Ending theo kết quả trận đấu
 **State machine dùng chung (player + boss):** Idle → Attack → Dodge → Hit → Stagger → Die.
 
 **Boss (nhân vật đối lập) — 2-3 phase:**
-- Phase 1 (100%→50% HP): 2-3 pattern cận chiến cơ bản, dễ đọc
-- Phase 2 (50%→20% HP): thêm 1 đòn AoE/telegraph dài + cơ chế môi trường động kích hoạt (nước dâng dần nếu đấu Thủy Tinh, đá/địa hình dâng cao nếu đấu Sơn Tinh) — chủ yếu VFX + 1 timer, ít code nhưng là "money shot" hình ảnh
-- Phase 3 (dưới 20%, optional nếu kịp thời gian): tăng tốc độ đòn hiện có, không thêm pattern mới
+- *Amend rev 2.2 (29/09): boss **dùng HP 3 đoạn** (đã bỏ thanh nộ) — hết 1 đoạn HP = đổi phase + **hồi đầy HP** + môi trường lật về bất lợi người chơi; hết đoạn 3 = finisher (chi tiết: `docs/scenes/final-battle-design.md` §3.4/§6)*
+- Phase 1 (mở trận): 2-3 pattern cận chiến cơ bản, dễ đọc; môi trường trung lập, người chơi kéo env về phía mình
+- Phase 2 (hết đoạn HP 1, hồi đầy): thêm 1 đòn AoE/telegraph dài + **môi trường lật về phía boss** (nước dâng nếu đấu Thủy Tinh, đá/địa hình dâng cao nếu đấu Sơn Tinh) — "money shot" hình ảnh
+- Phase 3 (hết đoạn HP 2, hồi đầy, optional nếu kịp thời gian): tăng tốc độ đòn hiện có, không thêm pattern mới; hết đoạn HP 3 → boss cạn kiệt → finisher
 
 ### Gameplay nhánh sính lễ — đã chốt (Phase 1)
 
@@ -69,12 +74,15 @@ Về code: 2 map dùng chung 1 hệ thống pickup/quest tracker (ScriptableObje
 - Hình dạng: đấu trường tròn/bát giác, đường kính ~25-30m, lòng chảo trũng nhẹ kiểu "đàn tế" (colosseum-style) để camera lock-on luôn đọc rõ ranh giới sàn đấu
 - Vào trận: player + boss bước vào từ cầu/bậc thang nối tiếp cutscene phán xử Hùng Vương, đứng 2 đầu đối diện
 - Rìa đấu trường: cột đá gãy xen lẫn vũng nước cạn (motif trung lập, gợi "đất lẫn nước" — đúng tinh thần đàn tế phân xử), rìa ngoài cùng là vực/tường vô hình chặn ra ngoài map
-- Phase 1 (100→50% HP): sàn đấu khô, rải rác đá vụn (chỉ là prop cản tầm nhìn nhẹ, không cần collision phức tạp)
-- Phase 2 (50→20% HP, trigger môi trường động, đúng nguyên tố **của boss** — tức nhân vật đối lập người chơi đang đánh):
-  - Đấu với **Thủy Tinh** → nước dâng dần từ rìa vào giữa trong ~10-15s, thu hẹp ~30% diện tích sàn đấu, buộc 2 bên dồn vào giữa
-  - Đấu với **Sơn Tinh** → cột đá trồi lên từ nền tạo địa hình nhiều tầng, buộc phải né/leo giữa các bệ đá cao thấp
-  - Chỉ cần 1 animation/VFX timeline + thu hẹp NavMesh — không cần logic phức tạp, đây là "money shot" hình ảnh chính
-- Phase 3 (optional, <20%): không đổi địa hình thêm, chỉ tăng tốc đòn + rung màn hình/VFX bão
+- **Bối cảnh (rev 2.3)**: đàn tế nằm giữa **đồng bằng ngập lũ** mênh mông (canon *"nước ngập lúa, ngập đồng rồi ngập nhà"*); **quyết đấu tại đàn tế = adaptation** — truyền thuyết gốc không có quyết đấu (Hùng Vương chỉ phán sính lễ), game cho vua cho phép quyết đấu để bảo vệ dân — chi tiết xem [final-battle-design.md](scenes/final-battle-design.md) §13.1
+- **Giới hạn di chuyển (rev 2.3)**: player + boss **chỉ trong arena** r ≈ 14–15m, **Thủy Tinh không lặn ra ngoài** (nước sâu = backdrop, không swim) — §13.4
+- Phase 1: sàn đấu khô, rải rác đá vụn (chỉ là prop cản tầm nhìn nhẹ, không cần collision phức tạp)
+- Phase đổi theo **HP boss (3 đoạn, hết là hồi đầy — amend rev 2.2)**; mỗi lần đổi phase, timeline môi trường chạy lại:
+  - P2 (hết đoạn HP 1): đúng nguyên tố **của boss** — tức nhân vật đối lập người chơi đang đánh:
+    - Đấu với **Thủy Tinh** → nước dâng dần từ rìa vào giữa trong ~10-15s, thu hẹp ~30% diện tích sàn đấu, buộc 2 bên dồn vào giữa
+    - Đấu với **Sơn Tinh** → cột đá trồi lên từ nền tạo địa hình nhiều tầng, buộc phải né/leo giữa các bệ đá cao thấp
+    - Chỉ cần 1 animation/VFX timeline + thu hẹp NavMesh — không cần logic phức tạp, đây là "money shot" hình ảnh chính
+  - P3 (hết đoạn HP 2): không đổi địa hình thêm, chỉ tăng tốc đòn + rung màn hình/VFX bão
 
 ### Layout 2 map nhánh sính lễ — đã chốt (Phase 1)
 

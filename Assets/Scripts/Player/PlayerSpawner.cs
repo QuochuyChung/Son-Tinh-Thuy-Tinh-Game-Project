@@ -35,10 +35,14 @@ namespace SonTinhThuyTinh.Player
         [SerializeField] DebugHUD debugHud;
 
         public PlayerController Player { get; private set; }
+        // Which suitor actually spawned (after the character-select fallback), and the roster to look rivals up in.
+        public CharacterId Character { get; private set; }
+        public CharacterRoster Roster => roster;
 
         void Awake()
         {
             CharacterId id = GameSession.SelectedCharacter ?? fallbackCharacter;
+            Character = id;
             CharacterDefinition character = roster.Get(id);
 
             Transform start = transform;

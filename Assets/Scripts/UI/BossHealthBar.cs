@@ -5,8 +5,10 @@ using UnityEngine.UI;
 
 namespace SonTinhThuyTinh.UI
 {
-    // The boss bar at the top of the screen: name, a long health bar with a slow orange trail after each hit (like GameplayHUD) and a
-    // mark at half health where phase 2 starts. Layout made by Assets/Editor/SauChinDuoiBuilder.cs; the boss calls Bind / Show / SetPhase2.
+    // The boss bar at the top of the screen: name, a long health bar with a slow orange trail after each hit (like GameplayHUD), a
+    // mark at half health where phase 2 starts, and two phase dots under the bar. Both dots are lit from the start; when the bar
+    // depletes to the phase-2 threshold the first dot turns gray (color only — never hidden) and phase 2 begins.
+    // Layout made by Assets/Editor/FinalBattleBossBarBuilder.cs; the boss calls Bind / Show / SetPhase2.
     public class BossHealthBar : MonoBehaviour
     {
         [SerializeField] CanvasGroup group;
@@ -14,6 +16,12 @@ namespace SonTinhThuyTinh.UI
         [SerializeField] Image trail;
         [SerializeField] TMP_Text nameLabel;
         [SerializeField] TMP_Text phaseLabel;
+        [Tooltip("Dot for phase 1. Turns gray (stays visible) once phase 2 starts.")]
+        [SerializeField] Image phaseDot1;
+        [Tooltip("Dot for phase 2. Stays lit through phase 2.")]
+        [SerializeField] Image phaseDot2;
+        [SerializeField] Color dotLitColor = new(0.95f, 0.85f, 0.35f);
+        [SerializeField] Color dotDoneColor = new(0.35f, 0.35f, 0.35f);
         [SerializeField] Color phase1Color = new(0.80f, 0.16f, 0.12f);
         [SerializeField] Color phase2Color = new(0.55f, 0.10f, 0.55f);
         [SerializeField] float fillSmoothing = 10f;
@@ -43,6 +51,9 @@ namespace SonTinhThuyTinh.UI
         {
             if (fill != null) fill.color = on ? phase2Color : phase1Color;
             if (phaseLabel != null) phaseLabel.text = on ? "Cuồng nộ" : "";
+            // Phase 1 done: its dot dims but stays on screen; phase 2's dot stays lit.
+            if (phaseDot1 != null) phaseDot1.color = on ? dotDoneColor : dotLitColor;
+            if (phaseDot2 != null) phaseDot2.color = dotLitColor;
         }
 
         void Awake()

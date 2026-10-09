@@ -64,6 +64,9 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
+# Unity hidden scratch folder (test screenshots/scripts, ~ hides it from Unity)
+/[Aa]ssets/[Tt]emp~/
+
 # Generated solution file (new Visual Studio .slnx format) and Python bytecode from tools/
 *.slnx
 __pycache__/
@@ -84,3 +87,4 @@ __pycache__/
 
 # Meshy downloads come as zips next to their unzipped copy: keep only the unzipped files (docs/progress.md 9.5)
 /ArtSource/Meshy/*.zip
+
