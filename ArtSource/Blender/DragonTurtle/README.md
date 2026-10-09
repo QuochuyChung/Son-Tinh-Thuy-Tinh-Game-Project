@@ -8,6 +8,8 @@ Nguồn Meshy ban đầu là một mesh đơn, chưa có armature. Thư mục n�
 - `DragonTurtle_Rigged_Animated.blend`: file Blender chính, gồm mesh, custom armature, skin weights và các Action.
 - `DragonTurtle_Animated.fbx`: bản xuất dành cho Unity, chứa skinned mesh, armature và cả ba animation clip.
 
+Mesh đang dùng trong hai file rig/animated được tạo lại từ `ArtSource/Meshy/NineLeggedTurtle/NineLeggedTurtle_Textured.fbx`, vì vậy giữ đúng UV và bộ texture PBR của bản Meshy có màu.
+
 ## Animation clips
 
 | Action | Frame | Loại | Mô tả |
@@ -37,4 +39,5 @@ Trong tab **Animation** của `DragonTurtle_Animated.fbx`, Unity sẽ nhận ba 
 
 - `rig_and_animate_dragon_turtle.py`: tạo armature, skin weights, Action, lưu `.blend` và xuất FBX.
 - `render_animation_previews.py`: render hình kiểm tra các clip.
+- `render_textured_preview.py`: render kiểm tra UV và màu từ material Meshy.
 - `Previews/DragonTurtle_Move.png`, `DragonTurtle_Attack.png`, `DragonTurtle_Defeated.png`: key pose đã được render bằng Blender để kiểm tra nhanh.

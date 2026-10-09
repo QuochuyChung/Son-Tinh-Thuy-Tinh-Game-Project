@@ -16,6 +16,11 @@ namespace SonTinhThuyTinh.EditorTools
     {
         const string ScenePath = "Assets/Scenes/Map_ThuyTinh.unity";
         const string FbxPath = "Assets/Art/Characters/NineLeggedTurtle/NineLeggedTurtle_Animated.fbx";
+        const string TextureDirectory = "Assets/Art/Characters/NineLeggedTurtle/Textures";
+        const string BaseColorPath = TextureDirectory + "/NineLeggedTurtle_BaseColor.png";
+        const string NormalPath = TextureDirectory + "/NineLeggedTurtle_Normal.png";
+        const string MetallicPath = TextureDirectory + "/NineLeggedTurtle_Metallic.png";
+        const string RoughnessPath = TextureDirectory + "/NineLeggedTurtle_Roughness.png";
         const string MaterialDirectory = "Assets/Art/Characters/NineLeggedTurtle/Materials";
         const string MaterialPath = MaterialDirectory + "/M_NineLeggedTurtle.mat";
         const string AnimationDirectory = "Assets/Animations/NineLeggedTurtle";
@@ -57,6 +62,12 @@ namespace SonTinhThuyTinh.EditorTools
         public static void SetupAndPlaceBatch()
         {
             SetupAndPlace();
+            EditorApplication.Exit(0);
+        }
+
+        public static void EnsureAssetsBatch()
+        {
+            EnsureAssets();
             EditorApplication.Exit(0);
         }
 
@@ -115,10 +126,15 @@ namespace SonTinhThuyTinh.EditorTools
         public static GameObject EnsureAssets()
         {
             EnsureFolder(MaterialDirectory);
+            EnsureFolder(TextureDirectory);
             EnsureFolder(AnimationDirectory);
             EnsureFolder("Assets/Prefabs/Characters");
             EnsureFolder("Assets/Resources");
             ConfigureModelImporter();
+            ConfigureTextureImporter(BaseColorPath, false, true);
+            ConfigureTextureImporter(NormalPath, true, false);
+            ConfigureTextureImporter(MetallicPath, false, false);
+            ConfigureTextureImporter(RoughnessPath, false, false);
             GiftItem gift = EnsureGift();
             Material material = EnsureMaterial();
             RuntimeAnimatorController controller = EnsureController();
@@ -171,6 +187,18 @@ namespace SonTinhThuyTinh.EditorTools
             return gift;
         }
 
+        static void ConfigureTextureImporter(string path, bool normalMap, bool sRgb)
+        {
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.ForceUpdate);
+            TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (importer == null) throw new FileNotFoundException("Turtle texture was not found.", path);
+            importer.textureType = normalMap ? TextureImporterType.NormalMap : TextureImporterType.Default;
+            importer.sRGBTexture = sRgb;
+            importer.maxTextureSize = 2048;
+            importer.textureCompression = TextureImporterCompression.CompressedHQ;
+            importer.SaveAndReimport();
+        }
+
         static Material EnsureMaterial()
         {
             Material material = AssetDatabase.LoadAssetAtPath<Material>(MaterialPath);
@@ -182,10 +210,28 @@ namespace SonTinhThuyTinh.EditorTools
             }
             else material.shader = shader;
 
-            Color shell = new(0.16f, 0.34f, 0.25f, 1f);
-            material.color = shell;
-            if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", shell);
-            if (material.HasProperty("_Metallic")) material.SetFloat("_Metallic", 0.08f);
+            Texture2D baseColor = AssetDatabase.LoadAssetAtPath<Texture2D>(BaseColorPath);
+            Texture2D normal = AssetDatabase.LoadAssetAtPath<Texture2D>(NormalPath);
+            Texture2D metallic = AssetDatabase.LoadAssetAtPath<Texture2D>(MetallicPath);
+            if (baseColor == null || normal == null || metallic == null)
+                throw new InvalidOperationException("Nine-legged turtle textures were not imported correctly.");
+
+            material.color = Color.white;
+            if (material.HasProperty("_BaseColor")) material.SetColor("_BaseColor", Color.white);
+            if (material.HasProperty("_BaseMap")) material.SetTexture("_BaseMap", baseColor);
+            if (material.HasProperty("_MainTex")) material.SetTexture("_MainTex", baseColor);
+            if (material.HasProperty("_BumpMap"))
+            {
+                material.SetTexture("_BumpMap", normal);
+                material.SetFloat("_BumpScale", 1f);
+                material.EnableKeyword("_NORMALMAP");
+            }
+            if (material.HasProperty("_MetallicGlossMap"))
+            {
+                material.SetTexture("_MetallicGlossMap", metallic);
+                material.EnableKeyword("_METALLICSPECGLOSSMAP");
+            }
+            if (material.HasProperty("_Metallic")) material.SetFloat("_Metallic", 1f);
             if (material.HasProperty("_Smoothness")) material.SetFloat("_Smoothness", 0.38f);
             EditorUtility.SetDirty(material);
             return material;

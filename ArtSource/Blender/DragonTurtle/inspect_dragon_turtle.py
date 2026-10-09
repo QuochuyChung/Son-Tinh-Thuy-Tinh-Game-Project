@@ -32,6 +32,8 @@ for obj in bpy.context.scene.objects:
                 "world_min": [round(v, 6) for v in lo],
                 "world_max": [round(v, 6) for v in hi],
                 "vertex_groups": [group.name for group in obj.vertex_groups],
+                "uv_layers": [layer.name for layer in obj.data.uv_layers],
+                "materials": [material.name if material else None for material in obj.data.materials],
             })
     elif obj.type == "ARMATURE":
         item["bones"] = [bone.name for bone in obj.data.bones]
