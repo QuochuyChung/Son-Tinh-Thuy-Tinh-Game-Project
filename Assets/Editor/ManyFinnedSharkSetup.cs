@@ -109,7 +109,7 @@ namespace SonTinhThuyTinh.EditorTools
 
         public static void AddToMap(Transform generatedRoot)
         {
-            GameObject prefab = EnsureAssets();
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath) ?? EnsureAssets();
             Scene scene = generatedRoot.gameObject.scene;
             Transform pickupContainer = scene.GetRootGameObjects()
                 .SelectMany(root => root.GetComponentsInChildren<Transform>(true))
@@ -122,6 +122,7 @@ namespace SonTinhThuyTinh.EditorTools
                 throw new InvalidOperationException("Map_ThuyTinh has no first gift pickup to replace.");
 
             pickup.name = PickupName;
+            pickup.gameObject.SetActive(true);
             GiftItem gift = AssetDatabase.LoadAssetAtPath<GiftItem>(GiftPath);
             if (gift == null) throw new FileNotFoundException("Map 9 Vay gift asset was not found.", GiftPath);
 

@@ -48,9 +48,27 @@ namespace SonTinhThuyTinh.UI.Map
             toggle.AddBinding("<Keyboard>/m");
             toggle.AddBinding("<Gamepad>/select");
 
+            EnsureGiftPinImages();
             SetPanelVisible(false);
             if (minimapButton != null) minimapButton.onClick.AddListener(Open);
             if (closeButton != null) closeButton.onClick.AddListener(Close);
+        }
+
+        void EnsureGiftPinImages()
+        {
+            int required = route != null && route.GiftPins != null ? route.GiftPins.Count : 0;
+            int current = giftPins != null ? giftPins.Length : 0;
+            if (required <= current || current == 0 || giftPins[0] == null) return;
+
+            Image template = giftPins[0];
+            var expanded = new Image[required];
+            for (int i = 0; i < current; i++) expanded[i] = giftPins[i];
+            for (int i = current; i < required; i++)
+            {
+                expanded[i] = Instantiate(template, template.transform.parent);
+                expanded[i].name = "Pin_" + i;
+            }
+            giftPins = expanded;
         }
 
         void OnEnable() => toggle.Enable();
