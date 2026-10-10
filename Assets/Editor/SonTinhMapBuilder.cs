@@ -29,8 +29,10 @@ namespace SonTinhThuyTinh.EditorTools
         // Terrain covers x -Width/2..Width/2 and z ZMin..ZMin+Length; the walkable path runs from z = 0 to PathEnd.
         // The valley is ValleyHalfWidth wide on each side of the path before the walls start; "bays" are side pockets where the walls
         // step back to make room for a village, a stone circle and a grove.
-        const float Width = 220f, Length = 370f, Height = 60f, ZMin = -25f;
-        const int HeightRes = 1025, AlphaRes = 512;
+        // The terrain runs from XMin (west, the mountain trail of SonTinhMountainBranch) to XMax; the valley itself is x -110..110.
+        internal const float XMin = -320f, XMax = 110f;
+        const float Width = XMax - XMin, Length = 370f, Height = 70f, ZMin = -25f;
+        const int HeightRes = 1025, AlphaRes = 1024;
         const float PathEnd = 295f;
         const float WallHeight = 24f;
         const float ValleyHalfWidth = 30f;
@@ -38,7 +40,9 @@ namespace SonTinhThuyTinh.EditorTools
         internal const float ClimbStart = 262f, ClimbEnd = 292f, ClimbHeight = 7f;
         internal static readonly float[] StopZ = { 85f, 175f, 250f };   // horse (traversal), rooster (arena), elephant (altar)
         // z along the path, lateral offset from the path (negative = left), radius of the flat floor
-        internal static readonly Vector3[] Bays = { new(45f, -36f, 12f), new(130f, 38f, 11f), new(212f, -37f, 12f) };   // village, stone circle, grove
+        // village, stone circle, grove, and the elephant arena: a flat round floor 38 m across at the foot of the last stop (index 3, ElephantBay)
+        internal static readonly Vector3[] Bays = { new(45f, -36f, 12f), new(130f, 38f, 11f), new(212f, -37f, 12f), new(235f, 42f, 19f) };
+        internal const int ElephantBay = 3;
 
         internal static System.Random rng;
         static float slabTop;   // world height of the altar slab at the third stop, measured after it is placed
@@ -59,6 +63,7 @@ namespace SonTinhThuyTinh.EditorTools
             DestroyByName("DebugHUD");
             DestroyByName(GeneratedRoot);
 
+            SonTinhMountainBranch.Reset();
             PlanPools();
             Terrain terrain = BuildTerrain();
             var root = new GameObject(GeneratedRoot).transform;
@@ -72,6 +77,8 @@ namespace SonTinhThuyTinh.EditorTools
             BuildStops(root);
             BuildTheme(root);
             BuildExit(root);
+            SonTinhMountainBranch.Build(root);
+            root.gameObject.AddComponent<SonTinhThuyTinh.Environment.TerrainFloorGuard>();   // never stay under the ground
             SetupGiftPickups();
             BuildMapHud();
             SonTinhMapDressing.Dress(terrain);
@@ -136,7 +143,10 @@ namespace SonTinhThuyTinh.EditorTools
         // Direction of the path (x, z) at height z, unit length.
         static Vector2 Tangent(float z) => new Vector2((PathX(z + 1f) - PathX(z - 1f)) / 2f, 1f).normalized;
 
-        internal static float GroundHeight(float x, float z)
+        internal static float GroundHeight(float x, float z) => SonTinhMountainBranch.Apply(x, z, BaseHeight(x, z));
+
+        // The valley without the mountain trail.
+        internal static float BaseHeight(float x, float z)
         {
             float d = Mathf.Abs(x - PathX(z));
             var p = new Vector2(x, z);
@@ -200,7 +210,7 @@ namespace SonTinhThuyTinh.EditorTools
             for (int j = 0; j < HeightRes; j++)
                 for (int i = 0; i < HeightRes; i++)
                 {
-                    float x = -Width * 0.5f + Width * i / (HeightRes - 1);
+                    float x = XMin + Width * i / (HeightRes - 1);
                     float z = ZMin + Length * j / (HeightRes - 1);
                     heights[j, i] = Mathf.Clamp01(GroundHeight(x, z) / Height);
                 }
@@ -223,7 +233,7 @@ namespace SonTinhThuyTinh.EditorTools
             }
             terrain.terrainData = data;
             terrain.GetComponent<TerrainCollider>().terrainData = data;
-            terrain.transform.position = new Vector3(-Width * 0.5f, 0f, ZMin);
+            terrain.transform.position = new Vector3(XMin, 0f, ZMin);
             terrain.heightmapPixelError = 4f;
             terrain.basemapDistance = 400f;
             EditorUtility.SetDirty(data);
@@ -247,7 +257,7 @@ namespace SonTinhThuyTinh.EditorTools
                 for (int x = 0; x < res; x++)
                 {
                     float u = (x + 0.5f) / res, v = (y + 0.5f) / res;
-                    float wx = -Width * 0.5f + u * Width, wz = ZMin + v * Length;
+                    float wx = XMin + u * Width, wz = ZMin + v * Length;
                     var p = new Vector2(wx, wz);
                     float d = Mathf.Abs(wx - PathX(wz));
                     float slope = data.GetSteepness(u, v);
@@ -257,6 +267,8 @@ namespace SonTinhThuyTinh.EditorTools
                     soil = Mathf.Max(soil, (1f - Smooth(4f, 7f, Vector2.Distance(p, Stop(2)))) * 0.8f);
                     soil = Mathf.Max(soil, (1f - Smooth(6f, 9f, Vector2.Distance(p, Bay(0)))) * 0.75f);   // the village yard
                     soil = Mathf.Max(soil, (1f - Smooth(3f, 6f, Vector2.Distance(p, Bay(1)))) * 0.75f);   // inside the stone circle
+                    soil = Mathf.Max(soil, (1f - Smooth(13f, 17f, Vector2.Distance(p, Bay(ElephantBay)))) * 0.8f);   // the elephant arena
+                    soil = Mathf.Max(soil, SonTinhMountainBranch.TrailMask(wx, wz));   // the mountain trail
                     float rock = Smooth(28f, 44f, slope);
                     float moss = Smooth(0.5f, 0.72f, Mathf.PerlinNoise(wx * 0.06f + 3f, wz * 0.06f + 9f)) * Smooth(7f, 14f, d) * (1f - rock);
                     soil *= 1f - rock;
@@ -350,6 +362,7 @@ namespace SonTinhThuyTinh.EditorTools
             var p = new Vector2(x, z);
             for (int i = 0; i < Bays.Length; i++)
                 if (Vector2.Distance(p, Bay(i)) < Bays[i].z + 2f + extra) return true;
+            if (SonTinhMountainBranch.NearTrail(x, z, extra)) return true;
             return Vector2.Distance(p, Stop(0)) < 8f + extra || Vector2.Distance(p, Stop(1)) < 15f + extra
                 || Vector2.Distance(p, Stop(2)) < 12f + extra || Vector2.Distance(p, LotusPondCentre) < LotusPondRadius + 3f + extra
                 || (z > PathEnd - 8f && z < PathEnd + 8f && Mathf.Abs(x - PathX(z)) < 12f + extra);
@@ -367,7 +380,7 @@ namespace SonTinhThuyTinh.EditorTools
             {
                 float z = R(-14f, PathEnd + 10f), x = PathX(z) + R(-58f, 58f);
                 float d = Mathf.Abs(x - PathX(z));
-                if (d < 6f || Mathf.Abs(x) > Width * 0.5f - 4f || InClearing(x, z, 2f)) continue;
+                if (d < 6f || x < XMin + 4f || x > XMax - 4f || InClearing(x, z, 2f)) continue;
                 var p = new Vector2(x, z);
                 if (placed.Exists(o => Vector2.Distance(o, p) < 9f)) continue;
                 placed.Add(p);
@@ -385,7 +398,7 @@ namespace SonTinhThuyTinh.EditorTools
             for (int i = 0; i < 400 && stone != null; i++)
             {
                 float z = R(-10f, PathEnd + 8f), x = PathX(z) + R(-34f, 34f);
-                if (Mathf.Abs(x - PathX(z)) < 1.2f) continue;
+                if (Mathf.Abs(x - PathX(z)) < 1.2f || SonTinhMountainBranch.NearTrail(x, z, 0f)) continue;
                 float s = R(1.5f, 4f);
                 Place(stone, Ground(x, z) - Vector3.up * 0.05f, R(0f, 360f), Vector3.one * s, small, true);
             }
@@ -400,13 +413,13 @@ namespace SonTinhThuyTinh.EditorTools
             for (int i = 0; i < 1400 && grass != null; i++)
             {
                 float z = R(-8f, PathEnd + 6f), x = PathX(z) + R(-26f, 26f);
-                if (Mathf.Abs(x - PathX(z)) < 1.8f) continue;
+                if (Mathf.Abs(x - PathX(z)) < 1.8f || SonTinhMountainBranch.NearTrail(x, z, 0f)) continue;
                 Place(grass, Ground(x, z), R(0f, 360f), Vector3.one * R(3.5f, 6f), small, true);
             }
             for (int i = 0; i < 480 && plant != null; i++)
             {
                 float z = R(-8f, PathEnd + 6f), x = PathX(z) + R(-30f, 30f);
-                if (Mathf.Abs(x - PathX(z)) < 2.2f) continue;
+                if (Mathf.Abs(x - PathX(z)) < 2.2f || SonTinhMountainBranch.NearTrail(x, z, 0f)) continue;
                 Place(plant, Ground(x, z), R(0f, 360f), Vector3.one * R(3f, 5.5f), small, true);
             }
         }
@@ -735,6 +748,65 @@ namespace SonTinhThuyTinh.EditorTools
             }
             foreach (Vector2 o in new[] { new Vector2(8f, 6f), new Vector2(-6f, -6f) })
                 MapDecor.Torch(group, Ground(grove.x + o.x, grove.y + o.y));
+
+            BuildElephantArena(group, rock, red, ochre);
+        }
+
+        // 3: the elephant arena. A ring of boulders round a flat floor, open towards the path (west), torches and banners inside,
+        // and three empty markers for the elephant boss that comes from another branch: ElephantArena (centre), ElephantSpawn (far side,
+        // facing the entrance) and ElephantPlayerEntry (inside the entrance, facing the centre).
+        static void BuildElephantArena(Transform group, GameObject rock, Color red, Color ochre)
+        {
+            Vector2 c = Bay(ElephantBay);
+            float radius = Bays[ElephantBay].z;
+            Vector2 toPath = (new Vector2(PathX(c.y), c.y) - c).normalized;   // from the arena towards the path
+            Transform arena = Group(group, "ElephantArenaProps");
+
+            if (rock != null)
+            {
+                for (int i = 0; i < 28; i++)
+                {
+                    float a = i * 360f / 28f * Mathf.Deg2Rad;
+                    Vector2 dir = new(Mathf.Sin(a), Mathf.Cos(a));
+                    if (Vector2.Dot(dir, toPath) > Mathf.Cos(34f * Mathf.Deg2Rad)) continue;   // the entrance
+                    Vector2 p = c + dir * (radius - 1.5f);
+                    float s = R(4.5f, 7f);
+                    Place(rock, Ground(p.x, p.y) - Vector3.up * 0.8f, R(0f, 360f), new Vector3(s, s * R(0.9f, 1.4f), s), arena, false);
+                }
+                // two tall standing stones at the entrance
+                Vector2 side = new(-toPath.y, toPath.x);
+                foreach (float sign in new[] { -1f, 1f })
+                {
+                    Vector2 p = c + toPath * (radius - 1f) + side * (sign * 7.5f);
+                    Place(rock, Ground(p.x, p.y) - Vector3.up * 0.5f, R(0f, 360f), new Vector3(3.4f, 10f, 3.4f), arena, false);
+                }
+            }
+
+            for (int i = 0; i < 6; i++)
+            {
+                float a = (i * 60f + 30f) * Mathf.Deg2Rad;
+                Vector2 p = c + new Vector2(Mathf.Sin(a), Mathf.Cos(a)) * (radius - 4.5f);
+                MapDecor.Torch(arena, Ground(p.x, p.y));
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                float a = (i * 90f + 135f) * Mathf.Deg2Rad;
+                Vector2 p = c + new Vector2(Mathf.Sin(a), Mathf.Cos(a)) * (radius - 3f);
+                MapDecor.Banner(arena, Ground(p.x, p.y), i * 90f, i % 2 == 0 ? red : ochre);
+            }
+            MapDecor.BronzeDrum(arena, Ground(c.x - toPath.x * 13f, c.y - toPath.y * 13f), 0f, 1.5f);
+
+            Marker(arena, "ElephantArena", Ground(c.x, c.y), toPath);
+            Vector2 spawn = c - toPath * (radius * 0.55f), entry = c + toPath * (radius * 0.75f);
+            Marker(arena, "ElephantSpawn", Ground(spawn.x, spawn.y), toPath);
+            Marker(arena, "ElephantPlayerEntry", Ground(entry.x, entry.y), -toPath);
+        }
+
+        static void Marker(Transform parent, string name, Vector3 position, Vector2 facing)
+        {
+            var t = new GameObject(name).transform;
+            t.SetParent(parent, false);
+            t.SetPositionAndRotation(position, Quaternion.LookRotation(new Vector3(facing.x, 0f, facing.y)));
         }
 
         static void PlaceHouse(Transform root, Transform decor, float z, float preferredSide)
@@ -776,11 +848,12 @@ namespace SonTinhThuyTinh.EditorTools
         static void BuildMapHud()
         {
             static GiftItem Gift(string name) => AssetDatabase.LoadAssetAtPath<GiftItem>("Assets/Data/Gifts/Gift_" + name + ".asset");
+            Vector3 summit = SonTinhMountainBranch.NodePosition(SonTinhMountainBranch.ISummit);
             MapHudBuilder.Build("SƠN TINH  ·  ĐƯỜNG NÚI", new Color(1f, 0.45f, 0.12f), WorldMapLayout.SonTinh, new[]
             {
-                (Gift("NguaChinHongMao"), Stop(0)),
+                (Gift("NguaChinHongMao"), new Vector2(summit.x, summit.z)),   // the summit of the mountain trail
                 (Gift("GaChinCua"), Stop(1)),
-                (Gift("VoiChinNga"), Stop(2)),
+                (Gift("VoiChinNga"), Bay(ElephantBay)),                        // the elephant arena
             });
         }
 

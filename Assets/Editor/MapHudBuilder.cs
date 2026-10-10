@@ -204,7 +204,7 @@ namespace SonTinhThuyTinh.EditorTools
             so.FindProperty("minimapImage").objectReferenceValue = picture;
             so.FindProperty("minimapArrow").objectReferenceValue = minimapArrow;
             so.FindProperty("minimapButton").objectReferenceValue = button;
-            so.FindProperty("minimapZoom").floatValue = 0.2f;
+            so.FindProperty("minimapZoom").floatValue = 0.15f;   // the picture is wider now (mountain trail), so a smaller share keeps the circle at the same scale
             so.FindProperty("panel").objectReferenceValue = group;
             so.FindProperty("closeButton").objectReferenceValue = closeButton;
             so.FindProperty("fullArrow").objectReferenceValue = fullArrow;
@@ -233,12 +233,12 @@ namespace SonTinhThuyTinh.EditorTools
         public static void ConfigurePicture()
         {
             var importer = (TextureImporter)AssetImporter.GetAtPath(MapTexturePath);
-            if (importer != null && (importer.mipmapEnabled || importer.wrapMode != TextureWrapMode.Clamp || importer.maxTextureSize < 2048 || importer.npotScale != TextureImporterNPOTScale.None))
+            if (importer != null && (importer.mipmapEnabled || importer.wrapMode != TextureWrapMode.Clamp || importer.maxTextureSize < 4096 || importer.npotScale != TextureImporterNPOTScale.None))
             {
                 importer.textureType = TextureImporterType.Default;
                 importer.mipmapEnabled = false;
                 importer.wrapMode = TextureWrapMode.Clamp;
-                importer.maxTextureSize = 2048;
+                importer.maxTextureSize = 4096;
                 importer.npotScale = TextureImporterNPOTScale.None;
                 importer.textureCompression = TextureImporterCompression.CompressedHQ;
                 importer.SaveAndReimport();

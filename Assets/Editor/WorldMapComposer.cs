@@ -36,12 +36,17 @@ namespace SonTinhThuyTinh.EditorTools
             Vector2 sonEnd, thuyEnd;
             using (new OpenScene(SonTinhScene))
             {
-                sonShot = CaptureRoute();
+                sonShot = Capture(new Vector2((WorldMapLayout.SonTinhEast - WorldMapLayout.SonTinhWest) * 0.5f, (WorldMapLayout.RouteZMin + WorldMapLayout.RouteZMax) * 0.5f),
+                    new Vector2(WorldMapLayout.SonTinhWest + WorldMapLayout.SonTinhEast, WorldMapLayout.RouteZMax - WorldMapLayout.RouteZMin));
                 Grade(sonShot, 0.40f, 1.25f);
                 sonEnd = Position("Exit_To_Next");
                 AddPlace(places, WorldMapLayout.SonTinh, "Rừng Rối", Position("Campfire"));
                 AddPlace(places, WorldMapLayout.SonTinh, "Khu rừng linh", Position("Crystals"));
                 AddPlace(places, WorldMapLayout.SonTinh, "Làng sơn cước", Average("StiltHouse", z => z < 80f));
+                AddPlace(places, WorldMapLayout.SonTinh, "Vực gãy", Position("Anchor_BeforePit"));
+                AddPlace(places, WorldMapLayout.SonTinh, "Bãi thú dữ", Position("Anchor_BeastClearing"));
+                AddPlace(places, WorldMapLayout.SonTinh, "Gò Hồng Mao", Position("Anchor_Summit"));
+                AddPlace(places, WorldMapLayout.SonTinh, "Đấu trường Voi", Position("ElephantArena"));
             }
             using (new OpenScene(PalaceScene))
             {
@@ -64,7 +69,7 @@ namespace SonTinhThuyTinh.EditorTools
             // ---- compose: the sea (colour taken from the plateau's open water), the three pictures, links, vignette, frame
             var canvas = new Color32[size.x * size.y];   // rows from the top
             FillBackground(canvas, size, palaceShot.GetPixel(3, 3));
-            BlitRectangle(canvas, size, sonShot, WorldMapLayout.SonTinh.ToPixels(new Vector2(-WorldMapLayout.RouteHalfWidth, WorldMapLayout.RouteZMax)));
+            BlitRectangle(canvas, size, sonShot, WorldMapLayout.SonTinh.ToPixels(new Vector2(-WorldMapLayout.SonTinhWest, WorldMapLayout.RouteZMax)));
             BlitCircle(canvas, size, palaceShot, WorldMapLayout.Palace.ToPixels(new Vector2(-WorldMapLayout.PalaceHalf, WorldMapLayout.PalaceHalf)));
             BlitRectangle(canvas, size, thuyShot, WorldMapLayout.ThuyTinh.ToPixels(new Vector2(-WorldMapLayout.RouteHalfWidth, WorldMapLayout.RouteZMax)));
             Object.DestroyImmediate(sonShot);

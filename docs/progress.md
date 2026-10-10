@@ -1,6 +1,6 @@
 # Tiến độ dự án — Sơn Tinh Thủy Tinh
 
-*Cập nhật: 06/10/2026. Thiết kế tổng thể xem [game-overview.md](game-overview.md).*
+*Cập nhật: 10/10/2026 (đồng bộ với `main` tại commit `43c457d`, PR #8). Thiết kế tổng thể xem [game-overview.md](game-overview.md). Hướng dẫn chơi thử từ đầu đến cuối: mục 4b.*
 
 ## 1. Tổng quan theo Phase
 
@@ -10,11 +10,11 @@
 | 1 — Chốt thiết kế | ✅ Xong phần chính | Combat, nhánh sính lễ, arena đã chốt trong GDD |
 | 2 — Asset pipeline | 🟡 Đang làm | 2 nhân vật + kiếm của Thủy Tinh xong; animation combat + leo bậc của **cả 2 nhân vật xong** (05/10) |
 | 3 — Lập trình core | 🟡 Đang làm | Mốc 1 (di chuyển, camera, stamina, dodge) xong. Đã thêm: máu, chọn nhân vật, hội thoại + prologue, sính lễ, chuyển cảnh, nhảy / trượt / ngã, **đánh nhau của cả 2 nhân vật (combo, đòn nặng, đòn nhảy, 3 phép, trúng đòn, bia tập, mục 9.12 và 9.14), leo bậc (9.13)** |
-| 4 — Dựng scene/level | 🟡 Đang làm | Map Sơn Tinh, Thủy Tinh, Hùng Vương cơ bản đã kết nối |
+| 4 — Dựng scene/level | 🟡 Đang làm | 9 scene đã nối thành luồng chơi được: Map Sơn Tinh (quest Ngựa 9.18 + quest Gà/Ninja 9.20), Map Thủy Tinh (boss Sấu Chín Đuôi 9.19, trang trí 9.21), Hùng Vương, cutscene phán xử (9.12), arena cuối (9.16) có boss AI 2 phase (9.22). **Còn thiếu: quest thật cho Voi chín ngà (Sơn Tinh, hiện là pickup tạm), 2 sính lễ nữa của Thủy Tinh (hiện chỉ có 1), cung điện thật** |
 | 5 — Polish hình ảnh | 🟡 Đang làm | **Nâng cấp VFX combat nguyên tố** (đá 3D, nứt đất phát sáng, tia nước, bọt sóng) + ánh sáng va chạm realtime Point Light (06/10, mục 9.15) |
 | 6 → 9 | ⬜ Chưa bắt đầu | |
 
-**Luồng game chạy được hiện tại:** Menu chính → Prologue (kể chuyện Vua Hùng kén rể) → Chọn nhân vật → **chọn Sơn Tinh thì vào `Map_SonTinh`** (map rừng, nhặt 3 sính lễ rồi đi tới cổng cuối map; xem mục 9.7), **chọn Thủy Tinh thì vào `Map_ThuyTinh`** (map đầm nước, xem mục 9.8). Cuối mỗi đường dốc lên một cổng đình, qua cổng là **`Map_HungVuong`** (cao nguyên cung điện Vua Hùng, ở giữa bản đồ thế giới; cung điện đang là chỗ giữ chỗ, xem mục 9.10), qua cổng cung điện là **cutscene phán xử `Cutscene_PhanXu`** (mục 9.12), rồi mới qua Sandbox_Combat (chỗ giữ tạm cho trận đánh cuối, có thanh máu/stamina thật + bấm Esc để tạm dừng). Cả 3 map có **vòng tròn bản đồ góc phải dưới**, bấm vào (hoặc phím M) để xem bản đồ chi tiết có mũi tên "bạn đang ở đây" (mục 9.9).
+**Luồng game chạy được hiện tại:** Menu chính → Prologue (kể chuyện Vua Hùng kén rể) → Chọn nhân vật → **chọn Sơn Tinh thì vào `Map_SonTinh`** (map rừng, nhặt 3 sính lễ rồi đi tới cổng cuối map; xem mục 9.7), **chọn Thủy Tinh thì vào `Map_ThuyTinh`** (map đầm nước, xem mục 9.8). Cuối mỗi đường dốc lên một cổng đình, qua cổng là **`Map_HungVuong`** (cao nguyên cung điện Vua Hùng, ở giữa bản đồ thế giới; cung điện đang là chỗ giữ chỗ, xem mục 9.10), qua cổng cung điện là **cutscene phán xử `Cutscene_PhanXu`** (mục 9.12), rồi sang **`Map_FinalBattle`** (arena cuối, đánh với nhân vật đối lập do AI điều khiển, mục 9.16 và 9.22; `Sandbox_Combat` giờ chỉ còn để test). **Chưa có màn thắng/thua hay ending sau trận cuối** (đánh xong boss thì dừng ở arena). Cả 3 map có **vòng tròn bản đồ góc phải dưới**, bấm vào (hoặc phím M) để xem bản đồ chi tiết có mũi tên "bạn đang ở đây" (mục 9.9).
 
 ## 2. Asset đã xong
 
@@ -94,6 +94,24 @@
 Nhân vật không còn đặt sẵn trong scene nữa mà do object `PlayerSpawn` tạo ra khi Play. **Đổi nhân vật để test**: chọn `PlayerSpawn` → đổi `Fallback Character` (Sơn Tinh / Thủy Tinh), không cần gán lại camera hay HUD.
 
 **Làm scene gameplay mới** (map sính lễ, arena): copy 3 object `PlayerFollowCamera`, `Main Camera`, `PlayerSpawn` từ Sandbox sang, rồi kéo `PlayerFollowCamera` vào 2 ô trên `PlayerSpawner`. Muốn có thanh máu/stamina và menu tạm dừng thì copy thêm `PlayerHUD`, `PauseCanvas`, `PauseMenu` và **`EventSystem`** (thiếu EventSystem thì menu tạm dừng hiện lên nhưng bấm chuột không trúng nút gì cả). Thêm scene vào Build Settings và `Flow/SceneNames.cs`. Map sính lễ của từng nhân vật thì điền tên scene vào `Gift Branch Scene` của `Character_SonTinh` / `Character_ThuyTinh`.
+
+## 4b. Chơi thử từ đầu đến cuối (cập nhật 10/10)
+
+**Chuẩn bị:** mở project bằng Unity 6000.3.24f1, đợi import xong, kiểm tra Console không có lỗi đỏ. Gói Asset Store bị `.gitignore` chặn nên máy nào thiếu thì cảnh bị thiếu model / nước hồng (xem 9.6, 9.21). Mở `Assets/Scenes/MainMenu.unity` → Play → **click vào cửa sổ Game**.
+
+**Phím:** WASD chạy, Shift chạy nhanh, chuột xoay camera, Space nhảy / leo bậc (đứng sát bậc rồi bấm Space), Ctrl trái né, J đánh (chạm 3 lần = combo, giữ = đòn nặng), U / I / O phép, **E nói chuyện / nhặt / bắt gà**, M bản đồ, Esc tạm dừng. Trong editor: K tự trừ máu, L gục, R đứng dậy.
+
+| # | Cảnh | Cần thử | Ghi chú |
+|---|---|---|---|
+| 1 | MainMenu → Prologue | Bắt đầu, Space qua thoại (Esc bỏ qua) | Vua Hùng vẫn đọc đủ voi / gà / ngựa (chưa quyết sửa) |
+| 2 | CharacterSelect | Chọn 1 trong 2 nhân vật | Mỗi nhân vật đi một map riêng |
+| 3a | **Map_SonTinh** | Làng: nói chuyện người chăn ngựa (E) → nhận chuông, leo đường núi sau làng (bậc đá, vực gãy có 3 cột đá, ngã thì hồi sinh ở checkpoint) → đánh 3 tên trộm ngựa ở bãi đá → lên đỉnh gò, đi chậm lại gần ngựa, bấm E rung chuông → về làng nói chuyện lại để nhận ngựa. Vòng đá chỗ dừng 2: cutscene, đánh 2 Ninja (đỡ được đòn thường, skill U/I/O không bị đỡ), bắt gà bằng E. HUD sính lễ phải lên 2/3. Voi chín ngà: đi vào pickup trên đường núi là nhận (đủ 3/3) | Voi chín ngà **chưa có quest riêng**, vẫn là pickup tạm. Cổng cuối map khoá tới khi đủ 3/3 (`SceneTransitionTrigger.requiredQuest`) |
+| 3b | **Map_ThuyTinh** | Đi qua đầm tới cồn giữa hồ (chỗ dừng 2), đánh Sấu Chín Đuôi (2 phase, ≤50% máu thì Cuồng nộ), thắng nhận Minh châu đáy vực. HUD 1/1 | Thua thì hồi sinh trước cồn. Nước phải xanh (nếu hồng là thiếu gói WaterWorks) |
+| 4 | Cổng cuối map → **Map_HungVuong** | Đi tới cung điện (placeholder), qua cổng | Danh sách sính lễ trên màn hình theo nhân vật đã chọn |
+| 5 | **Cutscene_PhanXu** | Vua Hùng + Mị Nương phán xử, thoại nói chung "sính lễ" | |
+| 6 | **Map_FinalBattle** | Boss là nhân vật đối lập, thanh máu boss trên đỉnh màn hình (2 chấm phase). Đánh tới 50% máu: thanh đổi tím "Cuồng nộ", boss nhanh hơn và lao vào sát người; đấu Thủy Tinh thì nước dâng + mưa bão, đấu Sơn Tinh thì khói bụi địa chấn | **Không có ending / game over**. Rơi xuống nước hoặc ra xa sàn 18 m thì tự đưa về chỗ xuất phát |
+
+Nên thử cả 2 nhân vật. Các phần Gà / Ngựa / Sấu / Ninja mới chỉ chạy thử bằng smoke test, **chưa ai bấm phím thật**: ghi lại lỗi gặp phải ở đây hoặc báo lại.
 
 ## 5. Quyết định kỹ thuật đã chốt
 
@@ -700,6 +718,46 @@ Kế hoạch + checklist: [`docs/ke-hoach-ga-chin-cua.md`](ke-hoach-ga-chin-cua.
 - **Sửa sau khi chơi thử (09/10 chiều)**: (1) Ninja bị "giật về" khi chạy / lao: `NpcBuilder` nướng quãng đường của clip vào tư thế (NPC đứng yên một chỗ), nên thân trôi khỏi vị trí rồi kéo về khi clip lặp. `RoosterQuestBuilder.UnbakeTravel` bỏ nướng XZ cho mọi clip trừ Death (quãng đường thành root motion, Animator bỏ đi vì `applyRootMotion` tắt, code tự di chuyển); đo trong trận: thân lệch khỏi gốc tối đa 0,13–0,15 m. (2) Ninja đánh tay không: bấm qua thoại nhanh làm đoạn rút kiếm bị dừng và `PlaceForFight` đặt kiếm về lưng; giờ cuối cutscene chỉ đặt vị trí (không reset), đầu trận Ninja nào chưa cầm kiếm (`NinjaEnemy.IsArmed`) tự rút. (3) Ninja tới lượt đánh chạy thẳng lên (Run 85%) tới tầm rồi ra đòn, chỉ Ninja chờ lượt mới Strafe. (4) Gà: clip Walk chỉ đi ~0,1 m/s nên chân trượt; giờ đi loanh quanh 0,45 m/s với tốc độ clip khớp bước, khi chạy trốn thì vỗ cánh (Fly) 3,2 m/s; bắt khoảng 7 s theo yêu cầu (4 lần vỗ cánh, hồi 6 s, sợ khi < 4,5 m, vỗ cánh khi < 2,4 m) — chưa đo lại được vì lúc thử người dùng cũng đang chơi trong cùng Editor.
 - **Dọn gói không dùng (09/10, theo yêu cầu)**: lấy danh sách file mà 9 scene + toàn bộ `Assets/Prefabs|Art|Data|Animations|Settings` thật sự dùng (`AssetDatabase.GetDependencies`), giữ mọi file mà code builder gọi theo tên, mọi `Resources/`, shader. Đã **dời ra ngoài project** (không xoá, trả lại được bằng cách chép vào đúng chỗ) sang `D:/ForStudies/FPTU_Season/Season07/PRU213/_unused_assets_backup_2026-10-09/` (147 MB): cả gói `Fantasy Forest Environment Free Sample`, 2 file cài đặt `.unitypackage` của TriForge (BiRP + URP, đã cài xong), các file demo scene không dùng của TriForge (giữ `Global Volume Profile` mà map Thủy Tinh dùng), thư mục `Idyllic Fantasy Nature/Demo`, scene demo của Houidisoft. Kiểm lại: 9 scene trong Build Settings đều 0 prefab / material / mesh bị thiếu. File không được scene nào dùng thì **không vào bản build** nên không làm game chậm; dọn chỉ giúp project nhẹ và import nhanh hơn. Chưa dời texture thừa trong Idyllic (~34 MB đất, bụi) vì có thể dùng khi trang trí map sau.
 
+
+### 9.22 Boss AI trận đánh cuối + thanh máu boss 2 phase (09/10, DuyLD, PR #8)
+
+- **Boss = nhân vật đối lập** (Sơn Tinh ↔ Thủy Tinh), không viết boss riêng: `BossAI` (`Assets/Scripts/Combat/BossAI.cs`) gắn lên prefab người chơi, bấm các input giả (`PlayerInputReader.AiPressLight/AiPressHeavy/AiPressSpell/AiSetLocomotion`) nên đòn, phép, di chuyển, trúng đòn đều đi qua đúng state machine của người chơi. `BossArenaDuel` sinh boss lúc vào cảnh (500 máu), gắn `BossAI`, hiện số sát thương trên đầu boss.
+- **Phase 1**: đi / chạy tới, đánh theo loạt 3 đòn nhẹ + đòn nặng kết, nghỉ 0,6–1,0 s giữa loạt; chọn phép theo khoảng cách và loại phép (`SpellKind`: xa = gió / Núi non, giữa = sóng / Núi mọc, gần = mưa / Núi dâng), cách nhau 3 s; trúng đòn lớn (≥ 15% máu) thì lùi 1,2 s.
+- **Phase 2** (≤ 50% máu, một lần duy nhất): boss đứng khựng 0,7 s, thanh máu đổi tím "Cuồng nộ", chấm phase 1 xám; đánh nhanh hơn, nghỉ ngắn, phép cách 1,5 s, bám sát người chơi, bắn phép bay xong thì lao vào cận chiến 1,5 s. Arena đổi môi trường như mục 9.16.
+- **Thanh máu boss** (`BossHealthBar`, dựng bằng menu `FinalBattleBossBarBuilder`): tên, nhãn phase, nền + vệt trễ, vạch 50%, 2 chấm phase. Mờ dần khi boss chết.
+- **Dọn kèm**: bộ skill / arena cũ (`Arena_Final`, E/R/F, Ult…) chuyển sang `Assets/_Disabled~/` vì chưa đồng bộ nhánh, nên **không còn skill E/R/F**; `Stamina.cs` chỉnh nhẹ; `Sandbox_Combat` có `SandboxBossSpawner` để test boss riêng.
+- **Chưa có**: màn thắng / thua + ending sau trận cuối, cutscene vào trận, lock-on, cơ chế môi trường nước↔đất luân phiên theo GDD rev 2.2, âm thanh. Các số liệu trên chưa được chơi thử bằng phím thật.
+
+### 9.23 Mở rộng `Map_SonTinh`: đường núi cho quest Ngựa + đấu trường Voi (10/10)
+
+Làm bằng code trong `SonTinhMapBuilder` + file mới `Assets/Editor/SonTinhMountainBranch.cs`; chạy lại **Build Son Tinh Map** là dựng lại (xong phải chạy lại **Build Horse Quest** và **Build Rooster Quest**, đã chạy sẵn). Địa hình rộng thêm về phía tây: 430 × 370 m (x từ −320 tới 110, trước đây ±110), cao tối đa 70 m, alphamap 1024. Phần thung lũng cũ giữ nguyên toạ độ nên quest Gà / Ngựa / Ninja không bị dịch.
+
+**Đường núi (nhánh quest ngựa)**, dài ~290 m, bắt đầu ở sườn tây sau làng (z≈60):
+| Chặng | Vị trí (x, z) | Nội dung |
+|---|---|---|
+| Bậc đá leo vách | (1, 60) → (−50, 136) | Bậc phẳng rộng 6,6 m cắt vào vách thung lũng, leo từ cao độ 4 lên 29 m (dốc ≤ 0,3), đuốc dọc đường. Anchor `Anchor_LedgeStart` |
+| Hẻm núi trên cao nguyên | (−50, 136) → (−108, 138) | Đường rộng 8 m giữa hai vách đá cao 12 m (không rơi ra ngoài được). `Anchor_CanyonStart`, checkpoint 0 |
+| Bậc đá (4 bậc cao 1,25 m) | (−108, 138) → (−138, 144) | Để thử nhảy / leo (Space cạnh bậc). `Anchor_Steps` |
+| **Vực gãy** | (−154, 146) → (−184, 150) | Hố sâu 15 m dài 16 m. Hai đầu cầu gãy còn trơ ván (đi được), giữa là **4 cột đá** rộng 2 m thẳng hàng, màu đá sáng, mặt cột chỉ thấp hơn ván 0,2–0,35 m, khe ~1 m (**sửa 10/10**: bản đầu là 3 cột 1,7 m lệch ngang / xoay, mặt thấp 0,5–1 m, khe 1,9 m, cùng màu vách nên khó nhìn và quá khó nhảy; người chơi nhảy tối đa ~1 m cao, ~4 m xa khi chạy Shift + Space). Rơi xuống thì `FallRespawnZone` đưa về checkpoint gần nhất và trừ 8 máu (không chết). `Anchor_BeforePit`, `Anchor_AfterPit` |
+| **Bãi thú** | (−208, 156) | Bãi rộng bán kính 13 m giữa vách (chỗ đặt bầy thú sau này). `Anchor_BeastClearing`, checkpoint 3 |
+| Đường hẹp lên đỉnh gò | (−234, 168) → (−256, 182) | Hẹp 9 m rồi 18 m; `Anchor_Summit` là chỗ đặt ngựa |
+
+- **Scripts mới** (`Assets/Scripts/Environment/`): `RespawnCheckpoint` (vùng trigger, nhớ chỗ người chơi đứng gần nhất), `FallRespawnZone` (vùng trigger đáy hố, đưa về checkpoint, trừ máu nhưng không giết), `FallRespawn` (trạng thái tĩnh theo scene). 4 checkpoint có cờ vàng / đỏ.
+- **Đo trên địa hình thật** (`SonTinhMountainBranch.Report`): độ dốc tâm đường lớn nhất ngoài hố 0,97 (ở bậc đá, đúng ý), bậc leo vách ≤ 0,3 (~17°). Đã chụp ảnh từng chặng trong Unity (không có lỗi console).
+- **Đấu trường Voi** (vịnh số 3 trong `Bays`, `ElephantBay`): sàn phẳng tròn **đường kính 38 m** ở bên phải đường, ngay dưới chỗ dừng 3 (z≈235, tâm khoảng (31,6; 7,2; 235)), vòng đá tảng cao quanh, hở một lối về phía đường chính, 2 đá đứng ở cửa, 6 đuốc, 4 cờ, trống đồng. **Ba điểm đánh dấu rỗng để ghép boss Voi** (object trong `Generated/Decor/...`, tìm bằng tên): `ElephantArena` (tâm sàn), `ElephantSpawn` (chỗ voi xuất hiện, đầu đối diện cửa, mặt hướng cửa), `ElephantPlayerEntry` (chỗ người chơi vào, trong cửa, mặt hướng tâm). Khi bạn của bạn push voi lên thì gắn prefab voi vào `ElephantSpawn` là xong (nên thêm trigger bước vào sàn để bắt đầu trận, giống `SauChinDuoiBoss` ở map Thủy Tinh).
+- **Bản đồ thế giới đã mở rộng (10/10)**: cột Sơn Tinh của `world_map.jpg` rộng thêm 214 m về phía tây (`WorldMapLayout.SonTinhWest = 290`, `SonTinhEast = 76`) nên đường núi nằm trong bản đồ, mũi tên "bạn ở đây" đi đúng. Ảnh 2639 × 1536 (texture tối đa 4096), vòng tròn minimap thu nhỏ vùng hiển thị (`minimapZoom` 0,2 → 0,15) để giữ cùng tỉ lệ. Thêm 4 tên địa điểm: **Vực gãy, Bãi thú dữ, Gò Hồng Mao, Đấu trường Voi**; chấm sính lễ Ngựa ghim ở đỉnh gò, Voi ở đấu trường. Chạy lại: **Tools ▸ Son Tinh Thuy Tinh ▸ Rebuild World Map Picture** (sau khi đã dựng 3 map).
+- **Quest Ngựa mới "ngựa sổng chuồng" (10/10)**, thay quest nhặt chuông cũ (`HorseQuest` 5 trạng thái: NotStarted → Accepted → Cleared → Calmed → Completed):
+  1. **Người chăn ngựa** (làng): kể đêm qua sấm nổ làm ngựa đứt cương chạy lên núi, có bọn trộm ngựa áo đen đuổi theo; đưa chuông đồng cho Sơn Tinh (banner "Đã nhận Chuông đồng gia truyền"). Chuồng ngựa trống tới khi ngựa về.
+  2. **Đường núi** (mục trên): bậc đá, 4 bậc thang, vực gãy với cột đá, checkpoint. Khi nhận việc, **cột sáng vàng** hiện trên đỉnh gò chỉ chỗ con ngựa.
+  3. **Bãi thú → bọn trộm ngựa** (`HorseQuestDirector`): 3 Ninja (cùng prefab `Ninja_Enemy` của quest gà, 120 máu) chờ trong bãi, **hàng rào cọc** chắn đường phía sau. Người chơi lại gần 17 m thì chúng nói 3 câu, rút kiếm và đánh: **tối đa 2 tên ra đòn cùng lúc** khi còn đủ 3 (khó hơn quest gà), còn 2 hoặc 1 tên thì từng tên một. Thua → hồi sinh ở checkpoint trước bãi (chạy lại là đánh tiếp, thoại không chiếu lại), bọn trộm đầy máu. Thắng cả 3 → banner "Bọn trộm ngựa đã bị đánh bại!", hàng rào biến mất (`Cleared`).
+  4. **Đỉnh gò** (`HorseSummit`): ngựa chín hồng mao đứng sát vách. **Ngựa nhát**: chạy Shift trong 13 m quanh nó thì nó giật mình (ngẩng đầu, banner "Thả phím Shift, đi chậm lại") và nút E bị khoá tới khi đi chậm 1,5 s. Lại gần bấm E "Nhấn E để rung chuông" → 4 câu thoại, ngựa chạy về chuồng (`Calmed`).
+  5. **Về làng**: nói chuyện với người chăn ngựa lần nữa → ngựa trong chuồng, tặng ngựa (`Completed`, banner "Bạn đã nhận được Ngựa chín hồng mao", sính lễ +1, ngựa rời chuồng như cũ).
+  Mọi thứ đổi theo `HorseQuest.State` kể cả khi vào lại map. Dựng bằng **Build Horse Quest (Son Tinh map)** (`HorseQuestBuilder`, object gốc `HorseQuest/MountainEvent`); thoại ở `Assets/Data/Dialogue/Dialogue_HorseQuest_*.asset` (thêm `Bandits`, `Summit`). `HeirloomPickup` (chuông nằm trên đường) không còn được dùng.
+- **Đã chạy thử trong Play** (`Assets/Scripts/DevTools/HorseQuestSmokeTest.cs`, Editor chạy nền, 0 lỗi console): nhận việc → thoại bọn trộm → đánh 14 s (người chơi mất 66 máu, 3 tên cầm kiếm) → thua một lần (hồi sinh đúng checkpoint, 3 tên đầy máu) → thắng (hàng rào biến mất, `Cleared`) → rung chuông (nút E bật, `Calmed`, ngựa trong chuồng bật, ngựa trên đỉnh tắt) → trả nhiệm vụ (`Completed`, sính lễ 1). **Chưa thử bằng phím thật** và chưa thử cơ chế ngựa giật mình (cần chạy Shift thật), chưa đánh bay vực bằng tay (nhảy qua 3 cột đá).
+- **Lỗi "màn hình nhìn từ dưới mặt đất" (10/10, đã sửa)**: Game view toàn thân cây trên nền xám xanh phẳng, dải dây đen dài rủ xuống, không thấy nhân vật, không điều khiển được. **Nguyên nhân thật**: `Build Horse Quest` thay hộp thoại của map (xoá `Dialogue` / `DialogueCanvas` rồi copy cái mới), còn `RoosterQuestDirector` (dựng từ trước) vẫn giữ tham chiếu `runner` tới cái đã bị xoá → đi tới vòng đá (z ≈ 155) thì cutscene gà chạy, bật camera cutscene (đang ở gốc toạ độ (0,0,0), nằm dưới địa hình), khoá điều khiển, rồi văng `NullReferenceException` ở `RoosterQuestDirector.cs:139` nên không bao giờ trả camera và điều khiển lại. Terrain chỉ vẽ một mặt nên từ dưới nhìn lên mặt đất biến mất, cỏ thành sợi dài rủ xuống. **Sửa**: (1) `HorseQuestBuilder` nối lại `runner` của `RoosterQuestDirector` sau khi dựng; (2) `RoosterQuestDirector.Start` tự tìm `DialogueRunner` nếu `runner` rỗng. Đã chạy lại `RoosterQuestSmokeTest`: cutscene 7 câu, đánh, thua / thắng, bắt gà, sính lễ 1/3, 0 lỗi.
+- **Lưới an toàn `TerrainFloorGuard`** (`Assets/Scripts/Environment/TerrainFloorGuard.cs`, trên object `Generated` của `Map_SonTinh`, `SonTinhMapBuilder` tự thêm): người chơi thấp hơn mặt đất 1,5 m thì được đặt lại chỗ đứng an toàn gần nhất. Không phải thủ phạm ở trên (camera mới bị kẹt, người chơi vẫn đứng trên đất) nhưng giữ lại phòng các trường hợp rơi xuyên thật.
+- **Lưu ý**: (a) thứ tự dựng lại map: Build Son Tinh Map → Build Horse Quest → Build Rooster Quest → Rebuild World Map Picture (Horse nay tự nối lại runner của Rooster). (b) Đừng sửa script C# lúc Editor đang Play: Unity biên dịch lại giữa phiên, báo `NullReferenceException` ở `PlayerInputReader.OnEnable` / `OnDisable` và input chết.
+- **Chưa làm**: Pickup Voi cũ (`Pickup_VoiChinNga`, z=250 trên đường chính) vẫn là pickup tạm, chờ boss Voi của bạn nhóm (gắn vào `ElephantSpawn`). Vách hẻm chỉ có một vật liệu đá xám, cầu gãy mới là ván + cột, chuông đồng chưa có model (chỉ có trong thoại / banner), ngựa chưa có animation chạy (chỉ EatGrass / Idle / LookUp nên "chạy về chuồng" chỉ là biến mất ở đỉnh và hiện ở chuồng).
 
 ### 9.21 Trang trí map Thủy Tinh bằng gói Idyllic + nước không còn hồng (09/10)
 

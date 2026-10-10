@@ -80,6 +80,9 @@ namespace SonTinhThuyTinh.Quest
 
         void Start()
         {
+            // Build Horse Quest replaces the map's dialogue box; a director built before that would be left holding a dead reference, and the
+            // cutscene would stop at its first line with the camera parked at the world origin (under the ground) and the controls off
+            if (runner == null) runner = FindFirstObjectByType<DialogueRunner>(FindObjectsInactive.Include);
             foreach (var n in fighters) { n.Setup(arenaCenter, arenaRadius, RequestTurn, EndTurn); n.Killed += OnKilled; }
             leader.Setup(arenaCenter, arenaRadius + 3f, null, null);
             leader.Health.IsInvulnerable = true;   // he only holds the rooster

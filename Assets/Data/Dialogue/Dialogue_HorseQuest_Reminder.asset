@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
   lines:
   - speaker: "Ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a"
-    text: "Chi\u1EBFc chu\xF4ng r\u01A1i \u1EDF \u0111o\u1EA1n \u0111\u01B0\u1EDDng
-      n\xFAi ph\xEDa tr\xEAn kia, ch\u1ED7 c\xF3 c\u1ED9t s\xE1ng \u1EA5y. \u0110\u01B0\u1EDDng
-      d\u1ED1c l\u1EAFm, ch\xE0ng \u0111i c\u1EA9n th\u1EADn nh\xE9!"
+    text: "Ch\xE0ng c\u1EE9 men \u0111\u01B0\u1EDDng n\xFAi sau l\xE0ng, qua v\u1EF1c
+      g\xE3y r\u1ED3i t\u1EDBi b\xE3i \u0111\xE1, b\u1ECDn tr\u1ED9m ng\u1EF1a ch\u1EAFc
+      \u1EDF \u0111\xF3. Con ng\u1EF1a \u1EDF tr\xEAn \u0111\u1EC9nh g\xF2, ch\u1ED7
+      c\xF3 c\u1ED9t s\xE1ng. T\u1EDBi g\u1EA7n th\xEC \u0111i ch\u1EADm th\xF4i,
+      n\xF3 nh\xE1t l\u1EAFm!"
     illustration: {fileID: 0}

@@ -44,7 +44,7 @@ namespace SonTinhThuyTinh.Quest
         void PickUp()
         {
             if (HorseQuest.State != HorseQuestState.Accepted) return;
-            HorseQuest.Set(HorseQuestState.HasBell);
+            HorseQuest.Set(HorseQuestState.Calmed);   // legacy: the bell is not lying on the path any more (the keeper hands it over), nothing uses this now
             GiftTracker.Announce($"Đã nhặt <b>{itemName}</b>\nMang về cho người chăn ngựa");
         }
     }

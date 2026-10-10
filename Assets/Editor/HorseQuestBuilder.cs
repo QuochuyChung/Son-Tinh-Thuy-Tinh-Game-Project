@@ -1,4 +1,5 @@
 using System.Linq;
+using SonTinhThuyTinh.Combat;
 using SonTinhThuyTinh.Dialogue;
 using SonTinhThuyTinh.Quest;
 using TMPro;
@@ -28,7 +29,7 @@ namespace SonTinhThuyTinh.EditorTools
         const string VillagerPrefab = "Assets/Prefabs/Characters/SonTinh.prefab";   // the v1 Sơn Tinh model, not used by the player any more
         const string GiftPath = "Assets/Data/Gifts/Gift_NguaChinHongMao.asset";
         const string DialogueDir = "Assets/Data/Dialogue";
-        const string Keeper = "Người chăn ngựa", Hero = "Sơn Tinh";
+        const string Keeper = "Người chăn ngựa", Hero = "Sơn Tinh", Thief = "Tên trộm ngựa";
 
         // must match SonTinhMapBuilder: the village is bay 0 (z 45, 36 m left of the path), the horse stop is the first stop (z 85)
         static float PathX(float z)
@@ -95,16 +96,23 @@ namespace SonTinhThuyTinh.EditorTools
             tso.FindProperty("radius").floatValue = 2.8f;
             tso.ApplyModifiedPropertiesWithoutUndo();
 
-            // ---- the bronze bell at the old horse stop on the mountain path ----
-            Vector2 bellAt = HorseStop + new Vector2(2.5f, 1.5f);
-            var bell = BuildBell(root, Ground(bellAt));
-            float distance = Vector2.Distance(keeperAt, bellAt);
-
             // ---- UI ----
             var runner = CopyDialogueUi(scene);
             scene.GetRootGameObjects().First(g => g.name == "DialogueCanvas").transform.SetParent(root, true);
             runner.transform.SetParent(root, true);
             BuildPrompt(root, runner);
+
+            // ---- the mountain trail: thieves in the clearing, a barricade, the horse on the summit ----
+            BuildMountainEvent(root, runner, dialogues[4], dialogues[5], horseGo);
+
+            // this build replaced the map's dialogue box: point the rooster quest's director (built earlier) at the new one
+            var roosterDirector = Object.FindFirstObjectByType<RoosterQuestDirector>();
+            if (roosterDirector != null)
+            {
+                var rso = new SerializedObject(roosterDirector);
+                rso.FindProperty("runner").objectReferenceValue = runner;
+                rso.ApplyModifiedPropertiesWithoutUndo();
+            }
 
             var villager = keeper.AddComponent<HorseQuestVillager>();
             var vso = new SerializedObject(villager);
@@ -120,7 +128,124 @@ namespace SonTinhThuyTinh.EditorTools
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
-            Debug.Log($"HorseQuestBuilder: built. Village yard {village}, stable {stableAt}, keeper {keeperAt}, bell {bellAt} ({distance:F0} m from the keeper)");
+            Debug.Log($"HorseQuestBuilder: built. Village yard {village}, stable {stableAt}, keeper {keeperAt}");
+        }
+
+        // ---------- the mountain trail (SonTinhMountainBranch): thieves, barricade, horse on the summit ----------
+
+        static void BuildMountainEvent(Transform root, DialogueRunner runner, DialogueSequence ambush, DialogueSequence rung, GameObject stableHorse)
+        {
+            Transform clearing = GameObject.Find("Anchor_BeastClearing")?.transform, afterPit = GameObject.Find("Anchor_AfterPit")?.transform,
+                summit = GameObject.Find("Anchor_Summit")?.transform;
+            if (clearing == null || afterPit == null || summit == null)
+            {
+                Debug.LogError("HorseQuestBuilder: no mountain trail anchors in the scene; run Build Son Tinh Map first.");
+                return;
+            }
+            var ev = new GameObject("MountainEvent").transform;
+            ev.SetParent(root, false);
+            var marks = new GameObject("Marks").transform;
+            marks.SetParent(ev, false);
+            Transform Mark(string name, Vector3 at, Vector3 look)
+            {
+                var t = new GameObject(name).transform;
+                t.SetParent(marks, false);
+                t.SetPositionAndRotation(at, Quaternion.LookRotation(look));
+                return t;
+            }
+            Vector3 OnGround(Vector3 p) => Ground(new Vector2(p.x, p.z));
+
+            // the clearing: f runs along the trail towards the summit, the thieves stand in its far half facing the way the player comes
+            Vector3 cc = OnGround(clearing.position);
+            Vector3 f = clearing.forward; f.y = 0f; f.Normalize();
+            Vector3 right = Vector3.Cross(Vector3.up, f);
+            var centre = Mark("ClearingCentre", cc, f);
+            var spots = new[]
+            {
+                Mark("ThiefSpot1", OnGround(cc + f * 3.5f - right * 4.5f), -f),
+                Mark("ThiefSpot2", OnGround(cc + f * 6.5f), -f),
+                Mark("ThiefSpot3", OnGround(cc + f * 3.5f + right * 4.5f), -f),
+            };
+            var playerMark = Mark("PlayerMark", OnGround(afterPit.position + f), f);
+
+            var enemy = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Characters/Ninja_Enemy.prefab");
+            var thieves = new NinjaEnemy[spots.Length];
+            for (int i = 0; i < spots.Length; i++)
+            {
+                var go = (GameObject)PrefabUtility.InstantiatePrefab(enemy, ev);
+                go.name = "HorseThief_" + (i + 1);
+                go.transform.SetPositionAndRotation(spots[i].position, spots[i].rotation);
+                thieves[i] = go.GetComponent<NinjaEnemy>();
+            }
+
+            // the barricade: a wall of stakes across the canyon beyond the clearing (it falls when the thieves are beaten)
+            Material wood = MapDecor.Lit("Mat_Wood", new Color(0.33f, 0.22f, 0.12f), 0f, 0.15f);
+            Material rope = MapDecor.Lit("Mat_Plank", new Color(0.45f, 0.31f, 0.18f), 0f, 0.1f);
+            Vector3 gate = OnGround(cc + f * 14f);
+            var barricade = new GameObject("Barricade").transform;
+            barricade.SetParent(ev, false);
+            barricade.SetPositionAndRotation(gate, Quaternion.LookRotation(f));
+            var wall = barricade.gameObject.AddComponent<BoxCollider>();
+            wall.size = new Vector3(26f, 14f, 1.4f);
+            wall.center = new Vector3(0f, 6f, 0f);
+            for (float x = -12.5f; x <= 12.5f; x += 0.75f)
+            {
+                Vector3 p = OnGround(gate + right * x);
+                float h = 4.2f + ((int)(x * 4f) % 3) * 0.35f;
+                MapDecor.Part(PrimitiveType.Cylinder, "Stake", barricade, barricade.InverseTransformPoint(p + Vector3.up * (h * 0.5f - 0.4f)),
+                    new Vector3(0.34f, h * 0.5f, 0.34f), Quaternion.Euler(0f, 0f, ((int)(x * 3f) % 3 - 1) * 4f), wood);
+            }
+            foreach (float y in new[] { 1.2f, 2.8f })
+                MapDecor.Part(PrimitiveType.Cube, "Rail", barricade, new Vector3(0f, y, -0.3f), new Vector3(26f, 0.18f, 0.18f), Quaternion.identity, rope);
+            MapDecor.Banner(barricade, OnGround(gate - f * 0.9f + right * 4f), 0f, new Color(0.62f, 0.12f, 0.08f));
+            MapDecor.Banner(barricade, OnGround(gate - f * 0.9f - right * 4f), 0f, new Color(0.62f, 0.12f, 0.08f));
+            MapDecor.Torch(barricade, OnGround(gate - f * 1.2f + right * 1.6f));
+            MapDecor.Torch(barricade, OnGround(gate - f * 1.2f - right * 1.6f));
+
+            // the horse on the summit, facing back down the trail; the bell spot in front of it; a light beam so it can be seen from afar
+            Vector3 beforeSummit = SonTinhMountainBranch.NodePosition(SonTinhMountainBranch.ISummit - 1);
+            Vector3 onward = summit.position - beforeSummit; onward.y = 0f; onward.Normalize();
+            Vector3 horseAt = OnGround(summit.position + onward * 2f);
+            var horseGo = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(HorseBuilder.PrefabPath), ev);
+            horseGo.name = "HorseSummit";
+            horseGo.transform.SetPositionAndRotation(horseAt + Vector3.up * 0.14f, Quaternion.LookRotation(-onward));
+            Material hay = MapDecor.Lit("Mat_Hay", new Color(0.78f, 0.68f, 0.30f), 0f, 0.05f);
+            MapDecor.Part(PrimitiveType.Sphere, "HayPile", horseGo.transform, horseGo.transform.InverseTransformPoint(horseAt + onward * 0.2f + Vector3.up * 0.05f), new Vector3(1.8f, 0.45f, 1.4f), Quaternion.identity, hay);
+
+            var bellSpot = new GameObject("BellSpot").transform;
+            bellSpot.SetParent(horseGo.transform, false);
+            bellSpot.position = OnGround(horseAt - onward * 2.2f);
+            var interact = bellSpot.gameObject.AddComponent<Interactable>();
+            var iso = new SerializedObject(interact);
+            iso.FindProperty("prompt").stringValue = "Nhấn E để rung chuông";
+            iso.FindProperty("radius").floatValue = 3.6f;
+            iso.ApplyModifiedPropertiesWithoutUndo();
+            var summitScript = bellSpot.gameObject.AddComponent<HorseSummit>();
+            var sso = new SerializedObject(summitScript);
+            sso.FindProperty("horse").objectReferenceValue = horseGo.GetComponent<HorseStall>();
+            sso.FindProperty("runner").objectReferenceValue = runner;
+            sso.FindProperty("rung").objectReferenceValue = rung;
+            sso.ApplyModifiedPropertiesWithoutUndo();
+            Material beam = MapDecor.Lit("Mat_QuestBeam", new Color(1f, 0.82f, 0.4f), 0f, 0f);
+            beam.EnableKeyword("_EMISSION"); beam.SetColor("_EmissionColor", new Color(1f, 0.75f, 0.3f) * 2f); EditorUtility.SetDirty(beam);
+            MapDecor.Part(PrimitiveType.Cylinder, "Beam", horseGo.transform, horseGo.transform.InverseTransformPoint(horseAt + Vector3.up * 14f), new Vector3(0.16f, 14f, 0.16f), Quaternion.identity, beam);
+
+            var director = ev.gameObject.AddComponent<HorseQuestDirector>();
+            var d = new SerializedObject(director);
+            SerializedProperty list = d.FindProperty("thieves"); list.arraySize = thieves.Length;
+            for (int i = 0; i < thieves.Length; i++) list.GetArrayElementAtIndex(i).objectReferenceValue = thieves[i];
+            list = d.FindProperty("spots"); list.arraySize = spots.Length;
+            for (int i = 0; i < spots.Length; i++) list.GetArrayElementAtIndex(i).objectReferenceValue = spots[i];
+            d.FindProperty("clearingCenter").objectReferenceValue = centre;
+            d.FindProperty("clearingRadius").floatValue = 11f;
+            d.FindProperty("triggerRadius").floatValue = 17f;
+            d.FindProperty("playerMark").objectReferenceValue = playerMark;
+            d.FindProperty("barricade").objectReferenceValue = barricade.gameObject;
+            d.FindProperty("summitHorse").objectReferenceValue = horseGo;
+            d.FindProperty("stableHorse").objectReferenceValue = stableHorse;
+            d.FindProperty("runner").objectReferenceValue = runner;
+            d.FindProperty("ambush").objectReferenceValue = ambush;
+            d.ApplyModifiedPropertiesWithoutUndo();
         }
 
         // ---------- stable: 4.6 m deep, 3.4 m wide, open front with the hay trough, roof on four posts ----------
@@ -344,25 +469,38 @@ namespace SonTinhThuyTinh.EditorTools
                 {
                     (Keeper, "Chào chàng trai! Dáng đi vững như núi thế kia, chắc chàng là Sơn Tinh, chúa vùng non cao phải không?"),
                     (Hero, "Đúng vậy. Ta đang tìm ngựa chín hồng mao để dâng vua Hùng làm sính lễ, cầu hôn Mị Nương."),
-                    (Keeper, "Thế thì chàng đến đúng nhà rồi! Con ngựa chín hồng mao đang ăn cỏ trong chuồng nhà tôi đấy. Tôi nuôi nó từ khi nó còn là con ngựa non."),
-                    (Keeper, "Có điều mấy hôm trước núi lở, tôi chạy vội nên đánh rơi chiếc chuông đồng ông nội để lại trên đường núi phía trên. Không có tiếng chuông ấy, nó chẳng chịu theo ai."),
-                    (Keeper, "Chàng tìm giúp tôi chiếc chuông nhé. Mang được về đây, tôi xin gửi chàng con ngựa quý."),
-                    ("", "Nhiệm vụ: tìm chuông đồng gia truyền của người chăn ngựa. Nơi chuông rơi đã có cột sáng đánh dấu trên đường núi."),
+                    (Keeper, "Thế thì chàng đến đúng lúc, mà cũng đến chậm mất rồi! Đêm qua sấm nổ rất lớn, con ngựa chín hồng mao nhà tôi hoảng sợ, đứt dây cương chạy thoát lên núi."),
+                    (Keeper, "Tệ hơn nữa, tôi thấy một bọn trộm ngựa áo đen cũng lần theo vết chân nó. Chúng mà bắt được thì tôi chẳng còn gì để nói."),
+                    (Keeper, "Đây là chiếc chuông đồng ông nội tôi để lại. Nó nghe tiếng chuông này từ thuở bé, chỉ cần rung lên là nó bình tĩnh ngay. Chàng đuổi theo giúp tôi nhé!"),
+                    (Hero, "Ông yên tâm. Ta sẽ đưa nó về."),
+                    ("", "Nhiệm vụ: đuổi theo ngựa chín hồng mao lên đường núi sau làng. Vượt bậc đá, bậc thang và vực gãy, đánh bọn trộm ngựa ở bãi đá rồi lên đỉnh gò rung chuông. Có cột sáng chỉ chỗ con ngựa. Đừng chạy nhanh khi lại gần nó."),
                 }),
                 ("Reminder", new[]
                 {
-                    (Keeper, "Chiếc chuông rơi ở đoạn đường núi phía trên kia, chỗ có cột sáng ấy. Đường dốc lắm, chàng đi cẩn thận nhé!"),
+                    (Keeper, "Chàng cứ men đường núi sau làng, qua vực gãy rồi tới bãi đá, bọn trộm ngựa chắc ở đó. Con ngựa ở trên đỉnh gò, chỗ có cột sáng. Tới gần thì đi chậm thôi, nó nhát lắm!"),
                 }),
                 ("Thanks", new[]
                 {
-                    (Hero, "Chiếc chuông đồng đây. Ta tìm thấy nó bên đường núi."),
-                    (Keeper, "Đúng nó rồi! Tiếng chuông này tôi nghe từ thuở bé... Cảm ơn chàng nhiều lắm!"),
-                    (Keeper, "Nghe kìa, con ngựa ngẩng đầu lên rồi. Nó nhận ra tiếng chuông nhà tôi đấy."),
+                    (Hero, "Ta đã rung chuông trên đỉnh gò, con ngựa bình tĩnh lại rồi chạy xuống núi. Chắc nó về tới chuồng rồi."),
+                    (Keeper, "Đúng nó rồi! Nghe tiếng chân quen thuộc ngoài sân kìa... Cảm ơn chàng nhiều lắm, lại còn đánh đuổi được cả bọn trộm ngựa!"),
                     (Keeper, "Ngựa chín hồng mao xin gửi chàng. Tôi cứ để nó ở chuồng, ăn no cỏ non, đến ngày chàng mang sính lễ lên kinh thì nó theo về."),
                 }),
                 ("After", new[]
                 {
                     (Keeper, "Con ngựa vẫn khoẻ lắm, ngày nào tôi cũng cắt cỏ non cho nó. Chúc chàng sớm cưới được Mị Nương!"),
+                }),
+                ("Bandits", new[]
+                {
+                    (Thief, "Đứng lại! Con ngựa chín hồng mao này bọn ta lần theo trước, ngươi định cướp phần à?"),
+                    (Hero, "Nó là ngựa của người chăn ngựa dưới làng, cũng là sính lễ ta dâng Vua Hùng. Tránh đường!"),
+                    (Thief, "Muốn lên đỉnh gò thì bước qua xác bọn ta. Anh em, xông lên!"),
+                }),
+                ("Summit", new[]
+                {
+                    ("", "Trên đỉnh gò, con ngựa chín hồng mao run rẩy bên mép vực. Sơn Tinh nhẹ nhàng rung chiếc chuông đồng."),
+                    ("", "Keng... keng... Con ngựa ngẩng đầu, tai vểnh lại rồi từ từ bình tĩnh."),
+                    (Hero, "Ngoan nào. Về nhà thôi."),
+                    ("", "Con ngựa hí vang rồi phi xuống núi, chạy thẳng về chuồng cũ. Hãy quay về làng báo cho người chăn ngựa."),
                 }),
             };
             var result = new string[sets.Length];
