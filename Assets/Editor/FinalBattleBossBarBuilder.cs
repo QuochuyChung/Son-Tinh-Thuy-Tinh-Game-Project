@@ -39,6 +39,10 @@ namespace SonTinhThuyTinh.EditorTools
 
             var bar = BuildBar();
 
+            // Game Over overlay on player death; the watch builds its own UI, so it needs only this component
+            if (Object.FindFirstObjectByType<FinalBattleDefeatWatch>(FindObjectsInactive.Include) == null)
+                new GameObject("DefeatWatch", typeof(FinalBattleDefeatWatch));
+
             var duel = Object.FindFirstObjectByType<BossArenaDuel>(FindObjectsInactive.Include);
             if (duel == null) return "error: BossArenaDuel not found in " + scene.name;
             var so = new SerializedObject(duel);

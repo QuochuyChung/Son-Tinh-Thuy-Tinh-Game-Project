@@ -4,10 +4,13 @@ using UnityEngine;
 
 namespace SonTinhThuyTinh.Flow
 {
+    public enum DuelOutcome { None, PlayerWon, BossWon }
+
     // Progress that must survive scene loads during one playthrough.
     public static class GameSession
     {
         public static CharacterId? SelectedCharacter { get; set; }
+        public static DuelOutcome Outcome { get; set; }
 
         static bool hasEncounterReturn;
         static Vector3 encounterReturnPosition;
@@ -46,6 +49,7 @@ namespace SonTinhThuyTinh.Flow
         public static void StartNewGame()
         {
             SelectedCharacter = null;
+            Outcome = DuelOutcome.None;
             GiftTracker.Reset();
             HorseQuest.Reset();
             VoiChinNgaQuest.Reset();
@@ -57,6 +61,7 @@ namespace SonTinhThuyTinh.Flow
         static void ResetOnPlay()
         {
             SelectedCharacter = null;
+            Outcome = DuelOutcome.None;
             ResetEncounter();
         }
 
