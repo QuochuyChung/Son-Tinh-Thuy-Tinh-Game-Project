@@ -34,7 +34,17 @@ namespace SonTinhThuyTinh.UI
         }
 
         void OnEnable() => pauseAction.Enable();
-        void OnDisable() => pauseAction.Disable();
+        void OnDisable()
+        {
+            pauseAction.Disable();
+            if (!IsPaused) return;
+
+            // Scene unloads and exiting Play Mode must not leave global time frozen.
+            IsPaused = false;
+            Time.timeScale = 1f;
+            if (cameraInput != null) cameraInput.enabled = true;
+            SetVisible(false);
+        }
         void OnDestroy() => pauseAction.Dispose();
 
         void Update()

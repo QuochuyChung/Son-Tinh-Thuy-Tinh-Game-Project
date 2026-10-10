@@ -15,4 +15,5 @@ MonoBehaviour:
   displayName: "Voi ch\xEDn ng\xE0"
   description: "Voi qu\xFD c\xF3 ch\xEDn chi\u1EBFc ng\xE0, s\xEDnh l\u1EC5 H\xF9ng
     V\u01B0\u01A1ng \u0111\xF2i."
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: c2f5c736f54a7774f817dbcd27bec9d7, type: 3}
+  receivedMessage: 
