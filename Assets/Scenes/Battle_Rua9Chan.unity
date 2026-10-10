@@ -4180,6 +4180,18 @@ MonoBehaviour:
   attackWindup: 0.78
   attackDuration: 1.5
   attackCooldown: 0.85
+  specialOpeningDelay: 2.2
+  specialCooldown: 4.6
+  spinTriggerRange: 5.5
+  spinDamage: 24
+  spinWindup: 0.55
+  spinDuration: 1.65
+  spinMoveSpeed: 6.5
+  spinHitRadius: 3.1
+  shockwaveRadius: 9
+  shockwaveDamage: 27
+  shockwaveWindup: 1.05
+  shockwaveDuration: 1.55
 --- !u!114 &819429836
 MonoBehaviour:
   m_ObjectHideFlags: 0

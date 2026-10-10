@@ -678,14 +678,11 @@ namespace SonTinhThuyTinh.EditorTools
             Color red = new(0.62f, 0.12f, 0.08f), ochre = new(0.78f, 0.58f, 0.18f);
             Transform group = Group(decor, "Bays");
 
-            // 0: the village, two stilt houses facing a bronze drum, torches lighting the yard
+            // 0: the village, two stilt houses north of a bronze drum (the boardwalk comes in from the east, the cliff is west),
+            // torches lighting the yard
             Vector2 village = Bay(0);
-            foreach (float sign in new[] { -1f, 1f })
-            {
-                Vector2 house = village + new Vector2(sign * 6.8f, -sign * 2.5f);
-                Vector2 away = (house - village).normalized;
-                MapDecor.StiltHouse(group, new Vector3(house.x, LowestGround(house, 2.8f) + 0.2f, house.y), Mathf.Atan2(away.x, away.y) * Mathf.Rad2Deg);
-            }
+            foreach (Vector2 house in new[] { VillageModelSetup.VillageWestHouse, VillageModelSetup.VillageNorthHouse })
+                MapDecor.StiltHouse(group, new Vector3(house.x, LowestGround(house, 2.8f) + 0.2f, house.y), 0f);
             MapDecor.BronzeDrum(group, Ground(village.x, village.y), 0f, 1.5f);
             foreach (Vector2 o in new[] { new Vector2(0f, 4.6f), new Vector2(0f, -4.6f), new Vector2(9f, 6f), new Vector2(-9f, -6f) })
                 MapDecor.Torch(group, Ground(village.x + o.x, village.y + o.y));

@@ -28,10 +28,11 @@ namespace SonTinhThuyTinh.EditorTools
         const string PrefabPath = "Assets/Prefabs/Characters/NineLeggedTurtle.prefab";
         const string ResourcePrefabPath = "Assets/Resources/Rua9Chan.prefab";
         const string GiftPath = "Assets/Data/Gifts/Gift_Rua9Chan.asset";
-        const string OldGiftPath = "Assets/Data/Gifts/Gift_GaChinCua.asset";
+        const string SharkGiftPath = "Assets/Data/Gifts/Gift_Map9Vay.asset";
+        const string PearlGiftPath = "Assets/Data/Gifts/Gift_MinhChauDayVuc.asset";
         const string QuestPath = "Assets/Data/Gifts/Quest_SinhLe_ThuyTinh.asset";
         const string PickupName = "Pickup_Rua9Chan";
-        const string OldPickupName = "Pickup_GaChinCua";
+        const string OldPickupName = "Pickup_VoiChinNga";
         const string TurtleName = "Rua9Chan";
         const float DisplayHeight = 0.32f;
 
@@ -73,7 +74,7 @@ namespace SonTinhThuyTinh.EditorTools
 
         public static void AddToMap(Transform generatedRoot)
         {
-            GameObject prefab = EnsureAssets();
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(PrefabPath) ?? EnsureAssets();
             GiftItem gift = AssetDatabase.LoadAssetAtPath<GiftItem>(GiftPath);
             Scene scene = generatedRoot.gameObject.scene;
 
@@ -83,8 +84,9 @@ namespace SonTinhThuyTinh.EditorTools
             if (pickupContainer == null) throw new InvalidOperationException("Map_ThuyTinh has no GiftPickups container.");
 
             Transform pickup = pickupContainer.Find(PickupName) ?? pickupContainer.Find(OldPickupName);
-            if (pickup == null) throw new InvalidOperationException("Map_ThuyTinh has no Ga Chin Cua pickup to replace.");
+            if (pickup == null) throw new InvalidOperationException("Map_ThuyTinh has no final gift pickup to replace.");
             pickup.name = PickupName;
+            pickup.gameObject.SetActive(true);
 
             GiftPickup oldPickup = pickup.GetComponent<GiftPickup>();
             Transform oldVisual = null;
@@ -293,17 +295,18 @@ namespace SonTinhThuyTinh.EditorTools
 
         static void ConfigureThuyTinhQuest(Scene scene, GiftItem turtleGift)
         {
-            GiftItem oldGift = AssetDatabase.LoadAssetAtPath<GiftItem>(OldGiftPath);
+            GiftItem sharkGift = AssetDatabase.LoadAssetAtPath<GiftItem>(SharkGiftPath);
+            GiftItem pearlGift = AssetDatabase.LoadAssetAtPath<GiftItem>(PearlGiftPath);
             GiftQuest quest = AssetDatabase.LoadAssetAtPath<GiftQuest>(QuestPath);
-            if (quest == null) throw new FileNotFoundException("Thuy Tinh gift quest was not found.", QuestPath);
+            if (quest == null || sharkGift == null || pearlGift == null)
+                throw new FileNotFoundException("Thuy Tinh gift roster is incomplete.", QuestPath);
 
             SerializedObject questData = new(quest);
             SerializedProperty required = questData.FindProperty("requiredGifts");
-            for (int i = 0; i < required.arraySize; i++)
-            {
-                SerializedProperty item = required.GetArrayElementAtIndex(i);
-                if (item.objectReferenceValue == oldGift || i == 1) item.objectReferenceValue = turtleGift;
-            }
+            required.arraySize = 3;
+            required.GetArrayElementAtIndex(0).objectReferenceValue = sharkGift;
+            required.GetArrayElementAtIndex(1).objectReferenceValue = pearlGift;
+            required.GetArrayElementAtIndex(2).objectReferenceValue = turtleGift;
             questData.ApplyModifiedPropertiesWithoutUndo();
 
             foreach (GiftTrackerHUD hud in ComponentsInScene<GiftTrackerHUD>(scene))
@@ -313,18 +316,6 @@ namespace SonTinhThuyTinh.EditorTools
                 hudData.ApplyModifiedPropertiesWithoutUndo();
             }
 
-            foreach (MapRoute route in ComponentsInScene<MapRoute>(scene))
-            {
-                SerializedObject routeData = new(route);
-                SerializedProperty pins = routeData.FindProperty("giftPins");
-                if (pins == null || !pins.isArray) continue;
-                for (int i = 0; i < pins.arraySize; i++)
-                {
-                    SerializedProperty gift = pins.GetArrayElementAtIndex(i).FindPropertyRelative("gift");
-                    if (gift.objectReferenceValue == oldGift || i == 1) gift.objectReferenceValue = turtleGift;
-                }
-                routeData.ApplyModifiedPropertiesWithoutUndo();
-            }
         }
 
         static T[] ComponentsInScene<T>(Scene scene) where T : Component => scene.GetRootGameObjects()

@@ -2,6 +2,7 @@ using System.Collections;
 using SonTinhThuyTinh.Combat;
 using SonTinhThuyTinh.Flow;
 using SonTinhThuyTinh.Player;
+using SonTinhThuyTinh.UI;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,6 +40,7 @@ namespace SonTinhThuyTinh.Quest
                 yield break;
             }
 
+            SpellHud.Create(player);
             BuildBossHud();
             boss.Health.Changed += OnBossHealthChanged;
             boss.Health.Died += OnBossDied;

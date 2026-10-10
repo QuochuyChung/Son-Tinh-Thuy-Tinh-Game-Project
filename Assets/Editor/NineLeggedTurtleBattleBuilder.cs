@@ -203,6 +203,18 @@ namespace SonTinhThuyTinh.EditorTools
             bossData.FindProperty("attackWindup").floatValue = 0.78f;
             bossData.FindProperty("attackDuration").floatValue = 1.5f;
             bossData.FindProperty("attackCooldown").floatValue = 0.85f;
+            bossData.FindProperty("specialOpeningDelay").floatValue = 2.2f;
+            bossData.FindProperty("specialCooldown").floatValue = 4.6f;
+            bossData.FindProperty("spinTriggerRange").floatValue = 5.5f;
+            bossData.FindProperty("spinDamage").floatValue = 24f;
+            bossData.FindProperty("spinWindup").floatValue = 0.55f;
+            bossData.FindProperty("spinDuration").floatValue = 1.65f;
+            bossData.FindProperty("spinMoveSpeed").floatValue = 6.5f;
+            bossData.FindProperty("spinHitRadius").floatValue = 3.1f;
+            bossData.FindProperty("shockwaveRadius").floatValue = 9f;
+            bossData.FindProperty("shockwaveDamage").floatValue = 27f;
+            bossData.FindProperty("shockwaveWindup").floatValue = 1.05f;
+            bossData.FindProperty("shockwaveDuration").floatValue = 1.55f;
             bossData.ApplyModifiedPropertiesWithoutUndo();
             return boss;
         }
