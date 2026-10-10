@@ -1,6 +1,6 @@
 # Tiến độ dự án — Sơn Tinh Thủy Tinh
 
-*Cập nhật: 06/10/2026. Thiết kế tổng thể xem [game-overview.md](game-overview.md).*
+*Cập nhật: 11/10/2026. Thiết kế tổng thể xem [game-overview.md](game-overview.md).*
 
 ## 1. Tổng quan theo Phase
 
@@ -57,6 +57,7 @@
 | `Player/PlayerSpawner.cs` | Đặt vào scene gameplay: tự spawn nhân vật đã chọn và tự gắn camera + DebugHUD. Chạy thẳng scene (không qua màn chọn) thì dùng `Fallback Character` |
 | `UI/CharacterSelect/*` | Màn chọn nhân vật: 2 nhân vật đứng trên sân khấu có đèn rọi, chọn bằng phím mũi tên / tay cầm / chuột |
 | `Dialogue/DialogueRunner.cs`, `DialogueSequence.cs`, `DialogueLine.cs` | Hệ thống hội thoại: chữ hiện dần, Space / Enter / click / nút A để tiếp, Esc / Start để bỏ qua. Mỗi câu có thể kèm 1 ảnh minh hoạ toàn màn hình |
+| `Dialogue/DialogueVoicePlayer.cs`, `Dialogue/VoiceLibrary.cs` | **Giọng đọc TTS theo từng speaker** (edge-tts, thuần C#): tự thêm khi có DialogueRunner, mỗi câu thoại phát mp3 từ `Resources/Audio/Voice/`; giọng / rate / cao độ / âm lượng khai trong `VoiceLibrary.asset` (xem mục 9.23) |
 | `Dialogue/PrologueDirector.cs` | Mở đầu game: tiêu đề → kể chuyện (`Assets/Data/Dialogue/Dialogue_Prologue.asset`) → sang màn chọn nhân vật |
 | `Quest/GiftItem.cs`, `GiftQuest.cs`, `GiftTracker.cs` | Sính lễ: mỗi món là 1 asset (`Assets/Data/Gifts/`), `Quest_SinhLe` liệt kê 3 món cần mang về. Tiến độ giữ nguyên khi chuyển scene |
 | `Quest/GiftPickup.cs` | Vùng trigger: nhân vật đi vào là nhận sính lễ. Có sự kiện `Collected` để mở cổng / bật việc tiếp theo |
@@ -720,3 +721,21 @@ Kế hoạch + checklist: [`docs/ke-hoach-ga-chin-cua.md`](ke-hoach-ga-chin-cua.
 - **Lỗi console còn lại**: ~64 dòng `Missing Prefab` (Bush_01_02, Rock_*, Fir_*...) từ `VoiChinNgaSetup.AutoSetup` khi mở map — vô hại, có sẵn từ trước.
 - **Sửa sau khi chơi thử (10/10)**: (1) hiện Game Over mà **chuột vẫn bị khoá, chuột còn xoay camera**: `ShowGameOver()` giờ mở khoá chuột (`Cursor.lockState = None`, `visible = true`), tắt `ThirdPersonCameraInput` (vừa ngừng xoay camera, vừa chặn LMB tự khoá lại chuột) — hai object đều là object scene nên reload / về MainMenu là dựng lại fresh; (2) **bấm Esc trên Game Over vẫn mở menu tạm dừng**: `ShowGameOver()` tắt luôn component `PauseMenu` (Esc của nó nằm trong `Update` riêng); (3) vá sẵn bug có sẵn: `PauseMenu.SetVisible` null-check `panel` (teardown lúc thoát Play mà `IsPaused=true` thì `panel` đã bị destroy trước → `MissingReferenceException`). Đã verify bằng driver (`%TEMP%\opencode\ecd_driver6.cs`, chơi `Map_FinalBattle` → kill → 2,5 s): `visible=True lock=None camEnabled=False pauseEnabled=False`, bấm Esc → `paused=False overlay=True` → **DRV6 PASS**, 0 lỗi mới.
 - **Còn lại**: (1) để người chơi bấm phím thật chơi thử ending + flow thua.
+
+
+### 9.23 Giọng thoại hội thoại bằng edge-tts, thuần C# (11/10)
+
+- **Mục tiêu**: mỗi câu thoại được đọc voice đúng giọng từng nhân vật (Sơn Tinh / Thủy Tinh giọng vi-VN, Mị Nương giọng Pháp để tạo nét, v.v.), chỉnh giọng + tốc độ + cao độ + âm lượng ngay trong Inspector, sinh clip bằng edge-tts **không cần Python / uv** (pipeline chạy trong Unity Editor).
+- **Runtime**:
+  - `DialogueVoicePlayer.cs`: `DialogueRunner.Awake()` tự thêm component này (3 dòng) → khi dòng thoại đổi thì load và phát `Resources/Audio/Voice/<folder>/<hash>.mp3`; hash = 16 ký tự đầu SHA1 (thấp, hex) của chính text câu thoại, nên đổi prosody hay đổi tên file không phá câu đã có. Không có clip thì im lặng (không lỗi).
+  - `VoiceLibrary.cs` (ScriptableObject, asset `Assets/Resources/VoiceLibrary.asset`): mỗi entry = `speaker`, `folder`, `voice` (tên edge-tts, ví dụ `vi-VN-NamMinhNeural`), `rate` (`+10%`), `volume`, `pitch`. Speaker rỗng trong dialogue line → mặc định "Dẫn chuyện". 9 speaker đã khai.
+- **Pipeline Editor thuần C#** (`Assets/Editor/`):
+  - `EdgeTtsClient.cs`: WSS tới endpoint readaloud của Microsoft Edge (trusted client token, `Sec-MS-GEC` = SHA256 theo clock-skew lấy từ header `Date` của voices/list, SSML `<prosody pitch/rate/volume>` — cao độ KHÔNG bake vào pitch theo % mà theo Hz, nhận frame BINARY → bytes mp3), validate tên voice / rate, timeout + 4 lần retry với backoff, tối đa 3 request song song, bỏ qua file đã có >2000 byte trừ khi force.
+  - `VoiceGenerator.cs`: quét 11 asset `Assets/Data/Dialogue/*.asset` + 6 dòng EXTRA (đoạn gặp Voi Chín Ngà, text phải khớp trigger), lọc theo speaker đã khai trong VoiceLibrary, bỏ trùng (speaker, text), sinh job song song, **jitter prosody ±3% theo SHA1(text)** + cộng `?`/`!` để câu không đều đều, hash clip = SHA1(text) 16 ký tự (cùng thuật toán với runtime — sai một ký tự là load nhầm/null).
+  - `VoiceLibraryEditor.cs`: Inspector riêng: mỗi entry có **ô dropdown chọn voice** (danh sách 322 giọng), hiển thị FriendlyName, cảnh báo nếu voice không tồn tại; nút **Regenerate Missing Clips** / **Regenerate All Clips (Force)** có progress bar cancel được (hiện `số câu | speaker: đoạn trích` của clip đang synth), log tóm tắt + danh sách câu fail. Menu: `Tools ▸ Voice ▸ Regenerate Missing Clips`, `Regenerate All Clips (Force)`, `Refresh Voice List`.
+  - `VoiceCatalog.cs` + `VoicePicker.cs`: tải catalog voices từ endpoint của edge (lưu cache `Library/EdgeTtsVoices.json`, tự refresh sau 7 ngày, có nút Refresh khi cache cũ), parse (endpoint trả array gốc nên phải bọc wrapper cho JsonUtility), dropdown AdvancedDropdown nhóm theo locale + search sẵn có của Unity, fallback ô textfield khi chưa tải được catalog.
+  - `VoiceLibraryCreator.cs`: menu tạo lại `VoiceLibrary.asset` với 9 entry mẫu (nếu asset đã có thì không đụng).
+- **Dữ liệu đã sinh**: 79 dòng thoại có voice → **68 clip mp3** (trùng text gộp lại) trong `Assets/Resources/Audio/Voice/<Speaker>/`; smoke test: 11 dialogue asset, 73/73 dòng resolve đúng clip. 9 speaker: Sơn Tinh (NamMinh, +10%), Thủy Tinh (NamMinh, +16%), Hùng Vương (+8%), Mị Nương (`fr-FR-VivienneMultilingualNeural`, +4%), người chăn ngựa, thủ lĩnh Ninja, Ninja, Voi Chín Ngà, Dẫn chuyện.
+- **Bug progress bar đã fix (11/10)**: khi regen, label chỉ hiện 1 câu Sơn Tinh "Ta chấp nhận thử thách. Xin hãy xuất chiêu!" suốt cả run — vì `CurrentLabel` được set **trước** khi chờ semaphore nên 68 worker set label đồng bộ ngay lúc khởi động, job cuối thắng và đóng băng. Đổi thành set **sau khi acquire** → label đổi theo clip đang synth (verify: sample 0,6 s/lần, 0/14 → 14/14 với 5 câu khác nhau).
+- **Cách dùng**: mở `VoiceLibrary.asset` → sửa giọng / rate / pitch ngay trên Inspector (voice chọn từ dropdown) → bấm **Regenerate Missing Clips**. Thêm câu thoại mới: thêm dòng vào dialogue asset rồi bấm lại Regenerate Missing (chỉ sinh clip còn thiếu).
+- **Chưa chốt / còn lại**: (1) đang so sánh 14 sample giọng mới cho Sơn Tinh + Thủy Tinh (`VoiceCompare/NewVoices/`) để có thể đổi giọng sau — clip sinh theo text hash nên đổi giọng chỉ cần regen All, không đụng dialogue; (2) edge-tts thỉnh thoảng ngắt WS giữa chừng → đã có retry 4 lần, câu fail nằm trong log `[Voice] FAIL ...`, bấm Regenerate Missing để làm lại; (3) volume / pitch phát lúc runtime lấy từ asset nên chỉnh xong không cần regen.
