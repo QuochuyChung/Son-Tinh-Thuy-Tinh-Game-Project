@@ -25,6 +25,8 @@ namespace SonTinhThuyTinh.Quest
         {
             // the horse may already be ours (e.g. a test that collected the gift directly): never give it twice
             if (horseGift != null && GiftTracker.Has(horseGift)) HorseQuest.Set(HorseQuestState.Completed);
+            // a state left from an earlier game whose gifts were cleared: the errand starts over
+            else if (horseGift != null && HorseQuest.State == HorseQuestState.Completed) HorseQuest.Reset();
         }
 
         void Talk()

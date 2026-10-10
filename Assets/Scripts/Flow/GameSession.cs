@@ -52,7 +52,9 @@ namespace SonTinhThuyTinh.Flow
             Outcome = DuelOutcome.None;
             GiftTracker.Reset();
             HorseQuest.Reset();
+            RoosterQuest.Reset();
             VoiChinNgaQuest.Reset();
+            SonTinhThuyTinh.Combat.SauChinDuoiBoss.ResetIntro();
             ResetEncounter();
         }
 

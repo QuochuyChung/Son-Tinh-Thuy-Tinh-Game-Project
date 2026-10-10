@@ -478,6 +478,7 @@ namespace SonTinhThuyTinh.EditorTools
             Arr("shots", shots);
             d.FindProperty("gift").objectReferenceValue = gift;
             d.ApplyModifiedPropertiesWithoutUndo();
+            ArenaBoundaryBuilder.AddRoosterBoundary(director);   // the player stays in the ring during the fight
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
