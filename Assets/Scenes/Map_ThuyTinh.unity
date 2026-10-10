@@ -18153,12 +18153,12 @@ GameObject:
   - component: {fileID: 110367534}
   - component: {fileID: 110367533}
   m_Layer: 0
-  m_Name: Pickup_VoiChinNga
+  m_Name: Pickup_Rua9Chan
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &110367532
 Transform:
   m_ObjectHideFlags: 0
@@ -18174,6 +18174,7 @@ Transform:
   m_Children:
   - {fileID: 649563037}
   - {fileID: 1389653192}
+  - {fileID: 2100000012}
   m_Father: {fileID: 1745008986}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &110367533
@@ -18185,19 +18186,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 110367531}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68090c0e10518414daa7e6dfaabd5b1b, type: 3}
+  m_Script: {fileID: 11500000, guid: 42dc7ab06f2ce204fa21de2b3480ee9e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Quest.GiftPickup
-  gift: {fileID: 11400000, guid: 17aa350935c751a45bcc7c1c8f98155e, type: 2}
-  visual: {fileID: 649563037}
-  bobHeight: 0.15
-  bobSpeed: 2
-  spinSpeed: 60
-  collectEffect: {fileID: 0}
-  collectSound: {fileID: 0}
-  collected:
-    m_PersistentCalls:
-      m_Calls: []
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Quest.NineLeggedTurtleEncounterTrigger
+  gift: {fileID: 11400000, guid: 5d433c1ef0d3552498614e60d1ea23a9, type: 2}
+  battleScene: Battle_Rua9Chan
+  returnClearance: 2.5
 --- !u!135 &110367534
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -18217,8 +18211,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 2
-  m_Center: {x: 0, y: 1.2, z: 0}
+  m_Radius: 2.9
+  m_Center: {x: 0, y: 0.8, z: 0}
 --- !u!1001 &111272776
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -47577,12 +47571,12 @@ GameObject:
   - component: {fileID: 238849317}
   - component: {fileID: 238849316}
   m_Layer: 0
-  m_Name: Pickup_NguaChinHongMao
+  m_Name: Pickup_Map9Vay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &238849315
 Transform:
   m_ObjectHideFlags: 0
@@ -47598,6 +47592,7 @@ Transform:
   m_Children:
   - {fileID: 672652865}
   - {fileID: 399388670}
+  - {fileID: 2100000002}
   m_Father: {fileID: 1745008986}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &238849316
@@ -47609,19 +47604,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 238849314}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68090c0e10518414daa7e6dfaabd5b1b, type: 3}
+  m_Script: {fileID: 11500000, guid: be52b28182d42da4db1f595c61842b06, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Quest.GiftPickup
-  gift: {fileID: 11400000, guid: e46493dc10639cc49994a197bd31e298, type: 2}
-  visual: {fileID: 672652865}
-  bobHeight: 0.15
-  bobSpeed: 2
-  spinSpeed: 60
-  collectEffect: {fileID: 0}
-  collectSound: {fileID: 0}
-  collected:
-    m_PersistentCalls:
-      m_Calls: []
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Quest.ManyFinnedSharkEncounterTrigger
+  gift: {fileID: 11400000, guid: 739e94a46c604239ae4ff5b9f66df4ad, type: 2}
+  battleScene: Battle_Map9Vay
+  returnClearance: 2.5
 --- !u!135 &238849317
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -47641,7 +47629,7 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 2
+  m_Radius: 3.8
   m_Center: {x: 0, y: 1.2, z: 0}
 --- !u!1 &239805734
 GameObject:
@@ -109773,7 +109761,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &649563037
 Transform:
   m_ObjectHideFlags: 0
@@ -112105,7 +112093,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &672652865
 Transform:
   m_ObjectHideFlags: 0
@@ -292653,8 +292641,12 @@ MonoBehaviour:
   mapReference: {x: 0.85925925, y: 0.2825521}
   mapPerMeter: {x: 0.0018518518, y: 0.0022786458}
   giftPins:
+  - gift: {fileID: 11400000, guid: 739e94a46c604239ae4ff5b9f66df4ad, type: 2}
+    map: {x: 0.8847622, y: 0.7451172}
   - gift: {fileID: 11400000, guid: fdeb107ff50e39249b01a91bd01b3fb2, type: 2}
     map: {x: 0.8298953, y: 0.55598956}
+  - gift: {fileID: 11400000, guid: 5d433c1ef0d3552498614e60d1ea23a9, type: 2}
+    map: {x: 0.8415882, y: 0.38053387}
 --- !u!4 &1507613396
 Transform:
   m_ObjectHideFlags: 0
@@ -407152,6 +407144,106 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2147005365}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &2100000001
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 238849315}
+    m_Modifications:
+    - target: {fileID: 4643631838051496665, guid: 16349f3cfe3e8d04e92b8dfc387b6e0c, type: 3}
+      propertyPath: m_Name
+      value: Map9Vay
+      objectReference: {fileID: 0}
+    - target: {fileID: 6688659939810706379, guid: 16349f3cfe3e8d04e92b8dfc387b6e0c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6688659939810706379, guid: 16349f3cfe3e8d04e92b8dfc387b6e0c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 6688659939810706379, guid: 16349f3cfe3e8d04e92b8dfc387b6e0c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6688659939810706379, guid: 16349f3cfe3e8d04e92b8dfc387b6e0c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6688659939810706379, guid: 16349f3cfe3e8d04e92b8dfc387b6e0c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6688659939810706379, guid: 16349f3cfe3e8d04e92b8dfc387b6e0c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6688659939810706379, guid: 16349f3cfe3e8d04e92b8dfc387b6e0c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 16349f3cfe3e8d04e92b8dfc387b6e0c, type: 3}
+--- !u!4 &2100000002 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6688659939810706379, guid: 16349f3cfe3e8d04e92b8dfc387b6e0c, type: 3}
+  m_PrefabInstance: {fileID: 2100000001}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &2100000011
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 110367532}
+    m_Modifications:
+    - target: {fileID: 2258417968917950475, guid: b0e6f9a5edbd1a04e8da1e187767ce86, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2258417968917950475, guid: b0e6f9a5edbd1a04e8da1e187767ce86, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.32
+      objectReference: {fileID: 0}
+    - target: {fileID: 2258417968917950475, guid: b0e6f9a5edbd1a04e8da1e187767ce86, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2258417968917950475, guid: b0e6f9a5edbd1a04e8da1e187767ce86, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2258417968917950475, guid: b0e6f9a5edbd1a04e8da1e187767ce86, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2258417968917950475, guid: b0e6f9a5edbd1a04e8da1e187767ce86, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2258417968917950475, guid: b0e6f9a5edbd1a04e8da1e187767ce86, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3427695715711532090, guid: b0e6f9a5edbd1a04e8da1e187767ce86, type: 3}
+      propertyPath: m_Name
+      value: Rua9Chan
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b0e6f9a5edbd1a04e8da1e187767ce86, type: 3}
+--- !u!4 &2100000012 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2258417968917950475, guid: b0e6f9a5edbd1a04e8da1e187767ce86, type: 3}
+  m_PrefabInstance: {fileID: 2100000011}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

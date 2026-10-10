@@ -83,6 +83,8 @@ namespace SonTinhThuyTinh.EditorTools
             BuildExit(root);
             SetupGiftPickups();
             BuildBoss(root);
+            ManyFinnedSharkSetup.AddToMap(root);
+            NineLeggedTurtleSetup.AddToMap(root);
             Dress(terrain);
             BuildMapHud();
 
@@ -691,8 +693,9 @@ namespace SonTinhThuyTinh.EditorTools
             SauChinDuoiBuilder.BuildArena(root, Ground(c.x, c.y), new Vector3(t.x, 0f, t.y), new Vector3(lair.x, 0f, lair.y), WaterY, ArenaRadius);
         }
 
-        // The three Sơn Tinh gifts' walk-in pickups that came with the copy of Sandbox_Combat are switched off: on this map the only gift is
-        // the crocodile's pearl, given when it is beaten.
+        // Reuse the three pickup anchors from Sandbox_Combat. The setup passes below
+        // replace the first and last anchors with Map 9 Vay and Rua 9 Chan; the middle
+        // anchor remains disabled because the crocodile encounter owns the island.
         static void SetupGiftPickups()
         {
             GameObject container = GameObject.Find("GiftPickups (test)");
@@ -740,7 +743,9 @@ namespace SonTinhThuyTinh.EditorTools
             static GiftItem Gift(string name) => AssetDatabase.LoadAssetAtPath<GiftItem>("Assets/Data/Gifts/Gift_" + name + ".asset");
             MapHudBuilder.Build("THỦY TINH  ·  ĐƯỜNG THỦY", new Color(0.25f, 0.82f, 1f), WorldMapLayout.ThuyTinh, new[]
             {
+                (Gift("Map9Vay"), Stop(0)),
                 (Gift("MinhChauDayVuc"), Stop(1)),   // the crocodile's island
+                (Gift("Rua9Chan"), Stop(2)),
             });
         }
 
