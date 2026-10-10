@@ -21,6 +21,12 @@ namespace SonTinhThuyTinh.UI
         public static SpellHud Create(PlayerController owner)
         {
             if (owner == null || owner.MoveSet == null || owner.MoveSet.spells == null || owner.MoveSet.spells.Length == 0) return null;
+            SpellHud existing = FindFirstObjectByType<SpellHud>(FindObjectsInactive.Include);
+            if (existing != null)
+            {
+                existing.gameObject.SetActive(true);
+                return existing;
+            }
             var go = new GameObject("SpellHud", typeof(RectTransform));
             var hud = go.AddComponent<SpellHud>();
             hud.Build(owner);
@@ -53,7 +59,7 @@ namespace SonTinhThuyTinh.UI
 
             var canvas = gameObject.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 4;
+            canvas.sortingOrder = 45;
             var scaler = gameObject.AddComponent<CanvasScaler>();
             scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
             scaler.referenceResolution = new Vector2(1920f, 1080f);

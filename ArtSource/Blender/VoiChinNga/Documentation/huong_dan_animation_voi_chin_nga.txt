@@ -1,0 +1,21 @@
+WAR ELEPHANT - RIG & ANIMATION
+
+File chính: voi_chin_nga_rigged.blend
+Hướng chuyển động tới: trục -X
+
+Các Action:
+- Idle: frame 1-61, lặp
+- Walk_Forward: frame 1-25, lặp, có root motion theo -X
+- Walk_Backward: frame 1-25, lặp, có root motion theo +X
+- Attack: frame 1-34, chạy một lần
+- Death: frame 1-58, chạy một lần
+
+Cách xem Action trong Blender:
+1. Chọn object War_Elephant_Rig.
+2. Đổi một vùng làm việc sang Dope Sheet.
+3. Trong Dope Sheet, chọn chế độ Action Editor.
+4. Chọn Action trong danh sách tên ở thanh tiêu đề.
+5. Đặt đúng khoảng frame nêu trên rồi bấm Play.
+
+Rig có 21 xương, gồm thân, đầu, 3 đốt vòi, đuôi và 3 đốt cho mỗi chân.
+Mesh gốc được giữ nguyên dưới tên War_Elephant_Mesh; toàn bộ 4.583 đỉnh đều đã có weight.

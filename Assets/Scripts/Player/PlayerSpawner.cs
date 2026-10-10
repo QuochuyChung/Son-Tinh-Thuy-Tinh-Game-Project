@@ -7,6 +7,7 @@ using SonTinhThuyTinh.UI;
 using SonTinhThuyTinh.UI.Map;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace SonTinhThuyTinh.Player
 {
@@ -52,6 +53,9 @@ namespace SonTinhThuyTinh.Player
 
             Player = Instantiate(character.PlayerPrefab, start.position, start.rotation);
             Player.name = character.PlayerPrefab.name;
+
+            if (GameSession.TryConsumeEncounterReturn(SceneManager.GetActiveScene().name, out Vector3 returnPosition, out Quaternion returnRotation))
+                Player.transform.SetPositionAndRotation(returnPosition, returnRotation);
 
             followCamera.Target.TrackingTarget = Player.CameraTarget;
             cameraInput.Bind(Player.InputReader);

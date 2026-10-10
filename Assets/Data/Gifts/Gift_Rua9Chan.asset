@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0150af9b7511ec942a27b9d2f3a361c7, type: 3}
+  m_Name: Gift_Rua9Chan
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Quest.GiftItem
+  displayName: "R\xF9a ch\xEDn ch\xE2n"
+  description: "Linh quy \u0111\u1EA7u r\u1ED3ng canh gi\u1EEF th\u1EE7y v\u1EF1c,
+    s\u1EDF h\u1EEFu s\u1EE9c m\u1EA1nh v\xE0 ch\xEDn ch\xE2n th\u1EA7n tho\u1EA1i."
+  icon: {fileID: 0}

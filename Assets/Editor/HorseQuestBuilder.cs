@@ -113,6 +113,13 @@ namespace SonTinhThuyTinh.EditorTools
                 rso.FindProperty("runner").objectReferenceValue = runner;
                 rso.ApplyModifiedPropertiesWithoutUndo();
             }
+            var elephantEvent = Object.FindFirstObjectByType<VoiChinNgaArenaEvent>();   // the same for the elephant fight (ElephantArenaBuilder)
+            if (elephantEvent != null)
+            {
+                var eso = new SerializedObject(elephantEvent);
+                eso.FindProperty("runner").objectReferenceValue = runner;
+                eso.ApplyModifiedPropertiesWithoutUndo();
+            }
 
             var villager = keeper.AddComponent<HorseQuestVillager>();
             var vso = new SerializedObject(villager);

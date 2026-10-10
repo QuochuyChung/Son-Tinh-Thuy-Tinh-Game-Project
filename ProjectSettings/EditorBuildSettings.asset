@@ -18,8 +18,17 @@ EditorBuildSettings:
     path: Assets/Scenes/Map_SonTinh.unity
     guid: 17db5845b7dfcfb4bb558a7c97614be3
   - enabled: 1
+    path: Assets/Scenes/Battle_VoiChinNga.unity
+    guid: 3a72d9c52a2e4ba4aa7d2e1a10000109
+  - enabled: 1
     path: Assets/Scenes/Map_ThuyTinh.unity
     guid: da5c79fa5ec91c3469b1e64b3751cc18
+  - enabled: 1
+    path: Assets/Scenes/Battle_Rua9Chan.unity
+    guid: 9973aaa2b22ea40469ae418c409c7b8f
+  - enabled: 1
+    path: Assets/Scenes/Battle_Map9Vay.unity
+    guid: 8c7b6a594e3f4210b1d2c3e4f5a60718
   - enabled: 1
     path: Assets/Scenes/Map_HungVuong.unity
     guid: fa61c29839fd1d648b444ce1fdc83bea

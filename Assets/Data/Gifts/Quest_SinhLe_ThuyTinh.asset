@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 894761f57b63ce641bcdd8d09a0f9c4e, type: 3}
   m_Name: Quest_SinhLe_ThuyTinh
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Quest.GiftQuest
-  title: "S\xEDnh l\u1EC5"
+  title: "S\xEDnh l\u1EC5 Th\u1EE7y Tinh"
   requiredGifts:
+  - {fileID: 11400000, guid: 739e94a46c604239ae4ff5b9f66df4ad, type: 2}
   - {fileID: 11400000, guid: fdeb107ff50e39249b01a91bd01b3fb2, type: 2}
+  - {fileID: 11400000, guid: 5d433c1ef0d3552498614e60d1ea23a9, type: 2}
