@@ -83,6 +83,8 @@ namespace SonTinhThuyTinh.UI
 
         void SetVisible(bool visible)
         {
+            // Scene teardown can destroy the panel before this component's OnDisable runs.
+            if (panel == null) return;
             panel.alpha = visible ? 1f : 0f;
             panel.blocksRaycasts = visible;
             panel.interactable = visible;

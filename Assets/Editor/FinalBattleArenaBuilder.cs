@@ -242,6 +242,10 @@ namespace SonTinhThuyTinh.EditorTools
             var rescueSo = new SerializedObject(rescue);
             rescueSo.FindProperty("respawn").objectReferenceValue = playerSpawn;
             rescueSo.ApplyModifiedProperties();
+
+            // Game Over overlay when the player dies (guarded: FinalBattleBossBarBuilder may have placed one at scene root)
+            if (Object.FindFirstObjectByType<FinalBattleDefeatWatch>(FindObjectsInactive.Include) == null)
+                managerGo.AddComponent<FinalBattleDefeatWatch>();
         }
 
         static void SetupPlayerSpawner(Transform playerSpawn)
