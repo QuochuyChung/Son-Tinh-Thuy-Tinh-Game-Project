@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_HorseQuest_Thanks
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: "S\u01A1n Tinh"
+    text: "Chi\u1EBFc chu\xF4ng \u0111\u1ED3ng \u0111\xE2y. Ta t\xECm th\u1EA5y n\xF3
+      b\xEAn \u0111\u01B0\u1EDDng n\xFAi."
+    illustration: {fileID: 0}
+  - speaker: "Ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a"
+    text: "\u0110\xFAng n\xF3 r\u1ED3i! Ti\u1EBFng chu\xF4ng n\xE0y t\xF4i nghe t\u1EEB
+      thu\u1EDF b\xE9... C\u1EA3m \u01A1n ch\xE0ng nhi\u1EC1u l\u1EAFm!"
+    illustration: {fileID: 0}
+  - speaker: "Ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a"
+    text: "Nghe k\xECa, con ng\u1EF1a ng\u1EA9ng \u0111\u1EA7u l\xEAn r\u1ED3i. N\xF3
+      nh\u1EADn ra ti\u1EBFng chu\xF4ng nh\xE0 t\xF4i \u0111\u1EA5y."
+    illustration: {fileID: 0}
+  - speaker: "Ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a"
+    text: "Ng\u1EF1a ch\xEDn h\u1ED3ng mao xin g\u1EEDi ch\xE0ng. T\xF4i c\u1EE9
+      \u0111\u1EC3 n\xF3 \u1EDF chu\u1ED3ng, \u0103n no c\u1ECF non, \u0111\u1EBFn
+      ng\xE0y ch\xE0ng mang s\xEDnh l\u1EC5 l\xEAn kinh th\xEC n\xF3 theo v\u1EC1."
+    illustration: {fileID: 0}

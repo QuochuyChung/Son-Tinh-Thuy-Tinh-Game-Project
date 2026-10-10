@@ -25,3 +25,4 @@ MonoBehaviour:
   portrait: {fileID: 21300000, guid: 7fc0563be0671684eac4e48cb650a1fb, type: 3}
   playerPrefab: {fileID: 8660803594350561352, guid: 91e2c870c738a22468de257f00891ae9, type: 3}
   giftBranchScene: Map_SonTinh
+  giftQuest: {fileID: 11400000, guid: bdb69bcbf7392c34984b33921bd9b9e1, type: 2}

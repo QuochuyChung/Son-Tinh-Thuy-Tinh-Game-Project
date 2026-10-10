@@ -12,17 +12,20 @@ namespace SonTinhThuyTinh.Cutscene
 {
     // Hùng Vương's judgement in front of the palace (scene Cutscene_PhanXu, built by Tools ▸ Son Tinh Thuy Tinh ▸ Build Judgement Cutscene).
     // An intro Timeline flies the camera in over the courtyard, then the dialogue for the chosen character plays; every line cuts to its
-    // camera and starts the king's gesture. When the dialogue ends (or is skipped) the duel scene loads.
+    // camera and starts the gestures of the king and of Mị Nương (standing beside him). When the dialogue ends (or is skipped) the duel
+    // scene loads.
     public class JudgementCutsceneDirector : MonoBehaviour
     {
-        public enum Shot { Wide, King, KingLow, Player, Opponent, Suitors }
+        public enum Shot { Wide, King, KingLow, Player, Opponent, Suitors, MiNuong }
         public enum KingAction { Keep, Idle, Talk, Point, Nod }
+        public enum MiNuongAction { Keep, Idle, Talk, Bow, Shy }
 
         [Serializable]
         public struct Cue
         {
             public Shot shot;
             public KingAction king;
+            public MiNuongAction miNuong;
         }
 
         [Serializable]
@@ -42,6 +45,8 @@ namespace SonTinhThuyTinh.Cutscene
         [SerializeField] Transform sonTinhMark;
         [SerializeField] Transform thuyTinhMark;
         [SerializeField] Animator king;
+        [Tooltip("Optional: without her model her lines show her illustration instead (DialogueLine.illustration).")]
+        [SerializeField] Animator miNuong;
         [Tooltip("Cameras in the order of the Shot enum, except Player / Opponent: those use the Son Tinh / Thuy Tinh close-ups below.")]
         [SerializeField] CinemachineCamera wide;
         [SerializeField] CinemachineCamera kingCamera;
@@ -49,7 +54,8 @@ namespace SonTinhThuyTinh.Cutscene
         [SerializeField] CinemachineCamera sonTinhClose;
         [SerializeField] CinemachineCamera thuyTinhClose;
         [SerializeField] CinemachineCamera suitors;
-        [SerializeField] string nextScene = SceneNames.Sandbox;
+        [SerializeField] CinemachineCamera miNuongCamera;
+        [SerializeField] string nextScene = SceneNames.FinalBattle;
         [Tooltip("Used when the scene is played on its own, without character select.")]
         [SerializeField] CharacterId fallbackPlayer = CharacterId.SonTinh;
 
@@ -110,6 +116,7 @@ namespace SonTinhThuyTinh.Cutscene
             Cue cue = script.cues[index];
             Cut(CameraFor(cue.shot));
             if (cue.king != KingAction.Keep && king != null) king.SetTrigger(cue.king.ToString());
+            if (cue.miNuong != MiNuongAction.Keep && miNuong != null) miNuong.SetTrigger(cue.miNuong.ToString());
         }
 
         int IndexOf(DialogueLine line)
@@ -130,6 +137,7 @@ namespace SonTinhThuyTinh.Cutscene
                 case Shot.Player: return sonTinhIsPlayer ? sonTinhClose : thuyTinhClose;
                 case Shot.Opponent: return sonTinhIsPlayer ? thuyTinhClose : sonTinhClose;
                 case Shot.Suitors: return suitors;
+                case Shot.MiNuong: return miNuongCamera != null ? miNuongCamera : kingCamera;
                 default: return wide;
             }
         }

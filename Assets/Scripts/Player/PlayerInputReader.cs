@@ -32,9 +32,16 @@ namespace SonTinhThuyTinh.Player
         float heavyPressedAt = float.NegativeInfinity;
         readonly float[] spellPressedAt = { float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity };
 
-        public Vector2 Move => move.ReadValue<Vector2>();
+        // AI override (BossAI): while active the stick and sprint come from the AI, and the device map is
+        // switched off so a second set of hands on the same keyboard cannot fight it for control.
+        bool aiActive;
+        Vector2 aiMove;
+        bool aiSprint;
+
+        public bool AiActive => aiActive;
+        public Vector2 Move => aiActive ? aiMove : move.ReadValue<Vector2>();
         // Held, not pressed: Shift (or left stick click) while moving makes the character sprint.
-        public bool SprintHeld => sprint.IsPressed();
+        public bool SprintHeld => aiActive ? aiSprint : sprint.IsPressed();
         public Vector2 Look => look.ReadValue<Vector2>();
         public bool LookFromMouse => look.activeControl?.device is Pointer;
 
@@ -65,6 +72,7 @@ namespace SonTinhThuyTinh.Player
             heavyAttack.performed += OnHeavy;
             for (int i = 0; i < SpellCount; i++) spells[i].performed += OnSpell;
             map.Enable();
+            if (aiActive) map.Disable();   // a re-enabled reader must not let the keyboard fight the AI
         }
 
         void OnDisable()
@@ -107,6 +115,43 @@ namespace SonTinhThuyTinh.Player
             lightPressedAt = float.NegativeInfinity;
             heavyPressedAt = float.NegativeInfinity;
             for (int i = 0; i < SpellCount; i++) spellPressedAt[i] = float.NegativeInfinity;
+        }
+
+        // --- AI override: a boss drives this reader by setting the stick and stamping the same buffers the
+        // keyboard uses, so every state machine rule (TryFight, TryCancel, stamina) is shared untouched. ---
+
+        public void AiActivate()
+        {
+            aiActive = true;
+            aiMove = Vector2.zero;
+            aiSprint = false;
+            ClearBuffered();
+            if (map != null) map.Disable();   // no device can interfere while the AI is driving
+        }
+
+        public void AiDeactivate()
+        {
+            aiActive = false;
+            aiMove = Vector2.zero;
+            aiSprint = false;
+            ClearBuffered();
+            if (map != null && isActiveAndEnabled) map.Enable();
+        }
+
+        public void AiSetLocomotion(Vector2 moveInput, bool sprint)
+        {
+            aiMove = moveInput;
+            aiSprint = sprint;
+        }
+
+        // Stamp the same timestamps OnLight/OnHeavy/OnSpell would, so the 0.2s buffer window still applies.
+        public void AiPressLight() => lightPressedAt = Time.time;
+
+        public void AiPressHeavy() => heavyPressedAt = Time.time;
+
+        public void AiPressSpell(int index)
+        {
+            if (index >= 0 && index < SpellCount) spellPressedAt[index] = Time.time;
         }
 
         void OnDodge(InputAction.CallbackContext _) => dodgePressedAt = Time.time;

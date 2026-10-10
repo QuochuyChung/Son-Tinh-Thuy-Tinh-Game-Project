@@ -11,9 +11,12 @@ namespace SonTinhThuyTinh.Quest
         [TextArea(2, 4)]
         [SerializeField] string description;
         [SerializeField] Sprite icon;
+        [Tooltip("Optional banner text when the gift is received, {0} = display name. Empty: the default \"Đã có ...\".")]
+        [SerializeField] string receivedMessage;
 
         public string DisplayName => displayName;
         public string Description => description;
         public Sprite Icon => icon;
+        public string ReceivedMessage => receivedMessage;
     }
 }

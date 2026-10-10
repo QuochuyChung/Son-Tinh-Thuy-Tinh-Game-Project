@@ -8,7 +8,7 @@ using UnityEngine.UI;
 namespace SonTinhThuyTinh.Dialogue
 {
     // Shows a DialogueSequence line by line with a typewriter effect.
-    // Space / Enter / click / gamepad A: finish the current line, or go to the next one. Esc / Start: skip the rest.
+    // Space / Enter / E / click / gamepad A: finish the current line, or go to the next one. Esc / Start: skip the rest.
     public class DialogueRunner : MonoBehaviour
     {
         [SerializeField] CanvasGroup panel;
@@ -41,6 +41,8 @@ namespace SonTinhThuyTinh.Dialogue
             advanceAction = new InputAction("Advance", InputActionType.Button);
             advanceAction.AddBinding("<Keyboard>/space");
             advanceAction.AddBinding("<Keyboard>/enter");
+            // E opens a conversation with a villager (InteractionPrompt), so players press it again to go on: it advances too
+            advanceAction.AddBinding("<Keyboard>/e");
             advanceAction.AddBinding("<Mouse>/leftButton");
             advanceAction.AddBinding("<Gamepad>/buttonSouth");
 

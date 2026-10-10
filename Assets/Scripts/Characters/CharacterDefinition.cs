@@ -1,5 +1,6 @@
 using SonTinhThuyTinh.Flow;
 using SonTinhThuyTinh.Player;
+using SonTinhThuyTinh.Quest;
 using UnityEngine;
 
 namespace SonTinhThuyTinh.Characters
@@ -19,6 +20,8 @@ namespace SonTinhThuyTinh.Characters
         [SerializeField] PlayerController playerPrefab;
         [Tooltip("Scene loaded after picking this character: their own gift (sính lễ) branch map.")]
         [SerializeField] string giftBranchScene = SceneNames.Sandbox;
+        [Tooltip("This character's own sính lễ (each suitor brings different gifts). The gift list on screen shows it on every map.")]
+        [SerializeField] GiftQuest giftQuest;
 
         public CharacterId Id => id;
         public string DisplayName => displayName;
@@ -28,5 +31,6 @@ namespace SonTinhThuyTinh.Characters
         public Sprite Portrait => portrait;
         public PlayerController PlayerPrefab => playerPrefab;
         public string GiftBranchScene => giftBranchScene;
+        public GiftQuest GiftQuest => giftQuest;
     }
 }

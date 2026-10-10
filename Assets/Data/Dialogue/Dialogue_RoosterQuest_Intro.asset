@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_RoosterQuest_Intro
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: 
+    text: "Gi\u1EEFa v\xF2ng \u0111\xE1 c\u1ED5 tr\xEAn \u0111\u01B0\u1EDDng n\xFAi,
+      G\xE0 Ch\xEDn C\u1EF1a \u0111ang thong th\u1EA3 m\u1ED5 th\xF3c..."
+    illustration: {fileID: 0}
+  - speaker: "Th\u1EE7 l\u0129nh Ninja"
+    text: "G\xE0 ch\xEDn c\u1EF1a \u0111\xE2y r\u1ED3i! B\u1EAFt l\u1EA5y, mang v\u1EC1
+      cho ch\u1EE7 nh\xE2n."
+    illustration: {fileID: 0}
+  - speaker: Ninja
+    text: "D\u1EC5 nh\u01B0 tr\u1EDF b\xE0n tay!"
+    illustration: {fileID: 0}
+  - speaker: "S\u01A1n Tinh"
+    text: "D\u1EEBng tay! G\xE0 ch\xEDn c\u1EF1a l\xE0 s\xEDnh l\u1EC5 d\xE2ng Vua
+      H\xF9ng. B\u1ECF n\xF3 xu\u1ED1ng!"
+    illustration: {fileID: 0}
+  - speaker: Ninja
+    text: "M\u1ED9t m\xECnh ng\u01B0\u01A1i m\xE0 \u0111\xF2i c\u1EA3n b\u1ECDn ta
+      sao?"
+    illustration: {fileID: 0}
+  - speaker: "Th\u1EE7 l\u0129nh Ninja"
+    text: "Hai \u0111\u1EE9a bay, x\u1EED n\xF3! Ta gi\u1EEF con g\xE0."
+    illustration: {fileID: 0}
+  - speaker: "S\u01A1n Tinh"
+    text: "V\u1EADy th\xEC \u0111\u1EC3 n\xFAi r\u1EEBng ph\xE2n x\u1EED!"
+    illustration: {fileID: 0}

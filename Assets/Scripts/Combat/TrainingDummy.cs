@@ -21,6 +21,8 @@ namespace SonTinhThuyTinh.Combat
         float diedAt = -10f;
         MaterialPropertyBlock block;
 
+        public void SetRenderers(Renderer[] r) => renderers = r;
+
         void Awake()
         {
             health = GetComponent<Health>();

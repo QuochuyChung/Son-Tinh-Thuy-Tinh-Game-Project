@@ -2,6 +2,7 @@ using SonTinhThuyTinh.CameraSystem;
 using SonTinhThuyTinh.Characters;
 using SonTinhThuyTinh.DevTools;
 using SonTinhThuyTinh.Flow;
+using SonTinhThuyTinh.Quest;
 using SonTinhThuyTinh.UI;
 using SonTinhThuyTinh.UI.Map;
 using Unity.Cinemachine;
@@ -35,10 +36,14 @@ namespace SonTinhThuyTinh.Player
         [SerializeField] DebugHUD debugHud;
 
         public PlayerController Player { get; private set; }
+        // Which suitor actually spawned (after the character-select fallback), and the roster to look rivals up in.
+        public CharacterId Character { get; private set; }
+        public CharacterRoster Roster => roster;
 
         void Awake()
         {
             CharacterId id = GameSession.SelectedCharacter ?? fallbackCharacter;
+            Character = id;
             CharacterDefinition character = roster.Get(id);
 
             Transform start = transform;
@@ -57,6 +62,8 @@ namespace SonTinhThuyTinh.Player
             if (gameplayHud != null) gameplayHud.Bind(Player, character);
             if (mapHud != null) mapHud.Bind(Player, character);
             if (debugHud != null) debugHud.Bind(Player);
+            foreach (GiftTrackerHUD gifts in FindObjectsByType<GiftTrackerHUD>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                gifts.SetQuest(character.GiftQuest);   // each suitor's own sính lễ
 
             // fighting characters: the camera shakes with their hits, and their spell slots show at the bottom of the screen
             if (Player.HasCombat)

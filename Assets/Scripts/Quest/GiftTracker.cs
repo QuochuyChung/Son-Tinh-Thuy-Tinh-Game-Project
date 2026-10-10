@@ -12,6 +12,10 @@ namespace SonTinhThuyTinh.Quest
         static readonly HashSet<string> collected = new();
 
         public static event Action<GiftItem> Collected;
+        // A one-off line for the same banner (e.g. "Đã nhặt Chuông đồng gia truyền"), for quest items that are not gifts.
+        public static event Action<string> Notice;
+
+        public static void Announce(string message) => Notice?.Invoke(message);
 
         public static int Count => collected.Count;
 
@@ -33,6 +37,7 @@ namespace SonTinhThuyTinh.Quest
         {
             collected.Clear();
             Collected = null;
+            Notice = null;
         }
     }
 }

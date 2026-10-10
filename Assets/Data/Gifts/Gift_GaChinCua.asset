@@ -15,3 +15,4 @@ MonoBehaviour:
   displayName: "G\xE0 ch\xEDn c\u1EF1a"
   description: "G\xE0 th\u1EA7n m\u1ED7i ch\xE2n c\xF3 ch\xEDn c\u1EF1a."
   icon: {fileID: 0}
+  receivedMessage: "B\u1EA1n \u0111\xE3 nh\u1EADn \u0111\u01B0\u1EE3c {0}"
