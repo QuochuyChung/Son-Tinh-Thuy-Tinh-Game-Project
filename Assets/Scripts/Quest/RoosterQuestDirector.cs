@@ -44,6 +44,7 @@ namespace SonTinhThuyTinh.Quest
     //  2. Fight: two NinjaEnemy, one attacking at a time (this hands out the turns), the leader stands at the edge holding the rooster.
     //     Sơn Tinh knocked out -> back at the edge of the ring, both Ninja full health, the fight starts again (no cutscene).
     //  3. Both Ninja dead -> the leader shouts, drops the rooster and runs off; the rooster runs about the ring (RoosterRunner), E catches it.
+    // From the start of the fight until the rooster is caught the player cannot leave the ring (ArenaBoundary).
     public class RoosterQuestDirector : MonoBehaviour
     {
         [Header("Cast")]
@@ -61,6 +62,8 @@ namespace SonTinhThuyTinh.Quest
         [SerializeField] Transform[] fighterSpots;     // round the rooster, then where the fight starts
         [SerializeField] Transform leaderEntry, leaderGrabSpot, leaderEdge, leaderExit;
         [SerializeField] Transform playerMark;         // where Sơn Tinh steps in (and comes back after a loss)
+        [Tooltip("Keeps the player in the ring from the start of the fight until the rooster is caught.")]
+        [SerializeField] ArenaBoundary boundary;
 
         [Header("Cutscene")]
         [SerializeField] DialogueRunner runner;
@@ -85,6 +88,8 @@ namespace SonTinhThuyTinh.Quest
             leader.Health.IsInvulnerable = true;   // he only holds the rooster
             if (cutsceneCamera != null) cutsceneCamera.gameObject.SetActive(false);
             if (gift != null && GiftTracker.Has(gift)) RoosterQuest.Set(RoosterQuestState.Completed);
+            // a quest state left from an earlier game whose gifts were cleared (back to the main menu, new game): start over
+            else if (gift != null && RoosterQuest.State == RoosterQuestState.Completed) RoosterQuest.Reset();
 
             switch (RoosterQuest.State)
             {
@@ -109,7 +114,8 @@ namespace SonTinhThuyTinh.Quest
                     rooster.gameObject.SetActive(false);
                     break;
             }
-            rooster.Caught += () => RoosterQuest.Set(RoosterQuestState.Completed);
+            rooster.Caught += () => { RoosterQuest.Set(RoosterQuestState.Completed); if (boundary != null) boundary.Release(); };
+            if (RoosterQuest.State == RoosterQuestState.RoosterFree && boundary != null) boundary.Engage();
         }
 
         void Update()
@@ -244,6 +250,7 @@ namespace SonTinhThuyTinh.Quest
             if (drawing) yield return new WaitForSeconds(0.6f);
             foreach (var n in fighters) n.BeginFight();
             fightOn = true;
+            if (boundary != null) boundary.Engage();
             running = false;
         }
 
@@ -291,6 +298,7 @@ namespace SonTinhThuyTinh.Quest
         IEnumerator ResetAfterDefeat()
         {
             resetting = true; running = true;
+            if (boundary != null) boundary.Release();
             foreach (var n in fighters) if (!n.IsDead) n.StopFight();
             yield return new WaitForSeconds(3f);
             PlaceForFight();
