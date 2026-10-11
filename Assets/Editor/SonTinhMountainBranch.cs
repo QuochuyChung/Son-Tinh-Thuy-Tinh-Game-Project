@@ -43,7 +43,7 @@ namespace SonTinhThuyTinh.EditorTools
 
             // The ledge: climbs the wall at the foot of the village. Its x is found where the bare wall reaches the wanted height,
             // so the cut into the hill stays shallow.
-            float[] zs = { 60f, 74f, 90f, 106f, 122f, 136f };
+            float[] zs = { 70f, 74f, 90f, 106f, 122f, 136f };   // starts at z = 70, north of the village houses (the Hearth Lodge reaches z = 65)
             float[] ys = { 0f, 8f, 13f, 18.5f, 24f, 29f };
             float x = SonTinhMapBuilder.PathX(zs[0]) - 7f;
             ys[0] = SonTinhMapBuilder.BaseHeight(x, zs[0]) + 0.1f;

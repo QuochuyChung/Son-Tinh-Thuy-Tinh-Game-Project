@@ -21,6 +21,7 @@ namespace SonTinhThuyTinh.Combat
         }
 
         static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
+        static readonly Color TelegraphRed = new Color(1f, 0.06f, 0.03f, 1f);
 
         [Header("Movement")]
         [SerializeField, Min(0f)] float moveSpeed = 2.8f;
@@ -102,7 +103,13 @@ namespace SonTinhThuyTinh.Combat
                 ?? Shader.Find("HDRP/Unlit")
                 ?? Shader.Find("Sprites/Default")
                 ?? Shader.Find("Unlit/Color");
-            if (shader != null) telegraphMaterial = new Material(shader) { name = "VoiChinNga_Telegraph_Runtime" };
+            if (shader != null)
+            {
+                telegraphMaterial = new Material(shader) { name = "VoiChinNga_Telegraph_Runtime" };
+                // URP's Unlit ignores the LineRenderer's own colours (the rings came out white): the material carries the red
+                if (telegraphMaterial.HasProperty(BaseColor)) telegraphMaterial.SetColor(BaseColor, TelegraphRed);
+                else if (telegraphMaterial.HasProperty("_Color")) telegraphMaterial.SetColor("_Color", TelegraphRed);
+            }
 
             SnapVisualToGround();
             health.Died += OnDied;
@@ -193,7 +200,7 @@ namespace SonTinhThuyTinh.Combat
             attackMode = AttackMode.GroundSlam;
             attackLanded = false;
             attackElapsed = 0f;
-            activeTelegraph = CreateRing(transform.position, slamRadius, new Color(1f, 0.25f, 0.05f, 0.9f), 0.18f);
+            activeTelegraph = CreateRing(transform.position, slamRadius, new Color(1f, 0.06f, 0.03f, 0.95f), 0.22f);
             Play("Attack", 0.06f, true);
         }
 
@@ -334,8 +341,8 @@ namespace SonTinhThuyTinh.Combat
             line.positionCount = 2;
             line.startWidth = chargeHitRadius * 2f;
             line.endWidth = chargeHitRadius * 2f;
-            line.startColor = new Color(1f, 0.2f, 0.05f, 0.35f);
-            line.endColor = new Color(1f, 0.65f, 0.05f, 0.75f);
+            line.startColor = new Color(1f, 0.06f, 0.03f, 0.5f);
+            line.endColor = new Color(1f, 0.06f, 0.03f, 0.9f);
             if (telegraphMaterial != null) line.sharedMaterial = telegraphMaterial;
             line.SetPosition(0, Vector3.zero);
             line.SetPosition(1, direction * length);
@@ -344,7 +351,7 @@ namespace SonTinhThuyTinh.Combat
 
         IEnumerator ExpandImpactRing(Vector3 position, float radius)
         {
-            GameObject effect = CreateRing(position, 0.2f, new Color(1f, 0.75f, 0.1f, 1f), 0.35f);
+            GameObject effect = CreateRing(position, 0.2f, new Color(1f, 0.12f, 0.05f, 1f), 0.35f);
             LineRenderer line = effect.GetComponent<LineRenderer>();
             const float duration = 0.32f;
             float elapsed = 0f;

@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_Sea_Lamp_Light
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: 
+    text: "Th\u1EE7y Tinh \u0111\u1EB7t tay l\xEAn chi\u1EBFc \u0111\xE8n ngu\u1ED9i
+      l\u1EA1nh. Kh\xF4ng c\xF2n vi\xEAn ng\u1ECDc, ch\xE0ng d\u1ED3n th\u1EE7y l\u1EF1c
+      c\u1EE7a ch\xEDnh m\xECnh v\xE0o ng\u1ECDn \u0111\xE8n."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "Ng\u1ECDn l\u1EEDa xanh b\xF9ng l\xEAn, tia s\xE1ng qu\xE9t qua m\u1EB7t
+      v\u1ECBnh. S\u01B0\u01A1ng m\xF9 d\xE0y \u0111\u1EB7c b\u1EAFt \u0111\u1EA7u
+      tan, \u0111\u1EC3 l\u1ED9 l\u1ED1i v\xE0o V\u1ECBnh M\u1EADp \u1EDF ph\xEDa
+      t\xE2y."
+    illustration: {fileID: 0}
+  - speaker: "Th\u1EE7y Tinh"
+    text: "Gi\u1EDD \u0111\u1EBFn l\u01B0\u1EE3t M\u1EADp Ch\xEDn V\xE2y."
+    illustration: {fileID: 0}

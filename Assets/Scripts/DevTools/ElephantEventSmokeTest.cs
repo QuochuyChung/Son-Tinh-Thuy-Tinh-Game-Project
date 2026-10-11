@@ -21,6 +21,7 @@ namespace SonTinhThuyTinh.DevTools
         DialogueRunner runner;
         float damageTaken;
         int shot;
+        readonly System.Collections.Generic.HashSet<string> seenRings = new();
 
         void Log(string s) { log.AppendLine($"[{Time.time:F1}] {s}"); Debug.Log("ElephantSmoke " + s); }
 
@@ -57,7 +58,14 @@ namespace SonTinhThuyTinh.DevTools
             for (float t = 0f; t < 28f; t += Time.deltaTime)
             {
                 Heal();
-                if (t > 6f && t < 6.1f) Snap("fight");
+                // the red warning rings: log the first one of each kind and take a picture of it
+                foreach (var lr in FindObjectsByType<LineRenderer>(FindObjectsSortMode.None))
+                {
+                    if (!lr.name.StartsWith("VoiChinNga_") || !seenRings.Add(lr.name)) continue;
+                    var m = lr.sharedMaterial;
+                    Log($"ring {lr.name}: shader {(m != null ? m.shader.name : "none")}, material colour {(m != null && m.HasProperty("_BaseColor") ? m.GetColor("_BaseColor").ToString() : "n/a")}, line colour {lr.startColor}");
+                    Snap("ring");
+                }
                 yield return null;
             }
             Log($"fight 28 s: player took {damageTaken:F0}, boss at {boss.transform.position} ({Vector3.Distance(boss.transform.position, centre.position):F1} m from the centre), boss health {boss.Health.Current}/{boss.Health.Max}");

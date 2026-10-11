@@ -62,8 +62,13 @@ namespace SonTinhThuyTinh.EditorTools
                 Grade(thuyShot, 0.40f, 1.25f);
                 thuyEnd = Position("Exit_To_Next");
                 AddPlace(places, WorldMapLayout.ThuyTinh, "Vịnh Đầm Lầy", Average("Log", _ => true));
-                AddPlace(places, WorldMapLayout.ThuyTinh, "Thác Mờ Sương", Position("Waterfall_ThuyTinhR185"));
+                AddPlace(places, WorldMapLayout.ThuyTinh, "Thác Mờ Sương", Position("Waterfall_ThuyTinhL185"));
                 AddPlace(places, WorldMapLayout.ThuyTinh, "Hang Chìm", Position("Crystals"));
+                AddPlace(places, WorldMapLayout.ThuyTinh, "Bến Thuyền", Position("Harbour"));
+                AddPlace(places, WorldMapLayout.ThuyTinh, "Làng Chài", Position("FishingVillage"));
+                AddPlace(places, WorldMapLayout.ThuyTinh, "Hải Đăng", Position("LighthouseTower"));
+                AddPlace(places, WorldMapLayout.ThuyTinh, "Đảo Thủy Cung", Position("SeaShrine"));
+                AddPlace(places, WorldMapLayout.ThuyTinh, "Vịnh Mập", Position("SharkBay"));
             }
 
             // ---- compose: the sea (colour taken from the plateau's open water), the three pictures, links, vignette, frame
@@ -71,7 +76,7 @@ namespace SonTinhThuyTinh.EditorTools
             FillBackground(canvas, size, palaceShot.GetPixel(3, 3));
             BlitRectangle(canvas, size, sonShot, WorldMapLayout.SonTinh.ToPixels(new Vector2(-WorldMapLayout.SonTinhWest, WorldMapLayout.RouteZMax)));
             BlitCircle(canvas, size, palaceShot, WorldMapLayout.Palace.ToPixels(new Vector2(-WorldMapLayout.PalaceHalf, WorldMapLayout.PalaceHalf)));
-            BlitRectangle(canvas, size, thuyShot, WorldMapLayout.ThuyTinh.ToPixels(new Vector2(-WorldMapLayout.RouteHalfWidth, WorldMapLayout.RouteZMax)));
+            BlitRectangle(canvas, size, thuyShot, WorldMapLayout.ThuyTinh.ToPixels(new Vector2(-WorldMapLayout.ThuyTinhWest, WorldMapLayout.RouteZMax)));
             Object.DestroyImmediate(sonShot);
             Object.DestroyImmediate(palaceShot);
             Object.DestroyImmediate(thuyShot);
@@ -158,9 +163,10 @@ namespace SonTinhThuyTinh.EditorTools
 
         // ---------------------------------------------------------------- capture
 
+        // The Thuy Tinh column: the marsh on the west and the open sea up to ThuyTinhEast metres east of the causeway.
         static Texture2D CaptureRoute() => Capture(
-            new Vector2(0f, (WorldMapLayout.RouteZMin + WorldMapLayout.RouteZMax) * 0.5f),
-            new Vector2(WorldMapLayout.RouteHalfWidth * 2f, WorldMapLayout.RouteZMax - WorldMapLayout.RouteZMin));
+            new Vector2((WorldMapLayout.ThuyTinhEast - WorldMapLayout.ThuyTinhWest) * 0.5f, (WorldMapLayout.RouteZMin + WorldMapLayout.RouteZMax) * 0.5f),
+            new Vector2(WorldMapLayout.ThuyTinhWest + WorldMapLayout.ThuyTinhEast, WorldMapLayout.RouteZMax - WorldMapLayout.RouteZMin));
 
         static Texture2D CapturePlateau() => Capture(Vector2.zero, new Vector2(WorldMapLayout.PalaceHalf * 2f, WorldMapLayout.PalaceHalf * 2f));
 

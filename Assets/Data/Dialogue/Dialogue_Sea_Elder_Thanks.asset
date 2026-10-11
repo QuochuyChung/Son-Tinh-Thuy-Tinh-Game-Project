@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_Sea_Elder_Thanks
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: "Tr\u01B0\u1EDFng l\xE0ng"
+    text: "H\u1EA3i \u0111\u0103ng s\xE1ng r\u1ED3i! S\u01B0\u01A1ng \u0111ang tan...
+      Ng\xE0i \u0111\xFAng l\xE0 ch\xFAa v\xF9ng n\u01B0\u1EDBc. Gi\u1EDD v\xE0o
+      V\u1ECBnh M\u1EADp \u0111i, r\u1ED3i t\u1EDBi \u0111\u1EA3o S\u1EA5u \u1EDF
+      ph\xEDa t\xE2y."
+    illustration: {fileID: 0}

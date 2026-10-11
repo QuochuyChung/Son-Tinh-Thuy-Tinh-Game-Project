@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_Sea_Shark_Intro
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: 
+    text: "Gi\u1EEFa v\u1ECBnh k\xEDn n\u01B0\u1EDBc xanh th\u1EABm, m\u1ED9t b\xF3ng
+      v\xE2y kh\u1ED5ng l\u1ED3 l\u01B0\u1EDBt ch\u1EADm d\u1ECDc v\xE1ch \u0111\xE1.
+      Ch\xEDn chi\u1EBFc v\xE2y x\xE9 n\u01B0\u1EDBc nh\u01B0 ch\xEDn l\u01B0\u1EE1i
+      dao."
+    illustration: {fileID: 0}
+  - speaker: "M\u1EADp Ch\xEDn V\xE2y"
+    text: "L\u1EA1i th\xEAm m\u1ED9t k\u1EBB n\u1EEFa t\u1EDBi qu\u1EA5y v\u1ECBnh
+      c\u1EE7a ta! B\u1ECDn ng\u01B0 t\u1EB7c \u0111\u1ED1t thuy\u1EC1n, x\xE9 l\u01B0\u1EDBi,
+      gi\u1EDD \u0111\u1EBFn l\u01B0\u1EE3t ng\u01B0\u01A1i sao?"
+    illustration: {fileID: 0}
+  - speaker: "Th\u1EE7y Tinh"
+    text: "Ta l\xE0 Th\u1EE7y Tinh, ch\xFAa v\xF9ng n\u01B0\u1EDBc. Ta \u0111\u1EBFn
+      \u0111\u1EC3 d\u1EB9p b\u1ECDn ng\u01B0 t\u1EB7c, v\xE0 xin M\u1EADp Ch\xEDn
+      V\xE2y l\xE0m s\xEDnh l\u1EC5 d\xE2ng Vua H\xF9ng."
+    illustration: {fileID: 0}
+  - speaker: "M\u1EADp Ch\xEDn V\xE2y"
+    text: "Ch\xFAa v\xF9ng n\u01B0\u1EDBc m\xE0 \u0111\u1EC3 v\u1ECBnh nh\xE0 ra
+      n\xF4ng n\u1ED7i n\xE0y \u01B0? Mu\u1ED1n ta tin, h\xE3y cho ta th\u1EA5y ng\u01B0\u01A1i
+      gi\u1EEF \u0111\u01B0\u1EE3c d\xF2ng n\u01B0\u1EDBc."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "Ch\xEDn chi\u1EBFc v\xE2y d\u1EF1ng \u0111\u1EE9ng. N\u01B0\u1EDBc trong
+      v\u1ECBnh cu\u1ED9n th\xE0nh xo\xE1y quanh b\xF3ng c\xE1 kh\u1ED5ng l\u1ED3."
+    illustration: {fileID: 0}
+  - speaker: "Th\u1EE7y Tinh"
+    text: "Ta ch\u1EA5p nh\u1EADn th\u1EED th\xE1ch. H\xE3y ra tay!"
+    illustration: {fileID: 0}

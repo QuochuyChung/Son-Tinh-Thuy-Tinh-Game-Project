@@ -10,7 +10,7 @@ namespace SonTinhThuyTinh.Combat
     [RequireComponent(typeof(Health))]
     [RequireComponent(typeof(CapsuleCollider))]
     [DisallowMultipleComponent]
-    public sealed class NineLeggedTurtleBoss : MonoBehaviour, IHitReceiver
+    public sealed class NineLeggedTurtleBoss : MonoBehaviour, IHitReceiver, IArenaBoss
     {
         enum AttackMode
         {
@@ -364,6 +364,18 @@ namespace SonTinhThuyTinh.Combat
             attackMode = AttackMode.None;
             CleanupEffects();
             if (!health.IsDead) Play("Turtle_Move", 0.1f);
+        }
+
+        // A fresh fight inside a map (SeaBossArenaEvent): no attack in progress, the specials wait again like at the start.
+        public void ResetForRetry()
+        {
+            battleEnded = false;
+            attackMode = AttackMode.None;
+            CleanupEffects();
+            nextAttackAt = Time.time + 1.5f;
+            nextSpecialAt = Time.time + specialOpeningDelay;
+            useShockwaveNext = true;
+            Play("Turtle_Move", 0.1f, true);
         }
 
         public void OnHit(DamageInfo info, Vector3 impulse)

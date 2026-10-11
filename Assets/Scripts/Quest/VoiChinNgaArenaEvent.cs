@@ -28,7 +28,7 @@ namespace SonTinhThuyTinh.Quest
         [SerializeField] float triggerRadius = 12f;   // inside the entrance (the player comes back at 14 m from the centre): a moment to breathe after a defeat
         [Tooltip("The elephant cannot leave this radius round the centre; also where its charge stops.")]
         [SerializeField] float arenaRadius = 17f;
-        [SerializeField] float bossMaxHealth = 450f;
+        [SerializeField] float bossMaxHealth = 350f;
 
         PlayerController player;
         Image bossFill;

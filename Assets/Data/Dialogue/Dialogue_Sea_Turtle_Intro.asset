@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_Sea_Turtle_Intro
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: 
+    text: "Gi\u1EEFa \u0111\u1EC1n ch\xECm, m\u1EB7t n\u01B0\u1EDBc ph\u1EB3ng nh\u01B0
+      g\u01B0\u01A1ng. Linh Quy ch\xEDn ch\xE2n t\u1EEB t\u1EEB nh\xF4 l\xEAn kh\u1ECFi
+      n\u01B0\u1EDBc, mai ph\u1EE7 r\xEAu ng\u1ECDc s\xE1ng m\u1EDD."
+    illustration: {fileID: 0}
+  - speaker: "R\xF9a Ch\xEDn Ch\xE2n"
+    text: "S\xF3ng \u0111\xE3 k\u1EC3 cho ta nghe: ng\u01B0 t\u1EB7c tan, h\u1EA3i
+      \u0111\u0103ng s\xE1ng, n\u01B0\u1EDBc c\xE1c v\u1ECBnh l\u1EAFng l\u1EA1i.
+      Ng\u01B0\u01A1i l\xE0m \u0111\u01B0\u1EE3c nhi\u1EC1u \u0111i\u1EC1u r\u1ED3i,
+      Th\u1EE7y Tinh."
+    illustration: {fileID: 0}
+  - speaker: "Th\u1EE7y Tinh"
+    text: "Ta \u0111\u1EBFn xin R\xF9a Ch\xEDn Ch\xE2n l\xE0m s\xEDnh l\u1EC5 cu\u1ED1i
+      c\xF9ng d\xE2ng Vua H\xF9ng."
+    illustration: {fileID: 0}
+  - speaker: "R\xF9a Ch\xEDn Ch\xE2n"
+    text: "Ng\u01B0\u1EDDi tr\u1ECB th\u1EE7y kh\xF4ng ch\u1EC9 bi\u1EBFt \u0111\xE1nh.
+      Ph\u1EA3i bi\u1EBFt gi\u1EEF, bi\u1EBFt n\xE9, bi\u1EBFt \u0111\u1EE3i s\xF3ng
+      l\xEAn. H\xE3y n\u1EBFm v\xF2ng xo\xE1y c\u1EE7a mai ta."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "Linh Quy h\u1EA1 th\u1EA5p th\xE2n m\xECnh. Ng\u1ECDc tr\xEAn mai r\u1EF1c
+      s\xE1ng, n\u01B0\u1EDBc quanh \u0111\u1EC1n b\u1EAFt \u0111\u1EA7u rung."
+    illustration: {fileID: 0}
+  - speaker: "Th\u1EE7y Tinh"
+    text: "Ta s\u1EB5n s\xE0ng. Xin h\xE3y ra tay!"
+    illustration: {fileID: 0}

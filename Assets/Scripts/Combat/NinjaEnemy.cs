@@ -418,10 +418,21 @@ namespace SonTinhThuyTinh.Combat
             transform.position = Grounded(next);
         }
 
+        // The terrain under p, or a solid thing standing on it that reaches at most a metre above where p is (a pier, a deck, a boat's
+        // deck: the pirates of Map_ThuyTinh fight on wooden decks; trees and walls taller than that are not stepped on).
         static Vector3 Grounded(Vector3 p)
         {
+            float y = p.y;
             Terrain t = Terrain.activeTerrain;
-            if (t != null) p.y = t.SampleHeight(p) + t.transform.position.y;
+            if (t != null) y = t.SampleHeight(p) + t.transform.position.y;
+            float from = Mathf.Max(p.y, y) + 1f;
+            foreach (RaycastHit hit in Physics.RaycastAll(new Vector3(p.x, from, p.z), Vector3.down, 8f, ~0, QueryTriggerInteraction.Ignore))
+            {
+                Collider c = hit.collider;
+                if (c is TerrainCollider || c.GetComponentInParent<Health>() != null || c.GetComponentInParent<CharacterController>() != null) continue;
+                if (hit.point.y > y) y = hit.point.y;
+            }
+            p.y = y;
             return p;
         }
 

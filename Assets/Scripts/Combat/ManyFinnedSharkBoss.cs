@@ -8,7 +8,7 @@ namespace SonTinhThuyTinh.Combat
     [RequireComponent(typeof(Health))]
     [RequireComponent(typeof(CapsuleCollider))]
     [DisallowMultipleComponent]
-    public sealed class ManyFinnedSharkBoss : MonoBehaviour, IHitReceiver
+    public sealed class ManyFinnedSharkBoss : MonoBehaviour, IHitReceiver, IArenaBoss
     {
         static readonly int BaseColor = Shader.PropertyToID("_BaseColor");
 
@@ -157,6 +157,15 @@ namespace SonTinhThuyTinh.Combat
         {
             battleEnded = true;
             if (!health.IsDead) Play("Shark_Swim", 0.1f);
+        }
+
+        // A fresh fight inside a map (SeaBossArenaEvent): the shark swims again and waits a moment before its first bite.
+        public void ResetForRetry()
+        {
+            battleEnded = false;
+            attacking = false;
+            nextAttackAt = Time.time + 1.5f;
+            Play("Shark_Swim", 0.1f, true);
         }
 
         public void OnHit(DamageInfo info, Vector3 impulse)

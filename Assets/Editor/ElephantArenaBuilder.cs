@@ -73,6 +73,19 @@ namespace SonTinhThuyTinh.EditorTools
             boss.AddComponent<Health>();
             var ai = boss.AddComponent<VoiChinNgaBoss>();
             ai.enabled = false;
+            // The arena fight is gentler than Huy's separate scene (the player has no healing here): lower damage, longer waits between
+            // blows and longer warnings before the special attacks. Only this instance; the defaults in VoiChinNgaBoss stay for Battle_VoiChinNga.
+            var bso = new SerializedObject(ai);
+            foreach (var (field, value) in new (string, float)[]
+            {
+                ("attackDamage", 12f), ("attackCooldown", 1.8f),
+                ("specialOpeningDelay", 4f), ("specialCooldown", 8f),
+                ("slamDamage", 16f), ("slamWindup", 1.3f), ("slamDuration", 1.8f),
+                ("chargeDamage", 20f), ("chargeWindup", 1.1f), ("chargeDuration", 1.5f),
+                ("moveSpeed", 2.4f),
+            })
+                bso.FindProperty(field).floatValue = value;
+            bso.ApplyModifiedPropertiesWithoutUndo();
 
             var evt = root.gameObject.AddComponent<VoiChinNgaArenaEvent>();
             var so = new SerializedObject(evt);

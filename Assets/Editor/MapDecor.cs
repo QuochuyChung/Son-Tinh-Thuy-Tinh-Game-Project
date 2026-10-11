@@ -274,10 +274,14 @@ namespace SonTinhThuyTinh.EditorTools
             return root.gameObject;
         }
 
-        // Stilt house: platform on posts, low walls with a doorway, A-frame thatch roof and a ladder.
+        static int houseVariant;
+
+        // Stilt house: one of the two Meshy village houses (VillageModelSetup, alternating), its stairs on local -Z. Without the models:
+        // platform on posts, low walls with a doorway, A-frame thatch roof and a ladder.
         public static GameObject StiltHouse(Transform parent, Vector3 groundPosition, float yaw)
         {
             Transform root = Empty("StiltHouse", parent, groundPosition, yaw);
+            if (VillageModelSetup.DressHouse(root, VillageModelSetup.VariantFor(groundPosition, houseVariant++)) != null) return root.gameObject;
             Material wood = Lit("Mat_Wood", new Color(0.33f, 0.22f, 0.12f), 0f, 0.15f);
             Material plank = Lit("Mat_Plank", new Color(0.45f, 0.31f, 0.18f), 0f, 0.1f);
             Material thatch = Lit("Mat_Thatch", new Color(0.50f, 0.40f, 0.20f), 0f, 0.05f, true);

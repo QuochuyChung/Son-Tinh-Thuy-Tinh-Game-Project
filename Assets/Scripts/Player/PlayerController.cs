@@ -208,6 +208,9 @@ namespace SonTinhThuyTinh.Player
 
         public void SetTrail(bool on) => swordTrail?.SetEmitting(on);
 
+        // Raised when an attack or a spell (comboIndex -1) has started: the sound system listens (Audio/PlayerAudio).
+        public event System.Action<AttackData, int> AttackStarted;
+
         // Starts an attack (or spell) if there is stamina for it.
         public bool TryAttack(AttackData data, int comboIndex)
         {
@@ -215,6 +218,7 @@ namespace SonTinhThuyTinh.Player
             if (data.staminaCost > 0f && !stamina.TryConsume(data.staminaCost)) return false;
             AttackState.Begin(data, comboIndex);
             ChangeState(AttackState);
+            AttackStarted?.Invoke(data, comboIndex);
             return true;
         }
 

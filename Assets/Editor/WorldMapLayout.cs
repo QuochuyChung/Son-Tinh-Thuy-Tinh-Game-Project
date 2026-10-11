@@ -18,10 +18,13 @@ namespace SonTinhThuyTinh.EditorTools
         // shows SonTinhWest metres to the west of the world's x = 0 and SonTinhEast to the east.
         public const float SonTinhWest = 290f, SonTinhEast = RouteHalfWidth;
 
+        // The Thuy Tinh map is wider than its marsh too: the open sea (ThuyTinhMapSea.cs) lies up to 290 m east of the causeway.
+        public const float ThuyTinhWest = RouteHalfWidth, ThuyTinhEast = 290f;
+
         // Picture layout in metres, from the top-left corner: [Son Tinh column][palace][Thuy Tinh column], all the same row line.
         const float EndLine = 124f;                                   // y of the line where both routes end and the plateau's centre line lies
         const float PalaceLeft = SonTinhWest + SonTinhEast;
-        public static readonly Vector2 SizeMeters = new(PalaceLeft + 2f * PalaceHalf + 2f * RouteHalfWidth, EndLine + (RouteEndZ - RouteZMin) + 8f);
+        public static readonly Vector2 SizeMeters = new(PalaceLeft + 2f * PalaceHalf + ThuyTinhWest + ThuyTinhEast, EndLine + (RouteEndZ - RouteZMin) + 8f);
         public static Vector2Int SizePixels => new(Mathf.RoundToInt(SizeMeters.x * PixelsPerMeter), Mathf.RoundToInt(SizeMeters.y * PixelsPerMeter));
 
         // A scene's ground placed on the picture: the world point (x, z) that lands on `referenceMeters` (picture metres, y down).
@@ -59,6 +62,6 @@ namespace SonTinhThuyTinh.EditorTools
 
         public static readonly Frame SonTinh = new(new Vector2(0f, RouteEndZ), new Vector2(SonTinhWest, EndLine));
         public static readonly Frame Palace = new(Vector2.zero, new Vector2(PalaceLeft + PalaceHalf, EndLine));
-        public static readonly Frame ThuyTinh = new(new Vector2(0f, RouteEndZ), new Vector2(PalaceLeft + 2f * PalaceHalf + RouteHalfWidth, EndLine));
+        public static readonly Frame ThuyTinh = new(new Vector2(0f, RouteEndZ), new Vector2(PalaceLeft + 2f * PalaceHalf + ThuyTinhWest, EndLine));
     }
 }

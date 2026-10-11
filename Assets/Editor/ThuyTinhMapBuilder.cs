@@ -28,8 +28,10 @@ namespace SonTinhThuyTinh.EditorTools
         const string PackCommon = "Assets/TriForge Assets/Fantasy Worlds - DEMO Common Files/";
         const string GeneratedRoot = "Generated";
 
-        const float Width = 220f, Length = 370f, Height = 60f, ZMin = -25f;
-        const int HeightRes = 1025, AlphaRes = 512;
+        // The terrain spans x -100..330 (430 m, like the Son Tinh map): the marsh and the causeway on the west part, the open sea on the east
+        // (ThuyTinhMapSea.cs). The causeway itself is still within +-20 m of x = 0.
+        const float XMin = -100f, XMax = 330f, Width = XMax - XMin, Length = 370f, Height = 70f, ZMin = -25f;
+        const int HeightRes = 1025, AlphaRes = 1024;
         const float PathEnd = 295f, WallHeight = 24f;
         const float ValleyHalfWidth = 30f;                        // the marsh spreads this far on each side of the path before the walls start
         const float WaterY = 2.4f;                                // water surface; the path stays about 0.75 m above it
@@ -70,6 +72,7 @@ namespace SonTinhThuyTinh.EditorTools
 
             Terrain terrain = BuildTerrain();
             var root = new GameObject(GeneratedRoot).transform;
+            root.gameObject.AddComponent<SonTinhThuyTinh.Environment.TerrainFloorGuard>();   // never stay under the ground
 
             Vector3 spawn = Ground(PathX(0f), 0f) + Vector3.up * 0.15f;
             float yaw = Mathf.Atan2(PathX(8f) - PathX(0f), 8f) * Mathf.Rad2Deg;
@@ -80,11 +83,13 @@ namespace SonTinhThuyTinh.EditorTools
             ScatterProps(root);
             BuildStops(root);
             BuildTheme(root);
+            BuildSea(root);
             BuildExit(root);
             SetupGiftPickups();
             BuildBoss(root);
             ManyFinnedSharkSetup.AddToMap(root);
             NineLeggedTurtleSetup.AddToMap(root);
+            BuildEvents(root);
             Dress(terrain);
             BuildMapHud();
 
@@ -109,41 +114,62 @@ namespace SonTinhThuyTinh.EditorTools
 
         static Vector2 Tangent(float z) => new Vector2((PathX(z + 1f) - PathX(z - 1f)) / 2f, 1f).normalized;
 
-        static float GroundHeight(float x, float z)
+        // Everything but the karst stacks, the walls and the final climb: the marsh floor, the open sea, the crossing, the islands.
+        static float GroundCore(float x, float z)
         {
-            float d = Mathf.Abs(x - PathX(z));
+            float east = x - PathX(z);
+            float d = Mathf.Abs(east);
             var p = new Vector2(x, z);
             float r1 = Vector2.Distance(p, Stop(1)), r2 = Vector2.Distance(p, Stop(2));
             float n1 = (Mathf.PerlinNoise(x * 0.13f + 3f, z * 0.13f + 77f) - 0.5f) * 2f;
+            float sea = Smooth(26f, 44f, east) * EastOpen(z);   // 0 in the marsh, 1 in the open sea (ThuyTinhMapSea.cs)
 
             // marsh floor: deeper around the island, with grassy hummocks away from the path, the crossing and the stops
             float crossing = Smooth(ChannelStart - 12f, ChannelStart - 4f, z) * (1f - Smooth(ChannelEnd + 4f, ChannelEnd + 12f, z));
             float hummock = Smooth(0.52f, 0.72f, Mathf.PerlinNoise(x * 0.05f + 20f, z * 0.05f + 40f)) * 2.7f
-                          * Smooth(7f, 11f, d) * Smooth(26f, 34f, r1) * Smooth(16f, 24f, r2) * (1f - crossing);
+                          * Smooth(7f, 11f, d) * Smooth(26f, 34f, r1) * Smooth(16f, 24f, r2) * (1f - crossing) * (1f - sea);
             float floor = WaterY - 1.5f + 0.25f * n1 - 0.9f * (1f - Smooth(22f, 38f, r1)) + hummock;   // the deep lake round the island
+            if (sea > 0f) floor = Mathf.Lerp(floor, SeaFloor(x, z, r1, r2), sea);
 
             float pathHeight = WaterY + 0.75f + 0.1f * n1;
             float h = Mathf.Lerp(pathHeight, floor, Smooth(3f, 8f, d));
 
             // river crossing: the whole width dips below the water; slopes stay gentle (about 14 degrees) so nobody gets stuck
-            float channel = Smooth(ChannelStart - 6f, ChannelStart + 4f, z) * (1f - Smooth(ChannelEnd - 4f, ChannelEnd + 6f, z));
+            float channel = Smooth(ChannelStart - 6f, ChannelStart + 4f, z) * (1f - Smooth(ChannelEnd - 4f, ChannelEnd + 6f, z)) * (1f - sea);
             h = Mathf.Lerp(h, Mathf.Min(h, WaterY - 1.7f), channel);
 
             h = Mathf.Max(h, WaterY + 0.8f - 3.8f * Smooth(IslandRadius, IslandRadius + 3.5f, r1));   // the island (the crocodile's arena)
             h = Mathf.Lerp(h, WaterY - 0.55f, 1f - Smooth(10f, 16f, r2));      // the flooded shrine, knee deep
 
-            // dry islets in the marsh, and the walls step back around them
-            float bayOpen = 0f;
+            // dry islets in the marsh
             for (int i = 0; i < Bays.Length; i++)
-            {
-                float rb = Vector2.Distance(p, Bay(i));
-                h = Mathf.Max(h, WaterY + 0.9f - 3.8f * Smooth(Bays[i].z, Bays[i].z + 3.5f, rb));
-                bayOpen = Mathf.Max(bayOpen, 1f - Smooth(Bays[i].z + 4f, Bays[i].z + 18f, rb));
-            }
+                h = Mathf.Max(h, WaterY + 0.9f - 3.8f * Smooth(Bays[i].z, Bays[i].z + 3.5f, Vector2.Distance(p, Bay(i))));
 
+            // the islands of the sea: fishing village, lighthouse hill, shrine, sandbars
+            if (sea > 0f)
+                foreach (SeaIsland isl in SeaIslands)
+                {
+                    float rb = Vector2.Distance(p, isl.Centre);
+                    if (rb < isl.Radius + isl.Skirt) h = Mathf.Max(h, WaterY + isl.Top - (isl.Top + 2.6f) * Smooth(isl.Radius, isl.Radius + isl.Skirt, rb));
+                }
+
+            // Shark Bay: an even, sandy pool 1.5 m deep (the karst ring that walls it in comes from KarstTop)
+            float rp = Vector2.Distance(p, PoolCentre);
+            if (rp < PoolRadius + 6f) h = Mathf.Lerp(h, WaterY - PoolDepth, 1f - Smooth(PoolRadius, PoolRadius + 6f, rp));
+            return h;
+        }
+
+        static float GroundHeight(float x, float z)
+        {
+            float h = KarstTop(x, z, GroundCore(x, z));
+
+            float east = x - PathX(z);
             float wobble = (Mathf.PerlinNoise(x * 0.05f, z * 0.05f + 50f) - 0.5f) * 2f * 4f;
-            float wallStart = ValleyHalfWidth + 26f * bayOpen;
-            h += WallHeight * Mathf.Pow(Mathf.Clamp01((d + wobble - wallStart) / 24f), 1.4f);
+            float wallStartWest = ValleyHalfWidth + 26f * BayOpen(x, z);
+            // on the east the wall steps back to the cliffs of the sea (SeaWallX) wherever the lagoon is open
+            float wallStartEast = Mathf.Lerp(wallStartWest, SeaWallX - PathX(z), EastOpen(z));
+            float over = east < 0f ? -east + wobble - wallStartWest : east + wobble - wallStartEast;
+            h += WallHeight * Mathf.Pow(Mathf.Clamp01(over / 24f), 1.4f);
             h += WallHeight * Mathf.Pow(Mathf.Clamp01((-3f - z) / 14f), 1.4f);
             h += WallHeight * Mathf.Pow(Mathf.Clamp01((z - (PathEnd + 3f)) / 10f), 1.4f);   // closed right behind the exit gate
             h += ClimbHeight * Smooth(ClimbStart, ClimbEnd, z);   // the way up to the palace gate, out of the water
@@ -172,16 +198,16 @@ namespace SonTinhThuyTinh.EditorTools
             for (int j = 0; j < HeightRes; j++)
                 for (int i = 0; i < HeightRes; i++)
                 {
-                    float x = -Width * 0.5f + Width * i / (HeightRes - 1);
+                    float x = XMin + Width * i / (HeightRes - 1);
                     float z = ZMin + Length * j / (HeightRes - 1);
                     heights[j, i] = Mathf.Clamp01(GroundHeight(x, z) / Height);
                 }
             data.SetHeights(0, 0, heights);
 
-            TerrainLayer[] layers = { FindLayer("TL_fwOF_Grass_01"), FindLayer("TL_fwOF_Soil_01"), FindLayer("TL_fwOF_RockSurf_02"), FindLayer("TL_fwOF_TerrainMoss_01") };
+            TerrainLayer[] layers = { FindLayer("TL_fwOF_Grass_01"), FindLayer("TL_fwOF_Soil_01"), FindLayer("TL_fwOF_RockSurf_02"), FindLayer("TL_fwOF_TerrainMoss_01"), EnsureSandLayer() };
             data.terrainLayers = System.Array.FindAll(layers, l => l != null);
             data.alphamapResolution = AlphaRes;
-            if (data.terrainLayers.Length == 4) Paint(data);
+            if (data.terrainLayers.Length == 5) Paint(data);
 
             Terrain terrain = Object.FindFirstObjectByType<Terrain>();
             if (terrain == null)
@@ -192,38 +218,68 @@ namespace SonTinhThuyTinh.EditorTools
             }
             terrain.terrainData = data;
             terrain.GetComponent<TerrainCollider>().terrainData = data;
-            terrain.transform.position = new Vector3(-Width * 0.5f, 0f, ZMin);
+            terrain.transform.position = new Vector3(XMin, 0f, ZMin);
             terrain.heightmapPixelError = 4f;
             terrain.basemapDistance = 400f;
             EditorUtility.SetDirty(data);
             return terrain;
         }
 
-        // Soil on the path and under the water, moss along the waterline, rock on steep walls, grass on the rest.
+        // The sand of the sea: the pack's grey rock surface tinted warm (URP's terrain shader multiplies the layer by its diffuse remap max).
+        static TerrainLayer EnsureSandLayer()
+        {
+            const string path = DataDir + "/TL_Sand.terrainlayer";
+            var source = FindLayer("TL_fwOF_RockSurf_02");
+            if (source == null) return null;
+            var layer = AssetDatabase.LoadAssetAtPath<TerrainLayer>(path);
+            if (layer == null)
+            {
+                Directory.CreateDirectory(DataDir);
+                layer = new TerrainLayer();
+                AssetDatabase.CreateAsset(layer, path);
+            }
+            layer.diffuseTexture = source.diffuseTexture;
+            layer.normalMapTexture = source.normalMapTexture;
+            layer.maskMapTexture = source.maskMapTexture;
+            layer.tileSize = source.tileSize * 1.3f;
+            layer.normalScale = 0.4f;
+            layer.smoothness = 0.02f;
+            layer.metallic = 0f;
+            layer.diffuseRemapMin = Vector4.zero;
+            layer.diffuseRemapMax = new Vector4(2.3f, 1.9f, 1.1f, 1f);
+            EditorUtility.SetDirty(layer);
+            return layer;
+        }
+
+        // Soil on the path and under the marsh water, moss along the waterline, rock on steep walls and karst, sand on the sea floor and
+        // beaches of the east, grass on the rest.
         static void Paint(TerrainData data)
         {
             int res = data.alphamapResolution;
-            var map = new float[res, res, 4];
+            var map = new float[res, res, 5];
             for (int y = 0; y < res; y++)
                 for (int x = 0; x < res; x++)
                 {
                     float u = (x + 0.5f) / res, v = (y + 0.5f) / res;
-                    float wx = -Width * 0.5f + u * Width, wz = ZMin + v * Length;
+                    float wx = XMin + u * Width, wz = ZMin + v * Length;
                     float h = GroundHeight(wx, wz);
-                    float d = Mathf.Abs(wx - PathX(wz));
+                    float east = wx - PathX(wz), d = Mathf.Abs(east);
                     float slope = data.GetSteepness(u, v);
 
                     float wet = 1f - Smooth(WaterY - 0.1f, WaterY + 0.45f, h);
                     float path = 1f - Smooth(1.6f, 3.6f, d);
                     float rock = Smooth(28f, 44f, slope);
-                    float soil = Mathf.Max(wet * 0.95f, path) * (1f - rock);
-                    float moss = (1f - Smooth(0.15f, 0.9f, Mathf.Abs(h - (WaterY + 0.25f)))) * 0.75f * (1f - path) * (1f - rock);
-                    float grass = Mathf.Max(0.0001f, 1f - soil - rock - moss);
-                    float sum = grass + soil + rock + moss;
+                    float seaZone = Smooth(30f, 46f, east) * EastOpen(wz);
+                    float sand = seaZone * (1f - Smooth(WaterY + 0.15f, WaterY + 1.1f, h)) * (1f - rock) * 0.95f;   // the sea floor and the beaches
+                    float soil = Mathf.Max(wet * 0.95f, path) * (1f - rock) * (1f - sand);
+                    float moss = (1f - Smooth(0.15f, 0.9f, Mathf.Abs(h - (WaterY + 0.25f)))) * 0.75f * (1f - path) * (1f - rock) * (1f - sand);
+                    float grass = Mathf.Max(0.0001f, 1f - soil - rock - moss - sand);
+                    float sum = grass + soil + rock + moss + sand;
                     map[y, x, 0] = grass / sum;
                     map[y, x, 1] = soil / sum;
                     map[y, x, 2] = rock / sum;
                     map[y, x, 3] = moss / sum;
+                    map[y, x, 4] = sand / sum;
                 }
             data.SetAlphamaps(0, 0, map);
         }
@@ -284,8 +340,8 @@ namespace SonTinhThuyTinh.EditorTools
             var plane = GameObject.CreatePrimitive(PrimitiveType.Plane);
             plane.name = "Water";
             plane.transform.SetParent(root, false);
-            plane.transform.position = new Vector3(0f, WaterY, ZMin + Length * 0.5f);
-            plane.transform.localScale = new Vector3(Width / 10f * 1.2f, 1f, Length / 10f * 1.2f);
+            plane.transform.position = new Vector3(XMin + Width * 0.5f, WaterY, ZMin + Length * 0.5f);
+            plane.transform.localScale = new Vector3(Width / 10f * 2.5f, 1f, Length / 10f * 2.5f);   // the sea goes on past the terrain
             Object.DestroyImmediate(plane.GetComponent<Collider>());   // water is only a surface, nothing to stand on
             var renderer = plane.GetComponent<MeshRenderer>();
             Material material = preferWaterWorks ? WaterMaterial() : EnsureWaterMaterial();
@@ -336,7 +392,7 @@ namespace SonTinhThuyTinh.EditorTools
             RenderSettings.defaultReflectionMode = DefaultReflectionMode.Skybox;
             RenderSettings.fog = true;
             RenderSettings.fogMode = FogMode.ExponentialSquared;
-            RenderSettings.fogDensity = 0.0042f;
+            RenderSettings.fogDensity = 0.0036f;   // a little thinner than the old marsh: the sea and the karst show through the mist
             RenderSettings.fogColor = new Color(0.58f, 0.72f, 0.80f);
 
             var volume = Object.FindFirstObjectByType<Volume>();
@@ -354,6 +410,7 @@ namespace SonTinhThuyTinh.EditorTools
         {
             var p = new Vector2(x, z);
             bool crossing = z > ChannelStart - 10f && z < StopZ[0] + 8f && Mathf.Abs(x - PathX(z)) < 24f + extra;
+            if (Vector2.Distance(p, PoolCentre) < PoolRadius + 3f + extra) return true;   // Shark Bay
             for (int i = 0; i < Bays.Length; i++)
                 if (Vector2.Distance(p, Bay(i)) < Bays[i].z + 3f + extra) return true;
             return crossing || Vector2.Distance(p, Stop(1)) < IslandRadius + 7f + extra || Vector2.Distance(p, Stop(2)) < 17f + extra
@@ -372,7 +429,8 @@ namespace SonTinhThuyTinh.EditorTools
             {
                 float z = R(-14f, PathEnd + 10f), x = PathX(z) + R(-58f, 58f);
                 float h = GroundHeight(x, z), d = Mathf.Abs(x - PathX(z));
-                if (h < WaterY + 0.45f || d < 5.5f || Mathf.Abs(x) > Width * 0.5f - 4f || NearStops(x, z, 2f)) continue;
+                if (h < WaterY + 0.45f || d < 5.5f || x < XMin + 4f || x > XMax - 4f || NearStops(x, z, 2f)) continue;
+                if (x - PathX(z) > 40f) continue;   // the sea's islands get their own trees (BuildSea); the cliffs and karst none
                 var p = new Vector2(x, z);
                 if (placed.Exists(o => Vector2.Distance(o, p) < 9f)) continue;
                 placed.Add(p);
@@ -474,7 +532,7 @@ namespace SonTinhThuyTinh.EditorTools
         static void BuildTheme(Transform root)
         {
             Transform decor = Group(root, "Decor");
-            MapDecor.DistantMountains(decor, new Vector3(0f, 0f, 160f), 9, MapDecor.MountainBlue, 300f, 400f, 11);
+            MapDecor.DistantMountains(decor, new Vector3(XMin + Width * 0.5f, 0f, 160f), 12, MapDecor.MountainBlue, 360f, 470f, 11);
 
             // torches at the start, the far bank, the island and the shrine so the way is lit through the mist
             foreach (float side in new[] { -1f, 1f })
@@ -507,9 +565,11 @@ namespace SonTinhThuyTinh.EditorTools
         static void BuildWaterfalls(Transform decor)
         {
             Transform group = Group(decor, "Waterfalls");
-            foreach (var (z, side) in new[] { (105f, -1f), (185f, 1f) })
+            // two on the west wall of the marsh, two on the cliffs that close the sea on the east (x from SeaWallX - 8)
+            foreach (var (z, side) in new[] { (105f, -1f), (185f, -1f), (80f, 2f), (205f, 2f) })
             {
-                Vector2 from = new(PathX(z) + side * 20f, z), dir = new(side, 0f);
+                bool cliff = side > 1f;
+                Vector2 from = cliff ? new Vector2(SeaWallX - 8f, z) : new(PathX(z) + side * 20f, z), dir = new(cliff ? 1f : side, 0f);
                 if (!MapDecor.FindSlope(GroundHeight, from, dir, WaterY, 14f, out Vector2 bottom, out Vector2 top))
                 {
                     Debug.LogWarning("No slope high enough for a waterfall near z=" + z);
@@ -654,6 +714,7 @@ namespace SonTinhThuyTinh.EditorTools
                 float a = i * 12f * Mathf.Deg2Rad;
                 Vector2 dir = new(Mathf.Sin(a), Mathf.Cos(a));
                 if (Mathf.Abs(Vector2.Dot(dir, t)) > Mathf.Cos(24f * Mathf.Deg2Rad) || Vector2.Dot(dir, lair) > Mathf.Cos(28f * Mathf.Deg2Rad)) continue;
+                if (Vector2.Dot(dir, (PoolCentre - c).normalized) > Mathf.Cos(24f * Mathf.Deg2Rad)) continue;   // open where the pier from Shark Bay lands
                 Vector2 p = c + dir * (IslandRadius + 0.9f);   // on the rim: further out the shore drops under the water
                 float s = R(3.6f, 5.6f);
                 Place(rock, new Vector3(p.x, GroundHeight(p.x, p.y) - 0.4f, p.y), R(0f, 360f), new Vector3(s, s * R(0.8f, 1.2f), s), island, false);
@@ -743,7 +804,7 @@ namespace SonTinhThuyTinh.EditorTools
             static GiftItem Gift(string name) => AssetDatabase.LoadAssetAtPath<GiftItem>("Assets/Data/Gifts/Gift_" + name + ".asset");
             MapHudBuilder.Build("THỦY TINH  ·  ĐƯỜNG THỦY", new Color(0.25f, 0.82f, 1f), WorldMapLayout.ThuyTinh, new[]
             {
-                (Gift("Map9Vay"), Stop(0)),
+                (Gift("Map9Vay"), PoolCentre),       // Shark Bay
                 (Gift("MinhChauDayVuc"), Stop(1)),   // the crocodile's island
                 (Gift("Rua9Chan"), Stop(2)),
             });
