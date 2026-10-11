@@ -42,6 +42,9 @@ namespace SonTinhThuyTinh.Player
 
         void Awake()
         {
+            // A scene played on its own (no character select before it) uses its fallback; remember it, so the next scenes of that run keep
+            // the same suitor instead of each falling back to its own (a Thủy Tinh run on Map_ThuyTinh used to reach the palace as Sơn Tinh).
+            if (GameSession.SelectedCharacter == null) GameSession.SelectedCharacter = fallbackCharacter;
             CharacterId id = GameSession.SelectedCharacter ?? fallbackCharacter;
             Character = id;
             CharacterDefinition character = roster.Get(id);

@@ -50,6 +50,9 @@ namespace SonTinhThuyTinh.Dialogue
             skipAction.AddBinding("<Keyboard>/escape");
             skipAction.AddBinding("<Gamepad>/start");
 
+            if (GetComponent<DialogueVoicePlayer>() == null)
+                gameObject.AddComponent<DialogueVoicePlayer>();
+
             SetVisible(false);
         }
 

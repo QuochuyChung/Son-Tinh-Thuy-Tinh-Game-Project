@@ -11,7 +11,7 @@ namespace SonTinhThuyTinh.Audio
         static float master = -1f, music = -1f, sfx = -1f;
 
         public static float MasterVolume { get => Get(ref master, MasterKey, 1f); set { Set(ref master, MasterKey, value); AudioListener.volume = master; } }
-        public static float MusicVolume { get => Get(ref music, MusicKey, 0.8f); set => Set(ref music, MusicKey, value); }
+        public static float MusicVolume { get => Get(ref music, MusicKey, 0.6f); set => Set(ref music, MusicKey, value); }
         public static float SfxVolume { get => Get(ref sfx, SfxKey, 1f); set => Set(ref sfx, SfxKey, value); }
 
         public static void Play(Sfx id, float volume = 1f) => AudioManager.Instance?.PlaySfx(id, null, volume);

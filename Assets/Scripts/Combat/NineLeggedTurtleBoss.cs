@@ -30,7 +30,7 @@ namespace SonTinhThuyTinh.Combat
 
         [Header("Basic Attack")]
         [SerializeField, Min(0f)] float attackRange = 3.9f;
-        [SerializeField, Min(0f)] float attackDamage = 18f;
+        [SerializeField, Min(0f)] float attackDamage = 11f;
         [SerializeField, Min(0f)] float attackWindup = 0.78f;
         [SerializeField, Min(0.01f)] float attackDuration = 1.5f;
         [SerializeField, Min(0f)] float attackCooldown = 0.85f;
@@ -39,13 +39,13 @@ namespace SonTinhThuyTinh.Combat
         [SerializeField, Min(0f)] float specialOpeningDelay = 2.2f;
         [SerializeField, Min(0f)] float specialCooldown = 4.6f;
         [SerializeField, Min(1f)] float spinTriggerRange = 5.5f;
-        [SerializeField, Min(0f)] float spinDamage = 24f;
+        [SerializeField, Min(0f)] float spinDamage = 14f;
         [SerializeField, Min(0.1f)] float spinWindup = 0.55f;
         [SerializeField, Min(0.1f)] float spinDuration = 1.65f;
         [SerializeField, Min(0f)] float spinMoveSpeed = 6.5f;
         [SerializeField, Min(0.1f)] float spinHitRadius = 3.1f;
         [SerializeField, Min(1f)] float shockwaveRadius = 9f;
-        [SerializeField, Min(0f)] float shockwaveDamage = 27f;
+        [SerializeField, Min(0f)] float shockwaveDamage = 16f;
         [SerializeField, Min(0.1f)] float shockwaveWindup = 1.05f;
         [SerializeField, Min(0.1f)] float shockwaveDuration = 1.55f;
 

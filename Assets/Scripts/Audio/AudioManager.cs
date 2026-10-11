@@ -171,6 +171,8 @@ namespace SonTinhThuyTinh.Audio
             nextScan = 0f;
         }
 
+        float duck = 1f;   // 1 = normal; lower while a dialogue is playing
+
         void Update()
         {
             if (library == null) return;
@@ -180,8 +182,11 @@ namespace SonTinhThuyTinh.Audio
             if (wantMusic == LoopId.MusicBattle && sceneMusic == LoopId.MusicCutscene) wantMusic = sceneMusic;   // cutscenes keep their own
             music.Set(wantMusic, library, 1.6f);
             ambience.Set(sceneAmbience, library, 2.5f);
-            music.Tick(Time.unscaledDeltaTime, GameAudio.MusicVolume);
-            ambience.Tick(Time.unscaledDeltaTime, 1f);
+            // while a conversation plays the music and the ambience sink so the voices can be heard
+            bool talking = hookedRunner != null && hookedRunner.IsPlaying;
+            duck = Mathf.MoveTowards(duck, talking ? 0.3f : 1f, Time.unscaledDeltaTime * 2.5f);
+            music.Tick(Time.unscaledDeltaTime, GameAudio.MusicVolume * duck);
+            ambience.Tick(Time.unscaledDeltaTime, Mathf.Lerp(0.5f, 1f, duck));
 
             UpdateMenuClicks();
             if (Time.unscaledTime >= nextScan) { nextScan = Time.unscaledTime + ScanEvery; Scan(); }
@@ -253,6 +258,9 @@ namespace SonTinhThuyTinh.Audio
         void OnDialogueLine(DialogueLine line)
         {
             if (voiceRoutine != null) { StopCoroutine(voiceRoutine); voiceRoutine = null; }
+            // a recorded line (DialogueVoicePlayer) replaces the placeholder babble
+            var recorded = hookedRunner != null ? hookedRunner.GetComponent<DialogueVoicePlayer>() : null;
+            if (recorded != null && recorded.HasClip(line)) return;
             VoiceId voice = VoiceFor(line.speaker);
             AudioLibrary.VoiceEntry entry = voice == VoiceId.None ? null : library.Get(voice);
             if (entry == null || entry.syllables == null || entry.syllables.Length == 0 || string.IsNullOrEmpty(line.text))

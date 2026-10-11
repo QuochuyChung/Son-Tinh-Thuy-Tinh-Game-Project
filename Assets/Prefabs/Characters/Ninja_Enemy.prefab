@@ -636,10 +636,10 @@ MonoBehaviour:
   kickAfter: 1.5
   kickCooldown: 9
   kickPush: 3
-  kickDamage: 5
-  attackDamage: 8
-  comboDamage: 6
-  slashDamage: 18
+  kickDamage: 3
+  attackDamage: 5
+  comboDamage: 3
+  slashDamage: 10
   reach: 2.2
   hitRadius: 1.5
   blockChance: 0.25

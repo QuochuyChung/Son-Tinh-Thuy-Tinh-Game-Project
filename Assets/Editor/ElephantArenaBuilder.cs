@@ -78,10 +78,10 @@ namespace SonTinhThuyTinh.EditorTools
             var bso = new SerializedObject(ai);
             foreach (var (field, value) in new (string, float)[]
             {
-                ("attackDamage", 12f), ("attackCooldown", 1.8f),
+                ("attackDamage", 8f), ("attackCooldown", 1.8f),
                 ("specialOpeningDelay", 4f), ("specialCooldown", 8f),
-                ("slamDamage", 16f), ("slamWindup", 1.3f), ("slamDuration", 1.8f),
-                ("chargeDamage", 20f), ("chargeWindup", 1.1f), ("chargeDuration", 1.5f),
+                ("slamDamage", 10f), ("slamWindup", 1.3f), ("slamDuration", 1.8f),
+                ("chargeDamage", 13f), ("chargeWindup", 1.1f), ("chargeDuration", 1.5f),
                 ("moveSpeed", 2.4f),
             })
                 bso.FindProperty(field).floatValue = value;

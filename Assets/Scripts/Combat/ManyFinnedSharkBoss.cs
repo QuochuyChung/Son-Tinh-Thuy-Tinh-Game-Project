@@ -19,7 +19,7 @@ namespace SonTinhThuyTinh.Combat
 
         [Header("Attack")]
         [SerializeField, Min(0f)] float attackRange = 5.8f;
-        [SerializeField, Min(0f)] float attackDamage = 14f;
+        [SerializeField, Min(0f)] float attackDamage = 8f;
         [SerializeField, Min(0f)] float attackWindup = 0.48f;
         [SerializeField, Min(0.01f)] float attackDuration = 1.05f;
         [SerializeField, Min(0f)] float attackCooldown = 0.9f;

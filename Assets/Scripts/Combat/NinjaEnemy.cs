@@ -42,10 +42,10 @@ namespace SonTinhThuyTinh.Combat
         [SerializeField] float kickAfter = 1.5f;
         [SerializeField] float kickCooldown = 9f;
         [SerializeField] float kickPush = 3f;
-        [SerializeField] float kickDamage = 5f;
-        [SerializeField] float attackDamage = 8f;     // jump attack
-        [SerializeField] float comboDamage = 6f;      // each of the three cuts
-        [SerializeField] float slashDamage = 18f;
+        [SerializeField] float kickDamage = 3f;
+        [SerializeField] float attackDamage = 5f;     // jump attack
+        [SerializeField] float comboDamage = 3f;      // each of the three cuts
+        [SerializeField] float slashDamage = 10f;
         [Tooltip("Reach of a sword blow, from the pivot along the facing.")]
         [SerializeField] float reach = 2.2f;
         [SerializeField] float hitRadius = 1.5f;
