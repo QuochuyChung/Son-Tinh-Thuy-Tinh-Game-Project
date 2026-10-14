@@ -929,3 +929,22 @@ Thay đổi:
 **Bẫy mới**: bật/tắt `Weather_Mist` trong lúc chẩn đoán làm Unity ghi thêm một **prefab override `m_IsActive`** vào scene instance. Nó không đổi hành vi (giá trị trùng với prefab) nhưng là noise trong diff. Xóa bằng `PrefabUtility.GetPropertyModifications` rồi `SetPropertyModifications` với mảng đã lọc.
 
 **Lưu ý API Unity 6**: `PrefabUtility.RemovePrefabInstancePropertyOverrides` **và** `ResetPrefabInstancePropertyOverrides` đều **không tồn tại** ở bản này. Phải dùng `GetPropertyModifications` + `SetPropertyModifications`. Sửa override tốn 3 lần thử vì đoán tên API — đáng lẽ phải liệt kê method qua reflection ngay từ đầu.
+
+### 9.34 Merge `origin/main`: conflict trong `.unity` là do Unity renumber fileID (15/10)
+
+Merge `origin/main` (cutscene 3D + Thủy Tinh đi trên nước) vào `DuyLD_SourceCode`. 70 files auto-merge sạch, **chỉ 1 conflict**: `Assets/Scenes/Map_SonTinh.unity`.
+
+**Cách nhận ra conflict "giả"**: mở 3 version (base/ours/theirs) rồi so `m_CorrespondingSourceObject`. Cả ba đều là
+`{fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71}` — **cùng một prefab instance**. Chỉ có local fileID khác nhau (base `1597947988`, ours `1627851895`, theirs `504611575`) vì **mỗi lần Unity save scene là nó renumber ID**. Git thấy hai đoạn khác nhau nên giữ cả hai → elephant bị render **2 lần đè lên nhau**. Khối `PrefabInstance` của cả ba bên **giống hệt nhau sau khi bỏ fileID** (57 dòng) — chứng minh được bằng normalize-so-sánh, không cần đoán.
+
+**Đây là cái bẫy lặp lại vô hạn với scene Unity**: *mỗi lần* hai branch cùng mở và save một scene `.unity` là y hệt kiểu conflict này. Cách xử lý đúng: giữ **một** bên, xóa **cả khối** (PrefabInstance + stripped Transform) của bên kia. Giữ mỗi child entry mà không xóa khối là sai — `m_TransformParent` vẫn trỏ về parent nên Unity tự re-parent khi load, duplicate quay lại.
+
+**Bẫy lớn hơn: KHÔNG dùng Unity Editor để resolve conflict scene.** Đã thử và hỏng 2 kiểu, cả hai đều im lặng:
+1. Unity đang chạy với **asset database cũ** (chưa `recompile` để ingest file mới của main) → nó **ghi đè `EditorBuildSettings.asset` và xóa mất scene `Cutscene_Opening.unity`** mà main vừa thêm.
+2. `EditorSceneManager.GetActiveScene()` trả `path` **rỗng** → `OpenScene("")` + `SaveScene()` làm scene trên đĩa **trở về đúng phiên bản trước merge** (hash khớp blob của HEAD cũ). Nội dung merge mất trắng.
+
+Phải **khôi phục bằng git**: `git checkout --merge -- <scene>` sinh lại kết quả 3-way kèm marker. (Lưu ý label marker là `ours`/`theirs`, không phải `HEAD`/`origin/main` — grep `origin/main` sẽ ra rỗng và làm bạn tưởng marker không tồn tại.)
+
+**Bẫy PowerShell suýt phá file**: một hàm PowerShell **vừa `return` array vừa `Write-Output` log** thì log string sẽ bị **nối vào mảng kết quả**. Viết thẳng vào scene được ~2 dòng rác. Chỉ hiện ra nhờ invariant check yêu cầu "ours IDs fully gone". **Đưa log ra `Write-Host`**, không dùng `Write-Output`, trong mọi hàm trả về dữ liệu.
+
+**Bài học chung**: resolve YAML nhạy cảm theo **text + invariant asserts** (abort không ghi nếu bất kỳ check nào fail), không qua Unity. Rẻ hơn nhiều so với để editor ghi đè dữ liệu theo cách không kiểm soát được.
