@@ -917,3 +917,15 @@ Chứng minh lại từ đầu:
 - Property soft particle của URP là `_SoftParticlesNearFadeDistance` / `_SoftParticlesFarFadeDistance` (+ `_SoftParticleFadeParams`), **không phải** `_DepthFade`. Không đoán keyword — liệt kê qua `shader.keywordSpace.keywords` rồi bật cái khớp.
 
 **Đang mở (chưa chốt)**: đường kẻ cuối cùng là **bóng thật của gờ núi phía sau máy ảnh** chứ không phải bug rendering. Cách xử lý: (a) để nguyên, (b) nâng mặt trời `SonTinhMapBuilder` từ 46° lên ~50° để đường chân bóng ra khỏi khung, (c) tắt `Terrain.shadowCastingMode`. Chờ user chọn.
+
+### 9.33 Chốt: nâng mặt trời 46° → 50° cho Map_SonTinh (15/10)
+
+User chọn phương án **nâng mặt trời**. Trước khi sửa đã **verify trước** ở đúng giá trị author (`shadowDistance=40`, `split=0.3333`, `terrain=TwoSided`): chỉ đổi sun X 46→50 là đường kẻ **biến mất hoàn toàn**, mọi thứ khác giữ nguyên. Nhờ vậy không sửa theo giả thuyết thêm lần nào nữa.
+
+Thay đổi:
+- `Assets/Editor/SonTinhMapBuilder.cs:314` — `Euler(46f, -32f, 0f)` → `Euler(50f, -32f, 0f)`, kèm comment giải thích *tại sao* là 50 (chỉ ghi "46" thì người sau sẽ sửa ngược về).
+- `Assets/Scenes/Map_SonTinh.unity` — xoay `Directional Light` theo, để scene và builder không lệch nhau (nếu lệch thì lần rebuild sau đường kẻ quay lại ngay).
+
+**Bẫy mới**: bật/tắt `Weather_Mist` trong lúc chẩn đoán làm Unity ghi thêm một **prefab override `m_IsActive`** vào scene instance. Nó không đổi hành vi (giá trị trùng với prefab) nhưng là noise trong diff. Xóa bằng `PrefabUtility.GetPropertyModifications` rồi `SetPropertyModifications` với mảng đã lọc.
+
+**Lưu ý API Unity 6**: `PrefabUtility.RemovePrefabInstancePropertyOverrides` **và** `ResetPrefabInstancePropertyOverrides` đều **không tồn tại** ở bản này. Phải dùng `GetPropertyModifications` + `SetPropertyModifications`. Sửa override tốn 3 lần thử vì đoán tên API — đáng lẽ phải liệt kê method qua reflection ngay từ đầu.

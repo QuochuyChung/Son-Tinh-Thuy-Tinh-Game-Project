@@ -311,7 +311,11 @@ namespace SonTinhThuyTinh.EditorTools
                 if (light.type == LightType.Directional) sun = light;
             if (sun != null)
             {
-                sun.transform.rotation = Quaternion.Euler(46f, -32f, 0f);
+                // 50, not 46: at 46 the sun grazes the ridge behind spawn (world ~11,26,-17) and
+                // its terminator lands ~7 m in front of the camera as a hard line across the
+                // ground that reads as a rendering bug. 50 clears the ridge - measured, both
+                // angles render otherwise identically.
+                sun.transform.rotation = Quaternion.Euler(50f, -32f, 0f);
                 sun.color = new Color(1f, 0.93f, 0.78f);
                 sun.intensity = 2.1f;
                 sun.shadows = LightShadows.Soft;
