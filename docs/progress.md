@@ -893,3 +893,27 @@ User báo thấy một **đường ngang rõ trên mặt đất**, nghi ngờ m�
 - `QualitySettings` chỉ nằm trong RAM tới khi `AssetDatabase.SaveAssets()` — disk vẫn ghi `40` sau khi đã set xong, phải check lại file mới tin là đã persist.
 - Round-trip `cascade2Split` qua số thập phân viết lại `0.33333334` thành `0.33` (change ngoài ý muốn) — khôi phục bằng `1f/3f`.
 - Mở + save scene làm Unity tự ghi thêm churn của TextMeshPro (`m_fontColor32.rgba`, `m_TextStyleHashCode 0 → -1183493901`) trên ~17 component. Không liên quan tới thay đổi nào — nếu scene đó không có thay đổi thật thì `git checkout` thẳng, đừng commit kèm.
+
+### 9.32 Sửa sai §9.31: sương thành "chấm", và đường kẻ KHÔNG phải cascade (15/10)
+
+**§9.31 phần 1 sai — thu nhỏ quad là lỗi của mình, đã hoàn nguyên.**
+Hạ quad 10–20 m xuống 3–6 m là hành động theo giả thuyết "đường kẻ do mist gây ra" — mà giả thuyết đó đã bị chứng minh là sai. Hệ quả: mật độ chồng phủ mất nên từng hạt hiện ra thành **những chấm tròn đếm được**, user báo "nó không giống sương". Đã trả lại đúng giá trị gốc `startSize 10..20`, hộp Y `9`, `rate 10`, `maxParticleSize 1`.
+
+**Vấn đề thật của quad 10–20 m**: đáy quad đâm xuống đất bị terrain cắt → mép thẳng giữa khung. Không thu nhỏ (vì ra chấm) mà dùng **soft particle**: tạo `Assets/Art/Environment/Mat_MistSoft.mat` bằng shader `Universal Render Pipeline/Particles/Unlit`, bật `_SoftParticlesEnabled` + keyword `_SOFTPARTICLES_ON`/`_FADING_ON`, `_BaseMap = vfx_dot`, blend trong suốt, gán vào renderer của `Weather_Mist.prefab`. `PC_RPAsset.supportsCameraDepthTexture` vốn đã `True`. **Kết quả: không chấm, và mép giữa khung biến mất.**
+
+**§9.31 phần 2 sai — đường kẻ KHÔNG phải cascade seam, `shadowDistance 40→150` là red herring, đã hoàn nguyên về 40.**
+Chứng minh lại từ đầu:
+- `shadowNormalBias 0.40→1.50` + `shadowBias 0.05→0.30` → đường kẻ **không đổi** ⇒ không phải acne.
+- `Terrain.shadowCastingMode = Off` (giữ `sun.shadows = Soft`) → đường kẻ **biến mất hẳn** ⇒ **Terrain chính là caster**. Đây cũng là lý do lần điều tra trước không tìm ra: `Terrain` là `Behaviour`, không phải `Renderer`, nên sweep 1849 renderer bỏ sót nó hoàn toàn.
+- `On` (front-face) → đường kẻ **vẫn còn** ⇒ không phải lỗi do `TwoSided`.
+- Trace **heightmap** bằng `Terrain.SampleHeight` (không tin `Physics.RaycastAll` nữa): điểm tối nhất bị che bởi terrain ở **world (11, 26, -17)** — một gờ dốc cách máy ảnh ~30 m phía sau — với ray **vừa khít** (terrain 26.4 vs ray 26.1). Từ điểm ngay trên đường kẻ thì "open sky". Vị trí cắt này khớp đúng y≈560 đã thấy.
+
+**Tại sao trước đây kết luận sai**: chính script `SpinSun` của mình đã gán sun X = 50° và không trả về giá trị gốc. Scene sau đó được `open_scene` reload → sun trở về đúng giá trị author `Euler(46, -32, 0)` từ `SonTinhMapBuilder.cs:314` (`-32 ≡ 328`). Ở **50°** ray lọt qua gờ nên không có bóng; ở **46°** thì sượt qua gờ nên có bóng. Nên phép thử `shadowDistance 400` / `split 0.90` trước đó sạch là nhờ **mặt trời đang ở 50°**, không phải do distance. **Bài học: trước khi tin một A/B, phải confirm biến mình không cố ý đổi đã được trả đúng về.**
+
+**Bẫy mới trong lần này**:
+- `GameObject.Find` **không tìm object đang inactive** → `MistProbe.Off()` tắt sương rồi script "bật lại" im lặng không chạy gì, làm material mới tưởng như render ra nothing. Phải dùng `FindObjectsByType<Transform>(FindObjectsInactive.Include, ...)`.
+- `ParticleSystem` **không có `.enabled`** (nó là `Component`, không phải `Behaviour`).
+- Unity 6: `ShaderPropertyType` đã chuyển vào `UnityEngine.Rendering.ShaderPropertyType`.
+- Property soft particle của URP là `_SoftParticlesNearFadeDistance` / `_SoftParticlesFarFadeDistance` (+ `_SoftParticleFadeParams`), **không phải** `_DepthFade`. Không đoán keyword — liệt kê qua `shader.keywordSpace.keywords` rồi bật cái khớp.
+
+**Đang mở (chưa chốt)**: đường kẻ cuối cùng là **bóng thật của gờ núi phía sau máy ảnh** chứ không phải bug rendering. Cách xử lý: (a) để nguyên, (b) nâng mặt trời `SonTinhMapBuilder` từ 46° lên ~50° để đường chân bóng ra khỏi khung, (c) tắt `Terrain.shadowCastingMode`. Chờ user chọn.
