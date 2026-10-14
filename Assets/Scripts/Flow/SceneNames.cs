@@ -5,6 +5,7 @@ namespace SonTinhThuyTinh.Flow
     {
         public const string MainMenu = "MainMenu";
         public const string Prologue = "Prologue";
+        public const string Opening = "Cutscene_Opening";
         public const string CharacterSelect = "CharacterSelect";
         public const string SonTinhMap = "Map_SonTinh";
         public const string VoiChinNgaBattle = "Battle_VoiChinNga";

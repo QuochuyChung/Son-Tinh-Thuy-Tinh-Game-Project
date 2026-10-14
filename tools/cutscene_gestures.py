@@ -59,7 +59,19 @@ def merge(*poses):
     return out
 
 
+# a gentle upright stance, hands joined low in front (loops): the neutral pose for Mị Nương, whose own idle leans to one side
+POISE = {"LA": [("x", -8), ("y", -14), ("z", 4)], "RA": [("x", -8), ("y", 14), ("z", -4)],
+         "S": [("x", 7)], "S1": [("x", 8)], "S2": [("x", 8)],
+         "LF": [("x", -44), ("y", -50)], "RF": [("x", -44), ("y", 50)], "Hd": [("x", 4)]}
+# hands held low in front of the waist, forearms forward with a little turn inwards (a bigger turn pushed the forearms through the
+# belly and the front panel of her dress)
+
+# Bones that take the rest (T-pose) values instead of the idle's: the idle is Hùng Vương's own stance (weight on one leg, a slight lean),
+# and on a different skeleton that stance comes out as a lean (Mị Nương leaned back). The arms still come from the idle (hanging).
+NEUTRAL = ["H", "S", "S1", "S2", "N", "Hd"]
+
 CLIPS = {
+    "Poise": (4.0, True, [(0.0, POISE), (2.0, merge(POISE, {"Hd": [("y", 3)]})), (4.0, POISE)]),
     # a deep bow to the king, hands joined before the chest
     "Bow": (2.8, False, [
         (0.0, {}),
@@ -189,6 +201,11 @@ def main():
             t = f / FPS
             arm.animation_data.action = idle
             scene.frame_set(idle_start + (f % (idle_end - idle_start)))
+            for nk in NEUTRAL:
+                if nk in pbs:
+                    pbs[nk].rotation_mode = "QUATERNION"
+                    pbs[nk].rotation_quaternion = Quaternion()
+            bpy.context.view_layer.update()
             p0, p1, w = pose_at(keys, t)
             breath = math.sin(2 * math.pi * t / 3.6)
             for k in ORDER:
