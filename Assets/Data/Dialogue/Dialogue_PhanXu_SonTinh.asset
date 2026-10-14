@@ -20,19 +20,24 @@ MonoBehaviour:
       sau l\u01B0ng."
     illustration: {fileID: 0}
   - speaker: "H\xF9ng V\u01B0\u01A1ng"
-    text: "H\u00F4m qua ta \u0111\u00E3 n\u00F3i: ai mang \u0111\u1EE7 s\u00EDnh l\u1EC5 \u0111\u1EBFn tr\u01B0\u1EDBc, ng\u01B0\u1EDDi \u1EA5y \u0111\u01B0\u1EE3c r\u01B0\u1EDBc M\u1ECB N\u01B0\u01A1ng."
+    text: "H\xF4m qua ta \u0111\xE3 n\xF3i: m\u1ED7i ch\xE0ng \u0111i l\u1EA5y ba
+      linh th\xFA c\u1EE7a mi\u1EC1n m\xECnh, ai mang \u0111\u1EE7 \u0111\u1EBFn
+      tr\u01B0\u1EDBc, ng\u01B0\u1EDDi \u1EA5y \u0111\u01B0\u1EE3c r\u01B0\u1EDBc
+      M\u1ECB N\u01B0\u01A1ng."
     illustration: {fileID: 0}
   - speaker: "S\u01A1n Tinh"
-    text: "Mu\u00F4n t\u00E2u b\u1EC7 h\u1EA1, th\u1EA7n l\u00E0 S\u01A1n Tinh. S\u00EDnh l\u1EC5 b\u1EC7 h\u1EA1 \u0111\u00F2i, th\u1EA7n \u0111\u00E3 t\u00ECm \u0111\u1EE7, xin d\u00E2ng l\u00EAn b\u1EC7 h\u1EA1."
+    text: "Mu\xF4n t\xE2u b\u1EC7 h\u1EA1, th\u1EA7n l\xE0 S\u01A1n Tinh. Ba linh
+      th\xFA mi\u1EC1n non cao, th\u1EA7n \u0111\xE3 t\xECm \u0111\u1EE7, xin d\xE2ng
+      l\xEAn b\u1EC7 h\u1EA1."
     illustration: {fileID: 0}
   - speaker: "Th\u1EE7y Tinh"
-    text: "Th\u1EA7n l\xE0 Th\u1EE7y Tinh. L\u1EC5 v\u1EADt c\u1EE7a th\u1EA7n c\u0169ng
-      \u0111\xE3 b\xE0y \u0111\u1EE7 tr\u01B0\u1EDBc s\xE2n r\u1ED3ng, ch\u1EB3ng
-      thi\u1EBFu m\u1ED9t m\xF3n."
+    text: "Th\u1EA7n l\xE0 Th\u1EE7y Tinh. Ba linh th\xFA mi\u1EC1n bi\u1EC3n c\u1EA3
+      c\u1EE7a th\u1EA7n c\u0169ng \u0111\xE3 b\xE0y \u0111\u1EE7 tr\u01B0\u1EDBc
+      s\xE2n r\u1ED3ng, ch\u1EB3ng thi\u1EBFu m\u1ED9t con."
     illustration: {fileID: 0}
   - speaker: "H\xF9ng V\u01B0\u01A1ng"
     text: "L\u1EA1 thay... Hai ng\u01B0\u1EDDi c\xF9ng \u0111\u1EBFn m\u1ED9t l\xFAc,
-      l\u1EC5 v\u1EADt nh\u01B0 nhau, ch\u1EB3ng ai k\xE9m ai."
+      s\xEDnh l\u1EC5 \u0111\u1EC1u \u0111\u1EE7 c\u1EA3, ch\u1EB3ng ai k\xE9m ai."
     illustration: {fileID: 0}
   - speaker: "M\u1ECB N\u01B0\u01A1ng"
     text: "Ph\u1EE5 v\u01B0\u01A1ng... con xin nghe theo l\u1EDDi cha \u0111\u1ECBnh
