@@ -342,7 +342,8 @@ namespace SonTinhThuyTinh.EditorTools
             plane.transform.SetParent(root, false);
             plane.transform.position = new Vector3(XMin + Width * 0.5f, WaterY, ZMin + Length * 0.5f);
             plane.transform.localScale = new Vector3(Width / 10f * 2.5f, 1f, Length / 10f * 2.5f);   // the sea goes on past the terrain
-            Object.DestroyImmediate(plane.GetComponent<Collider>());   // water is only a surface, nothing to stand on
+            Object.DestroyImmediate(plane.GetComponent<Collider>());   // water is only a surface, nothing to stand on ...
+            plane.AddComponent<SonTinhThuyTinh.Player.WaterSurface>();   // ... except for Thủy Tinh (WaterWalker)
             var renderer = plane.GetComponent<MeshRenderer>();
             Material material = preferWaterWorks ? WaterMaterial() : EnsureWaterMaterial();
             if (material != null) renderer.sharedMaterial = material;

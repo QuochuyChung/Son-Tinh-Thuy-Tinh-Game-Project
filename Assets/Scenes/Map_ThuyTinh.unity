@@ -720140,6 +720140,7 @@ GameObject:
   - component: {fileID: 1847406463}
   - component: {fileID: 1847406465}
   - component: {fileID: 1847406464}
+  - component: {fileID: 1847406466}
   m_Layer: 0
   m_Name: Water
   m_TagString: Untagged
@@ -720219,6 +720220,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1847406462}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1847406466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1847406462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fb0c15cad1c2f442a677a272c8427bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Player.WaterSurface
 --- !u!1 &1847594219
 GameObject:
   m_ObjectHideFlags: 0
