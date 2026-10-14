@@ -1266,7 +1266,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.UI.MainMenu.MainMenuController
   newGameButton: {fileID: 45352171}
   quitButton: {fileID: 1865194616}
-  firstScene: Prologue
+  firstScene: Cutscene_Opening
 --- !u!4 &503953646
 Transform:
   m_ObjectHideFlags: 0
