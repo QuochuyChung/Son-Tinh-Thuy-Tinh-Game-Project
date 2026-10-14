@@ -871,3 +871,25 @@ Theo kế hoạch `docs/ke-hoach-thuy-tinh-su-kien.md`. Mập Chín Vây và Rù
 - **Bẫy API quan trọng**: `ParticleSystem.EmissionModule.rateOverTimeMultiplier` **cùng vùng nhớ với `rateOverTime`** trong Unity 6 này — gán multiplier sẽ **thay luôn** tần số gốc, chứ không nhân lên. Nghĩa là `SetIntensity(1)` làm mưa 3200/s rớt còn 1 giọt/giây. Cả `RainController` và `MistController` đều phải cache tần số gốc lúc `Awake` rồi gán lại `rateOverTime = gốc × intensity`. Đã đo để xác nhận: gán `rateOverTime = 3200` cho đúng 4320 hạt sống (3200 × 1.35s lifetime).
 - **Splashes và Ripples không scale theo intensity** (`fixedRateEmitters` trên `RainController`): chỉ giọt mưa dày lên khi tăng intensity, còn phản hồi mặt đất giữ nguyên tần số gốc.
 - **Cảnh báo**: các builder trong `Assets/Editor/` (map builders) có block ghi đè `RenderSettings`. Nếu ai chạy lại builder thì skybox/fog/lighting của pass này sẽ bị mất — cần cập nhật builder cho khớp hoặc không chạy lại builder nữa.
+
+### 9.31 Fix "đường sương trên mặt đất" (14/10)
+
+User báo thấy một **đường ngang rõ trên mặt đất**, nghi ngờ mình chỉ dùng quad có shader. Điều tra ra là **hai lỗi khác nhau** gộp lại thành một:
+
+**1. Sương (mist) thật sự sai thiết kế** — có sửa:
+- `Weather_Mist/Billboards` dùng **quad 10–20 m** (bản gốc `startSize 10..20`) nhồi trong hộp `44×9×44`. Với kích thước đó, đáy mỗi quad đâm xuyên qua địa hình và bị depth-cut, sinh ra mép cứng. Đã thu về **3–6 m**, hộp Y `9→5`, `maxParticleSize 1→0.5`, và nâng tần số `10→18` để giữ độ dày (252 hạt sống / max 260).
+- `Mat_Mist.mat` có `_MainTex` **để trống** → shader `Sprites/Default` vẽ ra **hình vuông đặc** không có falloff. Đã gán `vfx_dot` (radial: alpha 0.00 ở rìa, 0.98 ở tâm) — material này đang được `Assets/Editor/ThuyTinhStoryBuilder.cs:179` dùng nên là fix thật, không phải dọn dẹp.
+- **Bẫy đọc nhầm của chính mình**: thấy `Billboards` ở `worldY=10` tưởng root đặt cao 6 m so với mặt đất (nền ở y≈4). Thực ra 10 là **local offset của child**, root vẫn ở đúng `4.00` (ThuyTinh) / `3.82` (Sơn Tinh) — đã neo lại đúng giá trị cũ. **Đừng nhìn `ps.transform.position` rồi kết luận root đặt sai.**
+
+**2. Đường kẻ đó thực ra là seam shadow, không phải sương** — chứng minh bằng 4 phép thử độc lập:
+- Tắt `Weather_Mist` → đường **vẫn còn** (nên không phải mist/fog).
+- Quay mặt trời +90° → đường **biến mất hoàn toàn**.
+- `shadowDistance 40 → 400` → đường **biến mất**; `cascade2Split 0.33 → 0.90` → đường **biến mất**. Cả hai đều là thay đổi layout cascade, không đụng geometry.
+- Dò ngược tia về phía mặt trời từ các điểm trên đường: **1849 renderer đang cast shadow, không có ai cản sáng**; terrain cũng không → **không có caster**, là artifact của cascade chứ không phải bóng của vật thể.
+
+**Fix**: `ProjectSettings/QualitySettings.asset` → `shadowDistance 40 → 150` trên **cả 2 level** (Mobile + PC), giữ nguyên `cascade2Split = 0.33333334`. Boundary chuyển từ `0.33×40 = 13.2 m` (ngay giữa vùng chơi) ra `0.33×150 ≈ 50 m` (ngoài vùng nhìn gần). Đã soi lại clean ở `Map_SonTinh`, `Map_ThuyTinh`, `Map_FinalBattle`.
+
+**Bẫy khi fix lần này**:
+- `QualitySettings` chỉ nằm trong RAM tới khi `AssetDatabase.SaveAssets()` — disk vẫn ghi `40` sau khi đã set xong, phải check lại file mới tin là đã persist.
+- Round-trip `cascade2Split` qua số thập phân viết lại `0.33333334` thành `0.33` (change ngoài ý muốn) — khôi phục bằng `1f/3f`.
+- Mở + save scene làm Unity tự ghi thêm churn của TextMeshPro (`m_fontColor32.rgba`, `m_TextStyleHashCode 0 → -1183493901`) trên ~17 component. Không liên quan tới thay đổi nào — nếu scene đó không có thay đổi thật thì `git checkout` thẳng, đừng commit kèm.
