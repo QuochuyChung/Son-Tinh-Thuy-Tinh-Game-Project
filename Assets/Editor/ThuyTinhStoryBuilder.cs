@@ -34,7 +34,7 @@ namespace SonTinhThuyTinh.EditorTools
 
         // A talker: the placeholder model with a straw hat, a capsule, an Interactable ("Nhấn E ...") and a SeaNpc.
         static SeaNpc MakeNpc(Transform parent, GameObject prefab, string name, SeaNpc.Role role, Vector3 at, Vector3 lookTowards, Color hat, DialogueRunner runner,
-            DialogueSequence offer, DialogueSequence reminder, DialogueSequence thanks, DialogueSequence afterwards)
+            DialogueSequence offer, DialogueSequence reminder, DialogueSequence thanks, DialogueSequence afterwards, bool wearHat = true)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
@@ -46,8 +46,11 @@ namespace SonTinhThuyTinh.EditorTools
             var capsule = go.AddComponent<CapsuleCollider>();
             capsule.center = new Vector3(0f, 0.95f, 0f); capsule.height = 1.9f; capsule.radius = 0.35f;
             // the straw hat (a flat disc over a low cone made of a squashed sphere): the cheap sign that this is a fisher
+            if (wearHat && !NewProps.DressHat(go.transform))
+            {
             MapDecor.Part(PrimitiveType.Cylinder, "HatBrim", go.transform, new Vector3(0f, 1.82f, 0f), new Vector3(0.78f, 0.02f, 0.78f), Quaternion.identity, MapDecor.Lit("Mat_Hat_" + ColorUtility.ToHtmlStringRGB(hat), hat, 0f, 0.1f, true));
             MapDecor.Part(PrimitiveType.Sphere, "HatTop", go.transform, new Vector3(0f, 1.86f, 0f), new Vector3(0.42f, 0.26f, 0.42f), Quaternion.identity, MapDecor.Lit("Mat_Hat_" + ColorUtility.ToHtmlStringRGB(hat), hat, 0f, 0.1f, true));
+            }
 
             var talk = go.AddComponent<Interactable>();
             var tso = new SerializedObject(talk);
@@ -171,7 +174,7 @@ namespace SonTinhThuyTinh.EditorTools
             var thanks = SaveDialogue("Elder_Thanks",
                 ("Trưởng làng", "Hải đăng sáng rồi! Sương đang tan... Ngài đúng là chúa vùng nước. Giờ vào Vịnh Mập đi, rồi tới đảo Sấu ở phía tây."));
             Vector3 at = Ground(c.x + 2.4f, c.y + 1.0f);
-            MakeNpc(ev, npc, "VillageElder", SeaNpc.Role.Elder, at, Ground(HarbourCentre.x, HarbourCentre.y), new Color(0.55f, 0.72f, 0.80f), runner, offer, reminder, thanks, null);
+            MakeNpc(ev, npc, "VillageElder", SeaNpc.Role.Elder, at, Ground(HarbourCentre.x, HarbourCentre.y), new Color(0.55f, 0.72f, 0.80f), runner, offer, reminder, thanks, null, wearHat: false);
         }
 
         // ---------------------------------------------------------------- the lighthouse

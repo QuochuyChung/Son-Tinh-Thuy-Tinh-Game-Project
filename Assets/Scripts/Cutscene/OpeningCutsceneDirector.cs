@@ -21,6 +21,7 @@ namespace SonTinhThuyTinh.Cutscene
         [SerializeField] ActorRig thuyTinh;
         [Header("Marks")]
         [SerializeField] Transform kingSeat;      // on the dais, facing the avenue
+        [SerializeField] Transform kingStand;     // where he stands when he rises: on the steps in front of the seat
         [SerializeField] Transform miNuongMark;
         [SerializeField] Transform sonTinhMark;
         [SerializeField] Transform thuyTinhMark;
@@ -81,8 +82,18 @@ namespace SonTinhThuyTinh.Cutscene
 
         // ---------------------------------------------------------------- the lines
 
+        // A beat is cut short when the player presses on, and the gods' appearances (a hidden actor shown again after a wait, the rocks that
+        // sink) never finish: whatever a skipped beat left undone is put right when the next line starts.
+        void EnsureCast(int line)
+        {
+            if (line > 3 && kingStand != null) king.transform.position = kingStand.position;   // (a skipped KingCalls leaves him where he stands up)
+            if (line > 5) sonTinh.gameObject.SetActive(true);
+            if (line > 6) { thuyTinh.gameObject.SetActive(true); stage.ClearRocksNow(); }
+        }
+
         IEnumerator Beat(int line)
         {
+            EnsureCast(line);
             switch (line)
             {
                 case 0: return Peace();
@@ -136,12 +147,28 @@ namespace SonTinhThuyTinh.Cutscene
             cam.FocusOff();
             miNuong.Release();
             king.Play("StandUp", 0.3f);
+            if (kingStand != null) Go(KingRises());
             Go(cam.Move(new Vector3(1.4f, 14.4f, 27.8f), new Vector3(0.6f, 14.9f, 29.4f), Pt.On(king.transform, 1.6f), Pt.On(king.transform, 2.1f), 42f, 34f, 7f, Ease.Out));
             yield return Wait(1.7f);
             king.Play("Command", 0.4f);
             cam.Shake(0.55f, 0.9f);
             yield return Wait(2.6f);
             king.Play("Talk", 0.5f);
+        }
+
+        // He does not rise through the chair: he steps forward off the seat onto the step in front of it while the clip stands him up.
+        IEnumerator KingRises()
+        {
+            Vector3 from = king.transform.position, to = kingStand.position;
+            yield return Wait(0.45f);
+            const float seconds = 1.1f;
+            for (float t = 0f; t < seconds; t += Time.unscaledDeltaTime)
+            {
+                float k = t / seconds; k = k * k * (3f - 2f * k);
+                king.transform.position = Vector3.Lerp(from, to, k);
+                yield return null;
+            }
+            king.transform.position = to;
         }
 
         // "Tin truyền đi khắp nơi…": the news runs down the avenue, then the camera lifts away over the land
@@ -160,15 +187,15 @@ namespace SonTinhThuyTinh.Cutscene
             cam.FocusOff();
             king.Release(); miNuong.Release();
             sonTinh.gameObject.SetActive(false);
-            cam.Set(Mark(sonTinhMark, 4.2f, 0.25f, -6.5f), SonPos + Vector3.up * 0.6f, 55f);
+            cam.Set(Mark(sonTinhMark, 4.2f, 0.9f, -8.5f), SonPos + Vector3.up * 1.0f, 50f);
             cam.Shake(0.6f, 1.8f);
-            Go(stage.RaiseRocks(SonPos, 4.8f, 8, 1.5f, ThuyPos, 4.5f));
+            Go(stage.RaiseRocks(SonPos, 12f, 4, 1.5f, ThuyPos, 9f, true, 95f));
             stage.Dust(SonPos, 1.4f, 70);
             yield return Wait(0.9f);
             sonTinh.gameObject.SetActive(true);
             sonTinh.Play("CrossArms", 0.05f);
             stage.Dust(SonPos, 1.1f, 40);
-            Go(cam.Orbit(Pt.On(sonTinh.transform, 0f), 6.5f, 3.6f, 0.6f, 1.4f, 200f, 385f, 0.9f, 50f, 34f, 6.5f, Ease.Smooth));
+            Go(cam.Orbit(Pt.On(sonTinh.transform, 0f), 8.5f, 6.0f, 1.0f, 1.7f, 200f, 385f, 1.05f, 42f, 33f, 6.5f, Ease.Smooth));
             yield return Wait(1.6f);
             sonTinh.Play("RaiseSword", 0.35f);
             stage.Dust(SonPos, 1.6f, 50);
@@ -185,7 +212,7 @@ namespace SonTinhThuyTinh.Cutscene
             sonTinh.Release(); sonTinh.Play("CrossArms", 0.4f);
             thuyTinh.gameObject.SetActive(false);
             Go(stage.SinkRocks(1.0f));
-            cam.Set(Mark(thuyTinhMark, -4.2f, 0.25f, -6.5f), ThuyPos + Vector3.up * 0.6f, 55f);
+            cam.Set(Mark(thuyTinhMark, -4.2f, 0.9f, -8.5f), ThuyPos + Vector3.up * 1.0f, 50f);
             stage.Lightning(1f);
             Go(stage.Mood(Storm, 0.5f, StormFog, 0.012f, 0.5f, 2.2f, -0.6f, -35f, StormTint));
             Go(stage.RainTo(2600f, 2.5f, ThuyPos));
@@ -193,7 +220,7 @@ namespace SonTinhThuyTinh.Cutscene
             yield return Wait(1.1f);
             thuyTinh.gameObject.SetActive(true);
             thuyTinh.Play("CrossArms", 0.05f);
-            Go(cam.Orbit(Pt.On(thuyTinh.transform, 0f), 6.5f, 3.6f, 0.6f, 1.4f, 160f, -25f, 0.9f, 50f, 34f, 6.5f, Ease.Smooth));
+            Go(cam.Orbit(Pt.On(thuyTinh.transform, 0f), 8.5f, 6.0f, 1.0f, 1.7f, 160f, -25f, 1.05f, 42f, 33f, 6.5f, Ease.Smooth));
             yield return Wait(1.7f);
             thuyTinh.Play("Command", 0.35f);
             stage.Lightning(0.8f);

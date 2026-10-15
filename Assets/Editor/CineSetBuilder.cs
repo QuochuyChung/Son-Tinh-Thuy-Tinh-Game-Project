@@ -31,7 +31,19 @@ namespace SonTinhThuyTinh.EditorTools
 
         // the set, in Map_HungVuong coordinates: palace front (steps) at z = 36, avenue along +z, plateau top at y = 14
         public static readonly Vector3 DaisCenter = new(0f, 14f, 33.4f);
-        public const float DaisTop = 0.5f;
+        // where the seated king's root stands above the dais origin, and how far behind it: the seat of the throne model (NewProps) or of the block throne
+        // (BuildThrone measures them on the throne model: the seat cushion's top and its distance behind the dais centre)
+        public static float DaisTop { get; private set; } = 0.5f;
+        public static float SeatZ { get; private set; } = 0.2f;
+        public static GameObject ThroneModel { get; private set; }
+
+        // Height of the throne's steps at (x, z) (what a king standing there stands on); the dais level when there is no model.
+        public static float StepTop(float x, float z)
+        {
+            if (ThroneModel == null) return DaisCenter.y + 0.5f;
+            float y = NewProps.TopAt(ThroneModel, x, z, DaisCenter.y, 1.0f);
+            return float.IsNaN(y) ? DaisCenter.y + 0.5f : y;
+        }
 
         static readonly string[] RemoveRoots = { "PlayerFollowCamera", "PlayerSpawn", "GameplayHUD", "PlayerHUD", "PauseCanvas", "PauseMenu", "MapRoute", "MapCanvas" };
         static readonly string[] RemoveGenerated = { "Exit_To_Next", "Spawns" };
@@ -49,6 +61,9 @@ namespace SonTinhThuyTinh.EditorTools
                 foreach (string n in RemoveGenerated) { var t = generated.transform.Find(n); if (t != null) Object.DestroyImmediate(t.gameObject); }
             foreach (var trigger in Object.FindObjectsByType<SceneTransitionTrigger>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 Object.DestroyImmediate(trigger.gameObject);
+            // the map's own court (PalaceCourt: throne, king, princess) is not part of the set: the cutscenes build their own cast and throne
+            foreach (var court in Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None).Where(t => t.name == PalaceCourt.GroupName).ToList())
+                Object.DestroyImmediate(court.gameObject);
             ClearPlaza(generated);
             return scene;
         }
@@ -189,6 +204,16 @@ namespace SonTinhThuyTinh.EditorTools
             var root = new GameObject("Throne").transform;
             root.SetParent(parent);
             root.SetPositionAndRotation(DaisCenter, Quaternion.identity);   // faces the avenue (-z)
+            ThroneModel = NewProps.Throne(root);
+            if (ThroneModel != null)                                        // the Meshy throne with its banners
+            {
+                const float SeatBehind = 0.83f;                              // the cushion's centre, behind the dais centre
+                float top = NewProps.TopAt(ThroneModel, DaisCenter.x, DaisCenter.z + SeatBehind, DaisCenter.y, 1.6f);
+                DaisTop = (float.IsNaN(top) ? DaisCenter.y + 0.87f : top) - DaisCenter.y - 0.28f;   // the old seat's cushion was 0.28 above the king's root
+                SeatZ = SeatBehind - 0.35f;
+                return root;
+            }
+            DaisTop = 0.5f; SeatZ = 0.2f;
             MapDecor.Part(PrimitiveType.Cube, "DaisLow", root, new Vector3(0f, 0.12f, 0f), new Vector3(4.6f, 0.25f, 3.4f), Quaternion.identity, wood, true);
             MapDecor.Part(PrimitiveType.Cube, "Dais", root, new Vector3(0f, 0.37f, 0.1f), new Vector3(3.6f, 0.25f, 2.6f), Quaternion.identity, lacquer, true);
             MapDecor.Part(PrimitiveType.Cube, "Trim", root, new Vector3(0f, 0.5f, 0.1f), new Vector3(3.7f, 0.04f, 2.7f), Quaternion.identity, gold);
@@ -295,6 +320,11 @@ namespace SonTinhThuyTinh.EditorTools
             var rp = sso.FindProperty("rockPrefabs");
             rp.arraySize = rocks.Length;
             for (int i = 0; i < rocks.Length; i++) rp.GetArrayElementAtIndex(i).objectReferenceValue = rocks[i];
+            var mountains = new[] { "RockKaya", "RockMonolith", "RockTundra" }
+                .Select(n => AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Props/" + n + ".prefab")).Where(m => m != null).ToArray();
+            var mp = sso.FindProperty("mountainPrefabs");
+            mp.arraySize = mountains.Length;
+            for (int i = 0; i < mountains.Length; i++) mp.GetArrayElementAtIndex(i).objectReferenceValue = mountains[i];
             sso.FindProperty("sun").objectReferenceValue = sun;
             sso.FindProperty("cam").objectReferenceValue = cam;
             sso.ApplyModifiedPropertiesWithoutUndo();

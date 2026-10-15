@@ -198,6 +198,7 @@ namespace SonTinhThuyTinh.EditorTools
             collider.center = new Vector3(0f, 0.6f, 0f);
             collider.radius = 0.6f;
             collider.height = 1.25f;
+            NewProps.DressDrum(root);    // the bronze drum model replaces the lathed one, when it is in the project
             return root.gameObject;
         }
 
@@ -260,6 +261,7 @@ namespace SonTinhThuyTinh.EditorTools
             light.intensity = 3.2f;
             light.shadows = LightShadows.None;
             lightObject.AddComponent<LightFlicker>();
+            NewProps.DressTorch(root);   // the brazier model replaces the pole and the bowl (Assets/Art/Props), when it is in the project
             return root.gameObject;
         }
 
@@ -271,6 +273,7 @@ namespace SonTinhThuyTinh.EditorTools
             Part(PrimitiveType.Cylinder, "Crossbar", root, new Vector3(0.45f, 4.9f, 0f), new Vector3(0.06f, 0.5f, 0.06f), Quaternion.Euler(0f, 0f, 90f), wood);
             Part(PrimitiveType.Quad, "Cloth", root, new Vector3(0.45f, 3.7f, 0f), new Vector3(0.9f, 2.4f, 1f), Quaternion.identity,
                 Lit("Mat_Banner_" + ColorUtility.ToHtmlStringRGB(cloth), cloth, 0f, 0.1f, true));
+            NewProps.DressBanner(root);   // the banner of the throne set (Assets/Art/Props) replaces the pole and the cloth, when it is in the project
             return root.gameObject;
         }
 
@@ -578,6 +581,7 @@ namespace SonTinhThuyTinh.EditorTools
             light.range = 9f * scale;
             light.intensity = 3f;
             light.shadows = LightShadows.None;
+            NewProps.DressCrystals(root, UnityEditor.SceneManagement.EditorSceneManager.GetActiveScene().name.Contains("SonTinh"));   // gem / crystal models (Assets/Art/Props) replace the cubes
             return root.gameObject;
         }
 
@@ -689,6 +693,7 @@ namespace SonTinhThuyTinh.EditorTools
             }
             foreach (float sign in new[] { -1f, 1f })
                 Part(PrimitiveType.Cube, "Rail", root, (from + to) * 0.5f + side * (sign * (width * 0.5f + 0.1f)) + Vector3.up * 0.95f, new Vector3(0.06f, 0.06f, length), rotation, wood);
+            NewProps.DressBridge(root);   // the plank bridge model (Assets/Art/Props) replaces the boards, posts and rails, when it is in the project
             return root.gameObject;
         }
 
