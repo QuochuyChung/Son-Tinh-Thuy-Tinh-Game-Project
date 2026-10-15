@@ -90,6 +90,7 @@ namespace SonTinhThuyTinh.EditorTools
             keeperModel.transform.localPosition = Vector3.zero;
             keeperModel.transform.rotation = Quaternion.LookRotation(new Vector3(village.x - keeperAt.x, 0f, village.y - keeperAt.y));
             var capsule = keeper.AddComponent<CapsuleCollider>(); capsule.center = new Vector3(0f, 0.95f, 0f); capsule.height = 1.9f; capsule.radius = 0.35f;
+            NewProps.DressHat(keeper.transform);   // the horse keeper wears a conical hat (the village elder of the sea map does not)
             var talk = keeper.AddComponent<Interactable>();
             var tso = new SerializedObject(talk);
             tso.FindProperty("prompt").stringValue = "Nhấn E để nói chuyện";
