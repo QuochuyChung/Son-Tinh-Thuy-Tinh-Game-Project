@@ -510,7 +510,8 @@ namespace SonTinhThuyTinh.EditorTools
             so.ApplyModifiedProperties();
 
             // the gate (a dinh-style arch with a tiled roof) on top of the climb
-            MapDecor.Gate(root, center - Vector3.up * 0.3f, Mathf.Atan2(tangent.x, tangent.z) * Mathf.Rad2Deg, 8f, new Color(0.62f, 0.12f, 0.08f));
+            DragonLanternGateSetup.UseNewVisual(
+                MapDecor.Gate(root, center - Vector3.up * 0.3f, Mathf.Atan2(tangent.x, tangent.z) * Mathf.Rad2Deg, 8f, new Color(0.62f, 0.12f, 0.08f)));
 
             if (rock == null) return;
             foreach (float sign in new[] { -1f, 1f })
