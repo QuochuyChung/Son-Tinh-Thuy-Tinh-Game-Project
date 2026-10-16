@@ -218,7 +218,7 @@ namespace SonTinhThuyTinh.EditorTools
             var gift = AssetDatabase.LoadAssetAtPath<GiftItem>(GiftPath);
             if (gift == null) { gift = ScriptableObject.CreateInstance<GiftItem>(); AssetDatabase.CreateAsset(gift, GiftPath); }
             var so = new SerializedObject(gift);
-            so.FindProperty("displayName").stringValue = "Minh châu đáy vực";
+            so.FindProperty("displayName").stringValue = "Sấu Chín Đuôi";
             so.FindProperty("description").stringValue = "Viên ngọc sáng Sấu Chín Đuôi giữ dưới đáy vực sâu, sính lễ Thủy Tinh dâng Vua Hùng.";
             so.FindProperty("receivedMessage").stringValue = "Bạn đã nhận được {0}";
             so.ApplyModifiedPropertiesWithoutUndo();
