@@ -18,6 +18,9 @@ namespace SonTinhThuyTinh.Quest
     {
         public enum Kind { Pirates, Ghosts }
 
+        public Kind GroupKind => kind;
+        public Vector3 ObjectivePosition => centre != null ? centre.position : transform.position;
+
         [SerializeField] Kind kind;
         [SerializeField] NinjaEnemy[] foes;
         [SerializeField] Transform[] spots;
@@ -52,6 +55,7 @@ namespace SonTinhThuyTinh.Quest
         void Apply()
         {
             bool now = Present;
+            foreach (var f in foes) if (f != null) f.Health.IsInvulnerable = !Fightable;
             if (now == present && present) return;   // still here: do not reset a fight under way
             present = now;
             StopAllCoroutines();
