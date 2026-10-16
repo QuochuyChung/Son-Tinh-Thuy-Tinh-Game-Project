@@ -47,6 +47,10 @@ namespace SonTinhThuyTinh.Quest
     // From the start of the fight until the rooster is caught the player cannot leave the ring (ArenaBoundary).
     public class RoosterQuestDirector : MonoBehaviour
     {
+        public Vector3 ObjectivePosition => rooster != null && RoosterQuest.State == RoosterQuestState.RoosterFree
+            ? rooster.transform.position
+            : arenaCenter != null ? arenaCenter.position : transform.position;
+
         [Header("Cast")]
         [SerializeField] NinjaEnemy[] fighters;
         [SerializeField] NinjaEnemy leader;
@@ -127,7 +131,7 @@ namespace SonTinhThuyTinh.Quest
             if (player == null || running) return;
             float d = Flat(player.transform.position - arenaCenter.position).magnitude;
 
-            if (RoosterQuest.State == RoosterQuestState.NotStarted && d < triggerRadius) StartCoroutine(Cutscene());
+            if (RoosterQuest.State == RoosterQuestState.NotStarted && d < triggerRadius && QuestQuizProgress.IsUnlocked(gift)) StartCoroutine(Cutscene());
             else if (RoosterQuest.State == RoosterQuestState.Fighting)
             {
                 if (!fightOn && d < arenaRadius + 2f) StartCoroutine(StartFight());

@@ -17,6 +17,7 @@ namespace SonTinhThuyTinh.Quest
         [SerializeField] float groundOffset = -0.04f;
 
         Animator animator;
+        VoiChinNgaEncounterTrigger encounter;
         Terrain terrain;
         Vector3 patrolCenter;
         int direction = 1;
@@ -30,10 +31,15 @@ namespace SonTinhThuyTinh.Quest
 
             animator = GetComponentInChildren<Animator>(true);
             if (animator != null) animator.CrossFade("Walk_Forward", 0.12f);
+            encounter = GetComponentInParent<VoiChinNgaEncounterTrigger>();
         }
 
         void Update()
         {
+            bool unlocked = encounter == null || QuestQuizProgress.IsUnlocked(encounter.Gift);
+            if (animator != null) animator.speed = unlocked ? 1f : 0f;
+            if (!unlocked) return;
+
             Vector3 target = patrolCenter + Vector3.forward * (direction * patrolDistance);
             Vector3 delta = target - transform.position;
             delta.y = 0f;

@@ -68,6 +68,10 @@ namespace SonTinhThuyTinh.Player
             foreach (GiftTrackerHUD gifts in FindObjectsByType<GiftTrackerHUD>(FindObjectsInactive.Include, FindObjectsSortMode.None))
                 gifts.SetQuest(character.GiftQuest);   // each suitor's own sính lễ
 
+            string scene = SceneManager.GetActiveScene().name;
+            if (scene == SceneNames.SonTinhMap || scene == SceneNames.ThuyTinhMap)
+                QuestKeeperNpc.Spawn(start, character.GiftQuest, character.Id, Player);
+
             // fighting characters: the camera shakes with their hits, and their spell slots show at the bottom of the screen
             if (Player.HasCombat)
             {
