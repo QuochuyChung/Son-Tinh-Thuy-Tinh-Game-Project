@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_Sea_Fisherman_Thanks
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: "Th\u1EE7y Tinh"
+    text: "B\u1ECDn ng\u01B0 t\u1EB7c \u0111\xE3 b\u1ECB d\u1EB9p, d\xE2y x\xEDch
+      ch\u1EAFn b\u1EBFn c\u0169ng g\u1EE1 r\u1ED3i."
+    illustration: {fileID: 0}
+  - speaker: "L\xE3o ch\xE0i"
+    text: "Tr\u1EDDi \u0111\u1EA5t! Ng\xE0i \u0111\xFAng l\xE0 ch\xFAa v\xF9ng n\u01B0\u1EDBc.
+      Gi\u1EDD ng\xE0i sang L\xE0ng Ch\xE0i g\u1EB7p tr\u01B0\u1EDFng l\xE0ng, r\u1ED3i
+      ra h\u1EA3i \u0111\u0103ng th\u1EAFp l\u1EA1i \u0111\xE8n. C\xF3 \u0111\xE8n
+      th\xEC s\u01B0\u01A1ng m\u1EDBi tan."
+    illustration: {fileID: 0}
+  - speaker: "L\xE3o ch\xE0i"
+    text: "Nh\u1EDB \u0111i tr\xEAn c\u1EA7u v\xE1n v\xE0 ch\u1ED7 n\u01B0\u1EDBc
+      n\xF4ng th\xF4i nh\xE9. Ch\u1ED7 n\u01B0\u1EDBc s\xE2u d\xF2ng ch\u1EA3y cu\u1ED1n
+      ng\u01B0\u1EDDi \u0111i nh\u01B0 ch\u01A1i."
+    illustration: {fileID: 0}

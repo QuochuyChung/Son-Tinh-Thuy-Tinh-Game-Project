@@ -46,6 +46,7 @@ GameObject:
   - component: {fileID: 8660803594350561352}
   - component: {fileID: 8243714584150594544}
   - component: {fileID: 1483029571064823772}
+  - component: {fileID: 8178109590050284698}
   m_Layer: 0
   m_Name: Player_ThuyTinh_v2
   m_TagString: Untagged
@@ -793,6 +794,52 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.Health
   max: 100
+--- !u!114 &1483029571064823772
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4653189492081580265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 203e42b842714e03957d4a0444aa4461, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.BossAI
+  target: {fileID: 0}
+  stopDistance: 1.9
+  sprintDistance: 8
+  attackRange: 2.6
+  attackInterval: 0.15
+  spellMinRange: 4
+  spellMaxRange: 12
+  spellGate: 3
+  burstHits: 3
+  burstRest: {x: 0.6, y: 1}
+  bigHitThreshold: 0.15
+  backOffDuration: 1.2
+  attackIntervalPhase2: 0.1
+  spellGatePhase2: 1.5
+  sprintDistancePhase2: 5
+  burstRestPhase2: 0.3
+  phase2Telegraph: 0.7
+  rushAfterProjectile: 1.5
+--- !u!114 &8178109590050284698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4653189492081580265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d4608a430f163642833a033b195d1f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Player.WaterWalker
+  rippleMaterial: {fileID: 2100000, guid: 4c5b7f14bf0c3bf45ad04ee2f7eabc08, type: 2}
+  sprayMaterial: {fileID: 2100000, guid: 18a1bd090a2dfa54e8a10e16e88e7882, type: 2}
+  rippleColor: {r: 0.85, g: 0.97, b: 1, a: 0.75}
+  sprayColor: {r: 0.9, g: 0.98, b: 1, a: 0.9}
 --- !u!1001 &417308743123289749
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -962,23 +1009,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1576296019405764318, guid: 98932d403fdd33c429d6b520818e4d6c, type: 3}
   m_PrefabInstance: {fileID: 7791323792563616600}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1483029571064823772
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4653189492081580265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 203e42b842714e03957d4a0444aa4461, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.BossAI
-  target: {fileID: 0}
-  stopDistance: 1.9
-  sprintDistance: 8
-  attackRange: 2.6
-  attackInterval: 0.15
-  spellMinRange: 4
-  spellMaxRange: 12
-  spellGate: 3

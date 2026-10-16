@@ -359,6 +359,7 @@ namespace SonTinhThuyTinh.EditorTools
             so.FindProperty("wakeRadius").floatValue = arenaRadius - 1.5f;
             so.FindProperty("leashRadius").floatValue = arenaRadius + 12f;
             so.ApplyModifiedPropertiesWithoutUndo();
+            ArenaBoundaryBuilder.AddCrocIntro(boss.GetComponent<SauChinDuoiBoss>());   // island limit + intro cutscene camera and cards
 
             // the map's gift list and exit now use the Thủy Tinh quest (one gift: the pearl)
             var quest = AssetDatabase.LoadAssetAtPath<GiftQuest>(QuestPath);

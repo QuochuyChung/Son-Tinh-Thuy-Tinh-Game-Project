@@ -14,16 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
   lines:
   - speaker: "S\u01A1n Tinh"
-    text: "Chi\u1EBFc chu\xF4ng \u0111\u1ED3ng \u0111\xE2y. Ta t\xECm th\u1EA5y n\xF3
-      b\xEAn \u0111\u01B0\u1EDDng n\xFAi."
+    text: "Ta \u0111\xE3 rung chu\xF4ng tr\xEAn \u0111\u1EC9nh g\xF2, con ng\u1EF1a
+      b\xECnh t\u0129nh l\u1EA1i r\u1ED3i ch\u1EA1y xu\u1ED1ng n\xFAi. Ch\u1EAFc
+      n\xF3 v\u1EC1 t\u1EDBi chu\u1ED3ng r\u1ED3i."
     illustration: {fileID: 0}
   - speaker: "Ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a"
-    text: "\u0110\xFAng n\xF3 r\u1ED3i! Ti\u1EBFng chu\xF4ng n\xE0y t\xF4i nghe t\u1EEB
-      thu\u1EDF b\xE9... C\u1EA3m \u01A1n ch\xE0ng nhi\u1EC1u l\u1EAFm!"
-    illustration: {fileID: 0}
-  - speaker: "Ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a"
-    text: "Nghe k\xECa, con ng\u1EF1a ng\u1EA9ng \u0111\u1EA7u l\xEAn r\u1ED3i. N\xF3
-      nh\u1EADn ra ti\u1EBFng chu\xF4ng nh\xE0 t\xF4i \u0111\u1EA5y."
+    text: "\u0110\xFAng n\xF3 r\u1ED3i! Nghe ti\u1EBFng ch\xE2n quen thu\u1ED9c ngo\xE0i
+      s\xE2n k\xECa... C\u1EA3m \u01A1n ch\xE0ng nhi\u1EC1u l\u1EAFm, l\u1EA1i c\xF2n
+      \u0111\xE1nh \u0111u\u1ED5i \u0111\u01B0\u1EE3c c\u1EA3 b\u1ECDn tr\u1ED9m
+      ng\u1EF1a!"
     illustration: {fileID: 0}
   - speaker: "Ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a"
     text: "Ng\u1EF1a ch\xEDn h\u1ED3ng mao xin g\u1EEDi ch\xE0ng. T\xF4i c\u1EE9

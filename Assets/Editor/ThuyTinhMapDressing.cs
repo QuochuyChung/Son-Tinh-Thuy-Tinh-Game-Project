@@ -156,7 +156,7 @@ namespace SonTinhThuyTinh.EditorTools
         // Anywhere in the valley off the causeway and the special places.
         static bool Open(float x, float z, float pathMargin, float margin)
         {
-            if (z < -6f || z > PathEnd + 2f || Mathf.Abs(x) > Width * 0.5f - 6f) return false;
+            if (z < -6f || z > PathEnd + 2f || x < XMin + 6f || x > XMax - 6f) return false;
             if (Mathf.Abs(x - PathX(z)) < pathMargin) return false;
             if (NearStops(x, z, margin) || NearLair(x, z) || OnDressObstacle(x, z, margin)) return false;
             if (z > ClimbStart - 4f && Mathf.Abs(x - PathX(z)) < 7f) return false;
@@ -177,14 +177,25 @@ namespace SonTinhThuyTinh.EditorTools
             GameObject[] reeds = IdyllicPrefabs("Reeds_01", "Reeds_02", "Reeds_03"), cattails = IdyllicPrefabs("Cattail_01", "Cattail_02", "Cattail_03");
             GameObject[] lilies = IdyllicPrefabs("Waterlily_01", "Waterlily_02"), pads = IdyllicPrefabs("LilyPads_01", "LilyPads_02", "LilyPads_03");
             // reeds and cattails where the ground meets the water (a band from knee-deep to just above the waterline), in clumps
+            // (the marsh along the causeway, then the shores of the sea's islands and sandbars)
             int placed = 0;
-            for (int attempt = 0; attempt < 20000 && placed < 420; attempt++)
+            for (int attempt = 0; attempt < 90000 && placed < 1100; attempt++)
             {
-                float z = DR(-4f, PathEnd), x = PathX(z) + DR(-50f, 50f);
+                float z, x;
+                if (attempt % 3 == 0)
+                {
+                    SeaIsland isl = SeaIslands[dressRng.Next(SeaIslands.Length)];
+                    float a = DR(0f, Mathf.PI * 2f), r = DR(isl.Radius * 0.7f, isl.Radius + isl.Skirt * 0.6f);
+                    x = isl.Centre.x + Mathf.Sin(a) * r; z = isl.Centre.y + Mathf.Cos(a) * r;
+                }
+                else
+                {
+                    z = DR(-4f, PathEnd); x = PathX(z) + DR(-50f, 50f);
+                }
                 float h = TerrainY(x, z);
                 if (h < WaterY - 0.8f || h > WaterY + 0.35f || !Open(x, z, 3.2f, 0f)) continue;
                 int clump = 2 + dressRng.Next(4);
-                for (int k = 0; k < clump && placed < 420; k++)
+                for (int k = 0; k < clump && placed < 1100; k++)
                 {
                     float cx = x + DR(-1.6f, 1.6f), cz = z + DR(-1.6f, 1.6f);
                     float ch = TerrainY(cx, cz);
@@ -197,9 +208,9 @@ namespace SonTinhThuyTinh.EditorTools
             }
             // lilies and pads on the open water (not on the causeway's line of sight right next to it, not in the river crossing's raft)
             int floating = 0;
-            for (int attempt = 0; attempt < 15000 && floating < 230; attempt++)
+            for (int attempt = 0; attempt < 60000 && floating < 700; attempt++)
             {
-                float z = DR(-4f, PathEnd - 12f), x = PathX(z) + DR(-45f, 45f);
+                float z = DR(-4f, PathEnd - 12f), x = attempt % 2 == 0 ? PathX(z) + DR(-45f, 45f) : DR(PathX(z) + 30f, XMax - 40f);   // the marsh, then the lagoon
                 if (TerrainY(x, z) > WaterY - 0.35f || !Open(x, z, 4.5f, 1f)) continue;
                 if (z > ChannelStart - 3f && z < ChannelEnd + 3f && Mathf.Abs(x - PathX(z)) < 7f) continue;   // the floating logs
                 var set = dressRng.Next(3) == 0 ? pads : lilies;
@@ -225,6 +236,25 @@ namespace SonTinhThuyTinh.EditorTools
                 Plant(DPick(willows), new Vector3(x, h - 0.15f, z), DR(1.2f, 1.7f), trees);
                 dressTrees.Add(p);
                 placed++;
+            }
+            // the sea's islands: willows leaning over the water on the village and the shrine, blossom trees by the village houses
+            foreach (SeaIsland isl in SeaIslands)
+            {
+                int want = isl.Name == "FishingVillage" ? 6 : isl.Name == "SeaShrine" ? 5 : isl.Name == "Sandbar_Tree" ? 2 : 0;   // (the lighthouse hill keeps its top clear)
+                for (int k = 0, tries = 0; k < want && tries < 200; tries++)
+                {
+                    float a = DR(0f, Mathf.PI * 2f), r = DR(isl.Radius * 0.6f, isl.Radius + 2f);
+                    float x = isl.Centre.x + Mathf.Sin(a) * r, z = isl.Centre.y + Mathf.Cos(a) * r;
+                    float h = TerrainY(x, z);
+                    if (h < WaterY + 0.4f || !Open(x, z, 4.5f, 3f) || !Gentle(x, z)) continue;
+                    var p = new Vector2(x, z);
+                    if (dressTrees.Exists(o => Vector2.Distance(o, p) < 6f)) continue;
+                    GameObject[] set = isl.Name == "FishingVillage" && k % 2 == 0 && blossom.Length > 0 ? blossom : willows;
+                    if (set.Length == 0) break;
+                    Plant(DPick(set), new Vector3(x, h - 0.15f, z), DR(1.2f, 1.6f), trees);
+                    dressTrees.Add(p);
+                    k++;
+                }
             }
             if (blossom.Length == 0) return;
             foreach (int i in new[] { 0, 2 })   // the islets with a stilt house (Bays 0 and 2)

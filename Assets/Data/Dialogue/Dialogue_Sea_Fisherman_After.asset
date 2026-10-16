@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_Sea_Fisherman_After
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: "L\xE3o ch\xE0i"
+    text: "\u0110i \u0111\u01B0\u1EDDng s\xF4ng n\u01B0\u1EDBc nh\u1EDB gi\u1EEF
+      m\xECnh. Ch\u1EC9 b\u01B0\u1EDBc tr\xEAn c\u1EA7u v\xE1n v\xE0 ch\u1ED7 n\u01B0\u1EDBc
+      n\xF4ng, n\u01B0\u1EDBc s\xE2u l\xE0 d\xF2ng ch\u1EA3y cu\u1ED1n \u0111i \u0111\u1EA5y!"
+    illustration: {fileID: 0}

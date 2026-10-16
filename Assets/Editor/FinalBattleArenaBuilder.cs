@@ -84,6 +84,11 @@ namespace SonTinhThuyTinh.EditorTools
             SetupPlayerSpawner(playerSpawn);
             SetupBossDuel(root, bossSpawn);
 
+            // 5b. The camera must render the post-processing volume (Tonemapping, Bloom): without it the bright stone and cliffs clip to
+            // white under the 2.2 sun + 1.5 skybox ambient (the Sandbox camera this scene is copied from has it switched off)
+            foreach (var camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+                if (camera.TryGetComponent(out UnityEngine.Rendering.Universal.UniversalAdditionalCameraData data)) data.renderPostProcessing = true;
+
             // 6. Register scene in Build Settings and save
             RegisterSceneInBuildSettings();
             EditorSceneManager.MarkSceneDirty(scene);
@@ -242,6 +247,10 @@ namespace SonTinhThuyTinh.EditorTools
             var rescueSo = new SerializedObject(rescue);
             rescueSo.FindProperty("respawn").objectReferenceValue = playerSpawn;
             rescueSo.ApplyModifiedProperties();
+
+            // Game Over overlay when the player dies (guarded: FinalBattleBossBarBuilder may have placed one at scene root)
+            if (Object.FindFirstObjectByType<FinalBattleDefeatWatch>(FindObjectsInactive.Include) == null)
+                managerGo.AddComponent<FinalBattleDefeatWatch>();
         }
 
         static void SetupPlayerSpawner(Transform playerSpawn)

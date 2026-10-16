@@ -42,7 +42,7 @@ namespace SonTinhThuyTinh.EditorTools
         static void AutoSetup()
         {
             if (SessionState.GetBool(SessionKey, false)) return;
-            if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+            if (EditorApplication.isCompiling || EditorApplication.isUpdating || EditorApplication.isPlayingOrWillChangePlaymode)   // the scene cannot be edited while playing
             {
                 EditorApplication.delayCall += AutoSetup;
                 return;

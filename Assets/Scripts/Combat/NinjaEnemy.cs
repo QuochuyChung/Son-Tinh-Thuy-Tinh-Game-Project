@@ -42,10 +42,10 @@ namespace SonTinhThuyTinh.Combat
         [SerializeField] float kickAfter = 1.5f;
         [SerializeField] float kickCooldown = 9f;
         [SerializeField] float kickPush = 3f;
-        [SerializeField] float kickDamage = 5f;
-        [SerializeField] float attackDamage = 8f;     // jump attack
-        [SerializeField] float comboDamage = 6f;      // each of the three cuts
-        [SerializeField] float slashDamage = 18f;
+        [SerializeField] float kickDamage = 3f;
+        [SerializeField] float attackDamage = 5f;     // jump attack
+        [SerializeField] float comboDamage = 3f;      // each of the three cuts
+        [SerializeField] float slashDamage = 10f;
         [Tooltip("Reach of a sword blow, from the pivot along the facing.")]
         [SerializeField] float reach = 2.2f;
         [SerializeField] float hitRadius = 1.5f;
@@ -418,10 +418,21 @@ namespace SonTinhThuyTinh.Combat
             transform.position = Grounded(next);
         }
 
+        // The terrain under p, or a solid thing standing on it that reaches at most a metre above where p is (a pier, a deck, a boat's
+        // deck: the pirates of Map_ThuyTinh fight on wooden decks; trees and walls taller than that are not stepped on).
         static Vector3 Grounded(Vector3 p)
         {
+            float y = p.y;
             Terrain t = Terrain.activeTerrain;
-            if (t != null) p.y = t.SampleHeight(p) + t.transform.position.y;
+            if (t != null) y = t.SampleHeight(p) + t.transform.position.y;
+            float from = Mathf.Max(p.y, y) + 1f;
+            foreach (RaycastHit hit in Physics.RaycastAll(new Vector3(p.x, from, p.z), Vector3.down, 8f, ~0, QueryTriggerInteraction.Ignore))
+            {
+                Collider c = hit.collider;
+                if (c is TerrainCollider || c.GetComponentInParent<Health>() != null || c.GetComponentInParent<CharacterController>() != null) continue;
+                if (hit.point.y > y) y = hit.point.y;
+            }
+            p.y = y;
             return p;
         }
 

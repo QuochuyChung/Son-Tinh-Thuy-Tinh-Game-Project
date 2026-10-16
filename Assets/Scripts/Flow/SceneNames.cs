@@ -5,6 +5,7 @@ namespace SonTinhThuyTinh.Flow
     {
         public const string MainMenu = "MainMenu";
         public const string Prologue = "Prologue";
+        public const string Opening = "Cutscene_Opening";
         public const string CharacterSelect = "CharacterSelect";
         public const string SonTinhMap = "Map_SonTinh";
         public const string VoiChinNgaBattle = "Battle_VoiChinNga";
@@ -14,6 +15,7 @@ namespace SonTinhThuyTinh.Flow
         public const string PalaceMap = "Map_HungVuong";
         public const string JudgementCutscene = "Cutscene_PhanXu";
         public const string FinalBattle = "Map_FinalBattle";
+        public const string Ending = "Cutscene_Ending";
         public const string Sandbox = "Sandbox_Combat";
     }
 }

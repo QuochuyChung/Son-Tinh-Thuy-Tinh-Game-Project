@@ -1,14 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using SonTinhThuyTinh.CameraSystem;
 using SonTinhThuyTinh.Player;
 using SonTinhThuyTinh.Quest;
 using SonTinhThuyTinh.UI;
+using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace SonTinhThuyTinh.Combat
 {
     // Sấu Chín Đuôi, the boss of the Thủy Tinh map (docs/task-sau-chin-duoi.md). It lies in the deep water beside the island with only its
-    // back and nine tails showing; when the player steps onto the island it climbs out, roars and the boss bar appears.
+    // back and nine tails showing; when the player steps onto the island it climbs out, roars and the boss bar appears. The first time
+    // this is a 3D cutscene (the player's controls off, letterbox bars, four camera shots: the still water, bubbles and the back rising,
+    // the crocodile climbing onto the island, a low close-up of the roar with its name, then back behind the player; Space / Enter / Esc
+    // skips it). During the fight the player cannot leave the island (ArenaBoundary).
     // Phase 1: walks / charges, bites, sweeps its tails round (red circle first) and spits water balls. Phase 2 (half health): roars again,
     // moves and recovers faster, spits three balls at once and adds the nine-tail slam (a big red circle on itself plus small ones under
     // the player). Winning gives the reward gift (banner + gift list); losing puts the player back at the edge of the island and the
@@ -39,6 +45,15 @@ namespace SonTinhThuyTinh.Combat
         [SerializeField] float wakeRadius = 13f;
         [Tooltip("Leaving the island by this much makes it go back into the water and heal.")]
         [SerializeField] float leashRadius = 26f;
+        [Tooltip("Keeps the player on the island while the fight is on.")]
+        [SerializeField] ArenaBoundary boundary;
+
+        [Header("Intro cutscene (first meeting)")]
+        [SerializeField] CinemachineCamera introCamera;
+        [Tooltip("Black bars at the top and bottom of the screen during the cutscene.")]
+        [SerializeField] CanvasGroup letterbox;
+        [Tooltip("The crocodile's name card shown with the roar.")]
+        [SerializeField] CanvasGroup introTitle;
 
         [Header("Movement")]
         [SerializeField] float walkSpeed = 2.4f;
@@ -89,6 +104,10 @@ namespace SonTinhThuyTinh.Combat
         readonly Dictionary<string, float> readyAt = new();
         readonly List<GameObject> warnings = new();
 
+        static bool introSeen;   // once per play session: after a defeat it just climbs out and roars
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        public static void ResetIntro() => introSeen = false;   // also on a new game (GameSession.StartNewGame)
+
         public bool IsAwake => awake;
         public bool IsPhase2 => phase2;
         public Health Health => health;
@@ -105,6 +124,8 @@ namespace SonTinhThuyTinh.Combat
         {
             groundY = arenaCenter != null ? arenaCenter.position.y : transform.position.y;
             if (bar != null) { bar.Bind(health, displayName); bar.Show(false); }
+            if (introCamera != null) introCamera.gameObject.SetActive(false);
+            SetGroup(letterbox, 0f); SetGroup(introTitle, 0f);
             if (reward != null && GiftTracker.Has(reward)) { gameObject.SetActive(false); return; }   // beaten on an earlier visit
             Sleep();
         }
@@ -197,11 +218,19 @@ namespace SonTinhThuyTinh.Combat
             if (lair != null) transform.SetPositionAndRotation(lair.position, lair.rotation);
             Loop("Idle", 0.6f);
             if (bar != null) bar.Show(false);
+            if (boundary != null) boundary.Release();
         }
 
         IEnumerator Wake()
         {
             busy = true; awake = true;
+            if (!introSeen && introCamera != null)
+            {
+                yield return IntroCutscene();
+                busy = false;
+                yield break;
+            }
+            if (boundary != null) boundary.Engage();
             if (bar != null) bar.Show(true);
             // climb out of the water onto the island, facing the centre
             Vector3 from = transform.position;
@@ -223,6 +252,121 @@ namespace SonTinhThuyTinh.Combat
             health.IsInvulnerable = false;
             Cooldown("bite", 0.5f); Cooldown("spit", 2.5f); Cooldown("sweep", 3f); Cooldown("charge", 4f);
             busy = false;
+        }
+
+        // ---------------------------------------------------------------- intro cutscene
+
+        IEnumerator IntroCutscene()
+        {
+            introSeen = true;
+            SetPlayerControl(false);
+            Vector3 c = arenaCenter.position;
+            Vector3 lairDir = Flat(lair.position - c).normalized;
+            Vector3 side = Vector3.Cross(Vector3.up, lairDir);
+            Vector3 climbTo = c + lairDir * (arenaRadius * 0.45f);   // the same spot as the plain wake: between the centre and the lair
+            climbTo.y = groundY;
+
+            // the player waits on the far side of the island, facing the water (hidden by the first cut)
+            if (player != null)
+            {
+                Vector3 stand = c - lairDir * (arenaRadius * 0.5f); stand.y = groundY + 0.2f;
+                player.SetBodyEnabled(false);
+                player.transform.SetPositionAndRotation(stand, Quaternion.LookRotation(lairDir));
+                player.SetBodyEnabled(true);
+            }
+            introCamera.gameObject.SetActive(true);
+            Transform cam = introCamera.transform;
+            bool skipped = false;
+            bool Skip() { var k = Keyboard.current; return skipped = skipped || (k != null && (k.spaceKey.wasPressedThisFrame || k.enterKey.wasPressedThisFrame || k.escapeKey.wasPressedThisFrame)); }
+
+            // 1. over the island to the still water: bubbles rise, then the back and the tails break the surface
+            StartCoroutine(Fade(letterbox, 1f, 0.4f));
+            Vector3 lairTop = new(lair.position.x, groundY - 0.3f, lair.position.z);
+            Vector3 a = c - lairDir * 2f + side * 7f + Vector3.up * 4.5f, b = c + lairDir * 3f + side * 5f + Vector3.up * 3.2f;
+            float nextBubble = 0f;
+            for (float t = 0f; t < 2.6f && !Skip(); t += Time.deltaTime)
+            {
+                cam.position = Vector3.Lerp(a, b, Smooth(t / 2.6f));
+                cam.rotation = Quaternion.LookRotation(lairTop - cam.position);
+                if (t >= nextBubble) { Splash(lairTop + new Vector3(Random.Range(-2.5f, 2.5f), 0f, Random.Range(-2.5f, 2.5f)), Random.Range(0.8f, 1.6f)); nextBubble = t + 0.3f; }
+                yield return null;
+            }
+
+            // 2. low by the shore: it climbs out of the water onto the island
+            Vector3 from = transform.position;
+            transform.rotation = Quaternion.LookRotation(Flat(climbTo - from).normalized);
+            Loop("Walk", 1.2f);
+            Vector3 shore = c + lairDir * (arenaRadius * 0.55f) + side * 8f + Vector3.up * 1.4f;
+            float climb = Vector3.Distance(Flat(from), Flat(climbTo)) / (walkSpeed * 1.4f);
+            for (float t = 0f; t < climb && !Skip(); t += Time.deltaTime)
+            {
+                float k = t / climb;
+                transform.position = Vector3.Lerp(from, climbTo, k) + Vector3.up * (Mathf.Sin(k * Mathf.PI) * 0.3f);
+                if (k < 0.3f && Random.value < 0.15f) Splash(transform.position + Random.insideUnitSphere * 2f, 1.2f);
+                cam.position = shore + side * (k * 2f);
+                cam.rotation = Quaternion.Slerp(cam.rotation, Quaternion.LookRotation(transform.position + Vector3.up * 1.5f - cam.position), 1f - Mathf.Exp(-8f * Time.deltaTime));
+                yield return null;
+            }
+            transform.position = climbTo;
+            if (player != null) Face(player.transform.position);
+
+            // 3. a low close-up from the front: the roar, the screen shakes, its name
+            if (!skipped)
+            {
+                Vector3 head = transform.position + transform.forward * 3f + Vector3.up * 1.6f;
+                Vector3 close = transform.position + transform.forward * 9f + transform.right * 2.5f + Vector3.up * 0.9f;
+                cam.position = close; cam.rotation = Quaternion.LookRotation(head - close);
+                Play("Roar");
+                if (player != null) player.Shake(1.2f);
+                StartCoroutine(Fade(introTitle, 1f, 0.35f));
+                for (float t = 0f; t < 2.4f && !Skip(); t += Time.deltaTime)
+                {
+                    cam.position = Vector3.Lerp(close, close - transform.forward * 2f + Vector3.up * 0.4f, Smooth(t / 2.4f));
+                    cam.rotation = Quaternion.LookRotation(head - cam.position);
+                    yield return null;
+                }
+                StartCoroutine(Fade(introTitle, 0f, 0.3f));
+            }
+
+            // 4. behind the player, the crocodile ahead: the camera blends back to the player's own
+            if (!skipped && player != null)
+            {
+                Vector3 back = player.transform.position - lairDir * 5f + Vector3.up * 2.6f;
+                cam.position = back; cam.rotation = Quaternion.LookRotation(transform.position + Vector3.up * 1.5f - back);
+                for (float t = 0f; t < 0.8f && !Skip(); t += Time.deltaTime) yield return null;
+            }
+
+            if (skipped) { Play("Idle"); Loop("Idle", 1f); }
+            SetGroup(introTitle, 0f);
+            StartCoroutine(Fade(letterbox, 0f, 0.4f));
+            introCamera.gameObject.SetActive(false);
+            SetPlayerControl(true);
+            if (boundary != null) boundary.Engage();
+            if (bar != null) bar.Show(true);
+            health.IsInvulnerable = false;
+            Cooldown("bite", 1.2f); Cooldown("spit", 3f); Cooldown("sweep", 3.5f); Cooldown("charge", 4.5f);
+        }
+
+        void SetPlayerControl(bool on)
+        {
+            if (player == null) return;
+            if (!on) player.SetSpeed(0f);
+            player.InputReader.enabled = on;
+            if (!on) player.InputReader.ClearBuffered();
+            var cam = FindAnyObjectByType<ThirdPersonCameraInput>();
+            if (cam != null) cam.enabled = on;
+        }
+
+        static float Smooth(float k) { k = Mathf.Clamp01(k); return k * k * (3f - 2f * k); }
+
+        static void SetGroup(CanvasGroup g, float a) { if (g != null) g.alpha = a; }
+
+        static IEnumerator Fade(CanvasGroup g, float to, float seconds)
+        {
+            if (g == null) yield break;
+            float from = g.alpha;
+            for (float t = 0f; t < seconds; t += Time.unscaledDeltaTime) { g.alpha = Mathf.Lerp(from, to, t / seconds); yield return null; }
+            g.alpha = to;
         }
 
         IEnumerator EnterPhase2()
@@ -464,6 +608,7 @@ namespace SonTinhThuyTinh.Combat
         IEnumerator Die()
         {
             Play("Death");
+            if (boundary != null) boundary.Release();
             foreach (var c in GetComponentsInChildren<Collider>()) c.enabled = false;
             yield return new WaitForSeconds(1.5f);
             if (bar != null) bar.Show(false);

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_Sea_Elder_Reminder
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: "Tr\u01B0\u1EDFng l\xE0ng"
+    text: "\u0110\u1ED3i h\u1EA3i \u0111\u0103ng \u1EDF ph\xEDa \u0111\xF4ng l\xE0ng,
+      c\u1EE9 theo c\u1EA7u v\xE1n m\xE0 \u0111i. Ma n\u01B0\u1EDBc \u0111\u1EE9ng
+      \u1EDF ch\xE2n th\xE1p, \u0111\xE1nh tan ch\xFAng m\u1EDBi th\u1EAFp \u0111\u01B0\u1EE3c
+      \u0111\xE8n."
+    illustration: {fileID: 0}

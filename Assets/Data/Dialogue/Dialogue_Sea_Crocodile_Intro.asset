@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_Sea_Crocodile_Intro
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: 
+    text: "Gi\u1EEFa h\u1ED3 \u0111en, m\u1ED9t c\u1ED3n \u0111\u1EA5t tr\xF2n nh\xF4
+      l\xEAn kh\u1ECFi m\u1EB7t n\u01B0\u1EDBc. M\u1EB7t h\u1ED3 l\u1EB7ng ng\u1EAFt,
+      nh\u01B0ng d\u01B0\u1EDBi \u0111\xE1y s\xE2u c\xF3 th\u1EE9 g\xEC \u0111\xF3
+      \u0111ang u\u1ED1n m\xECnh."
+    illustration: {fileID: 0}
+  - speaker: "Th\u1EE7y Tinh"
+    text: "Vi\xEAn minh ch\xE2u s\xE1ng d\u01B0\u1EDBi kia... S\u1EA5u Ch\xEDn \u0110u\xF4i
+      \u0111ang canh gi\u1EEF n\xF3. Ta c\u1EA3m nh\u1EADn \u0111\u01B0\u1EE3c ch\xEDn
+      c\xE1i \u0111u\xF4i c\u1EF1a qu\u1EADy."
+    illustration: {fileID: 0}

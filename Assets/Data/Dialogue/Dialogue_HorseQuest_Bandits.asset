@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_HorseQuest_Bandits
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: "T\xEAn tr\u1ED9m ng\u1EF1a"
+    text: "\u0110\u1EE9ng l\u1EA1i! Con ng\u1EF1a ch\xEDn h\u1ED3ng mao n\xE0y b\u1ECDn
+      ta l\u1EA7n theo tr\u01B0\u1EDBc, ng\u01B0\u01A1i \u0111\u1ECBnh c\u01B0\u1EDBp
+      ph\u1EA7n \xE0?"
+    illustration: {fileID: 0}
+  - speaker: "S\u01A1n Tinh"
+    text: "N\xF3 l\xE0 ng\u1EF1a c\u1EE7a ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a d\u01B0\u1EDBi
+      l\xE0ng, c\u0169ng l\xE0 s\xEDnh l\u1EC5 ta d\xE2ng Vua H\xF9ng. Tr\xE1nh \u0111\u01B0\u1EDDng!"
+    illustration: {fileID: 0}
+  - speaker: "T\xEAn tr\u1ED9m ng\u1EF1a"
+    text: "Mu\u1ED1n l\xEAn \u0111\u1EC9nh g\xF2 th\xEC b\u01B0\u1EDBc qua x\xE1c
+      b\u1ECDn ta. Anh em, x\xF4ng l\xEAn!"
+    illustration: {fileID: 0}

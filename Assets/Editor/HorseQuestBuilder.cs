@@ -1,4 +1,5 @@
 using System.Linq;
+using SonTinhThuyTinh.Combat;
 using SonTinhThuyTinh.Dialogue;
 using SonTinhThuyTinh.Quest;
 using TMPro;
@@ -12,11 +13,11 @@ namespace SonTinhThuyTinh.EditorTools
 {
     // The horse keeper's errand in Assets/Scenes/Map_SonTinh.unity (the existing map, not a new scene): everything goes under one root
     // "HorseQuest" that is deleted and rebuilt on every run.
-    //  - In the hill village (bay 0 of SonTinhMapBuilder) beside the west stilt house: a stable (floor, fences, roof on posts, hay trough,
-    //    hay) with Ngựa Chín Hồng Mao (prefab NguaChinHongMao, EatGrass at the trough), a haystack, a rail fence and Idyllic plants round
+    //  - In the hill village (bay 0 of SonTinhMapBuilder) beside the west stilt house: the Meshy stable (VillageModelSetup) with a hay trough
+    //    (block stable without the model) with Ngựa Chín Hồng Mao (prefab NguaChinHongMao, EatGrass at the trough), a haystack, a rail fence and Idyllic plants round
     //    it (DressYard), and the keeper (the old Sơn Tinh v1 model) at the
     //    house's ladder with Interactable + HorseQuestVillager.
-    //  - On the mountain path at the old horse stop (z = 85): the bronze bell (placeholder glowing cube + light beam, HeirloomPickup),
+    //  - On the mountain path at the old horse stop (z = 85): the heirloom bell (Meshy model + light beam, HeirloomPickup),
     //    shown once the keeper asks for it. The old walk-in pickup Pickup_NguaChinHongMao is switched off: the horse now comes from the keeper.
     //  - UI: the Prologue's dialogue box (copied in, if the map has none) and an "Nhấn E để …" prompt (InteractionPrompt).
     //  - Data: Dialogue_HorseQuest_Offer / _Reminder / _Thanks / _After, and the horse gift's banner text "Bạn đã nhận được {0}".
@@ -28,7 +29,7 @@ namespace SonTinhThuyTinh.EditorTools
         const string VillagerPrefab = "Assets/Prefabs/Characters/SonTinh.prefab";   // the v1 Sơn Tinh model, not used by the player any more
         const string GiftPath = "Assets/Data/Gifts/Gift_NguaChinHongMao.asset";
         const string DialogueDir = "Assets/Data/Dialogue";
-        const string Keeper = "Người chăn ngựa", Hero = "Sơn Tinh";
+        const string Keeper = "Người chăn ngựa", Hero = "Sơn Tinh", Thief = "Tên trộm ngựa";
 
         // must match SonTinhMapBuilder: the village is bay 0 (z 45, 36 m left of the path), the horse stop is the first stop (z 85)
         static float PathX(float z)
@@ -72,8 +73,8 @@ namespace SonTinhThuyTinh.EditorTools
             Vector2 house = village + new Vector2(-6.8f, 2.5f);          // SonTinhMapBuilder.BuildBays, sign -1
             Vector2 stableAt = village + new Vector2(-6.2f, -6.0f);
             float stableYaw = Mathf.Atan2(village.x - stableAt.x, village.y - stableAt.y) * Mathf.Rad2Deg;   // open front towards the yard
-            var stable = BuildStable(root, Ground(stableAt), stableYaw, out Vector3 horseSpot);
-            DressYard(root, stable.transform);
+            var stable = BuildStable(root, Ground(stableAt), stableYaw, out Vector3 horseSpot, out Vector2 half);
+            DressYard(root, stable.transform, half);
             var horseGo = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(HorseBuilder.PrefabPath));
             horseGo.transform.SetParent(root);
             horseGo.transform.SetPositionAndRotation(horseSpot, Quaternion.Euler(0f, stableYaw, 0f));
@@ -89,22 +90,37 @@ namespace SonTinhThuyTinh.EditorTools
             keeperModel.transform.localPosition = Vector3.zero;
             keeperModel.transform.rotation = Quaternion.LookRotation(new Vector3(village.x - keeperAt.x, 0f, village.y - keeperAt.y));
             var capsule = keeper.AddComponent<CapsuleCollider>(); capsule.center = new Vector3(0f, 0.95f, 0f); capsule.height = 1.9f; capsule.radius = 0.35f;
+            NewProps.DressHat(keeper.transform);   // the horse keeper wears a conical hat (the village elder of the sea map does not)
             var talk = keeper.AddComponent<Interactable>();
             var tso = new SerializedObject(talk);
             tso.FindProperty("prompt").stringValue = "Nhấn E để nói chuyện";
             tso.FindProperty("radius").floatValue = 2.8f;
             tso.ApplyModifiedPropertiesWithoutUndo();
 
-            // ---- the bronze bell at the old horse stop on the mountain path ----
-            Vector2 bellAt = HorseStop + new Vector2(2.5f, 1.5f);
-            var bell = BuildBell(root, Ground(bellAt));
-            float distance = Vector2.Distance(keeperAt, bellAt);
-
             // ---- UI ----
             var runner = CopyDialogueUi(scene);
             scene.GetRootGameObjects().First(g => g.name == "DialogueCanvas").transform.SetParent(root, true);
             runner.transform.SetParent(root, true);
             BuildPrompt(root, runner);
+
+            // ---- the mountain trail: thieves in the clearing, a barricade, the horse on the summit ----
+            BuildMountainEvent(root, runner, dialogues[4], dialogues[5], horseGo);
+
+            // this build replaced the map's dialogue box: point the rooster quest's director (built earlier) at the new one
+            var roosterDirector = Object.FindFirstObjectByType<RoosterQuestDirector>();
+            if (roosterDirector != null)
+            {
+                var rso = new SerializedObject(roosterDirector);
+                rso.FindProperty("runner").objectReferenceValue = runner;
+                rso.ApplyModifiedPropertiesWithoutUndo();
+            }
+            var elephantEvent = Object.FindFirstObjectByType<VoiChinNgaArenaEvent>();   // the same for the elephant fight (ElephantArenaBuilder)
+            if (elephantEvent != null)
+            {
+                var eso = new SerializedObject(elephantEvent);
+                eso.FindProperty("runner").objectReferenceValue = runner;
+                eso.ApplyModifiedPropertiesWithoutUndo();
+            }
 
             var villager = keeper.AddComponent<HorseQuestVillager>();
             var vso = new SerializedObject(villager);
@@ -118,16 +134,145 @@ namespace SonTinhThuyTinh.EditorTools
             vso.FindProperty("body").objectReferenceValue = keeperModel.transform;
             vso.ApplyModifiedPropertiesWithoutUndo();
 
+            int relinked = RelinkDialogueRunner(scene, runner);
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
-            Debug.Log($"HorseQuestBuilder: built. Village yard {village}, stable {stableAt}, keeper {keeperAt}, bell {bellAt} ({distance:F0} m from the keeper)");
+            Debug.Log($"HorseQuestBuilder: {relinked} link(s) to the dialogue runner restored.");
+            Debug.Log($"HorseQuestBuilder: built. Village yard {village}, stable {stableAt}, keeper {keeperAt}");
         }
 
-        // ---------- stable: 4.6 m deep, 3.4 m wide, open front with the hay trough, roof on four posts ----------
+        // ---------- the mountain trail (SonTinhMountainBranch): thieves, barricade, horse on the summit ----------
 
-        static GameObject BuildStable(Transform parent, Vector3 ground, float yaw, out Vector3 horseSpot)
+        static void BuildMountainEvent(Transform root, DialogueRunner runner, DialogueSequence ambush, DialogueSequence rung, GameObject stableHorse)
+        {
+            Transform clearing = GameObject.Find("Anchor_BeastClearing")?.transform, afterPit = GameObject.Find("Anchor_AfterPit")?.transform,
+                summit = GameObject.Find("Anchor_Summit")?.transform;
+            if (clearing == null || afterPit == null || summit == null)
+            {
+                Debug.LogError("HorseQuestBuilder: no mountain trail anchors in the scene; run Build Son Tinh Map first.");
+                return;
+            }
+            var ev = new GameObject("MountainEvent").transform;
+            ev.SetParent(root, false);
+            var marks = new GameObject("Marks").transform;
+            marks.SetParent(ev, false);
+            Transform Mark(string name, Vector3 at, Vector3 look)
+            {
+                var t = new GameObject(name).transform;
+                t.SetParent(marks, false);
+                t.SetPositionAndRotation(at, Quaternion.LookRotation(look));
+                return t;
+            }
+            Vector3 OnGround(Vector3 p) => Ground(new Vector2(p.x, p.z));
+
+            // the clearing: f runs along the trail towards the summit, the thieves stand in its far half facing the way the player comes
+            Vector3 cc = OnGround(clearing.position);
+            Vector3 f = clearing.forward; f.y = 0f; f.Normalize();
+            Vector3 right = Vector3.Cross(Vector3.up, f);
+            var centre = Mark("ClearingCentre", cc, f);
+            var spots = new[]
+            {
+                Mark("ThiefSpot1", OnGround(cc + f * 3.5f - right * 4.5f), -f),
+                Mark("ThiefSpot2", OnGround(cc + f * 6.5f), -f),
+                Mark("ThiefSpot3", OnGround(cc + f * 3.5f + right * 4.5f), -f),
+            };
+            var playerMark = Mark("PlayerMark", OnGround(afterPit.position + f), f);
+
+            var enemy = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Characters/Ninja_Enemy.prefab");
+            var thieves = new NinjaEnemy[spots.Length];
+            for (int i = 0; i < spots.Length; i++)
+            {
+                var go = (GameObject)PrefabUtility.InstantiatePrefab(enemy, ev);
+                go.name = "HorseThief_" + (i + 1);
+                go.transform.SetPositionAndRotation(spots[i].position, spots[i].rotation);
+                thieves[i] = go.GetComponent<NinjaEnemy>();
+            }
+
+            // the barricade: a wall of stakes across the canyon beyond the clearing (it falls when the thieves are beaten)
+            Material wood = MapDecor.Lit("Mat_Wood", new Color(0.33f, 0.22f, 0.12f), 0f, 0.15f);
+            Material rope = MapDecor.Lit("Mat_Plank", new Color(0.45f, 0.31f, 0.18f), 0f, 0.1f);
+            Vector3 gate = OnGround(cc + f * 14f);
+            var barricade = new GameObject("Barricade").transform;
+            barricade.SetParent(ev, false);
+            barricade.SetPositionAndRotation(gate, Quaternion.LookRotation(f));
+            var wall = barricade.gameObject.AddComponent<BoxCollider>();
+            wall.size = new Vector3(26f, 14f, 1.4f);
+            wall.center = new Vector3(0f, 6f, 0f);
+            for (float x = -12.5f; x <= 12.5f; x += 0.75f)
+            {
+                Vector3 p = OnGround(gate + right * x);
+                float h = 4.2f + ((int)(x * 4f) % 3) * 0.35f;
+                MapDecor.Part(PrimitiveType.Cylinder, "Stake", barricade, barricade.InverseTransformPoint(p + Vector3.up * (h * 0.5f - 0.4f)),
+                    new Vector3(0.34f, h * 0.5f, 0.34f), Quaternion.Euler(0f, 0f, ((int)(x * 3f) % 3 - 1) * 4f), wood);
+            }
+            foreach (float y in new[] { 1.2f, 2.8f })
+                MapDecor.Part(PrimitiveType.Cube, "Rail", barricade, new Vector3(0f, y, -0.3f), new Vector3(26f, 0.18f, 0.18f), Quaternion.identity, rope);
+            MapDecor.Banner(barricade, OnGround(gate - f * 0.9f + right * 4f), 0f, new Color(0.62f, 0.12f, 0.08f));
+            MapDecor.Banner(barricade, OnGround(gate - f * 0.9f - right * 4f), 0f, new Color(0.62f, 0.12f, 0.08f));
+            MapDecor.Torch(barricade, OnGround(gate - f * 1.2f + right * 1.6f));
+            MapDecor.Torch(barricade, OnGround(gate - f * 1.2f - right * 1.6f));
+
+            // the horse on the summit, facing back down the trail; the bell spot in front of it; a light beam so it can be seen from afar
+            Vector3 beforeSummit = SonTinhMountainBranch.NodePosition(SonTinhMountainBranch.ISummit - 1);
+            Vector3 onward = summit.position - beforeSummit; onward.y = 0f; onward.Normalize();
+            Vector3 horseAt = OnGround(summit.position + onward * 2f);
+            var horseGo = (GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(HorseBuilder.PrefabPath), ev);
+            horseGo.name = "HorseSummit";
+            horseGo.transform.SetPositionAndRotation(horseAt + Vector3.up * 0.14f, Quaternion.LookRotation(-onward));
+            Material hay = MapDecor.Lit("Mat_Hay", new Color(0.78f, 0.68f, 0.30f), 0f, 0.05f);
+            MapDecor.Part(PrimitiveType.Sphere, "HayPile", horseGo.transform, horseGo.transform.InverseTransformPoint(horseAt + onward * 0.2f + Vector3.up * 0.05f), new Vector3(1.8f, 0.45f, 1.4f), Quaternion.identity, hay);
+
+            var bellSpot = new GameObject("BellSpot").transform;
+            bellSpot.SetParent(horseGo.transform, false);
+            bellSpot.position = OnGround(horseAt - onward * 2.2f);
+            var interact = bellSpot.gameObject.AddComponent<Interactable>();
+            var iso = new SerializedObject(interact);
+            iso.FindProperty("prompt").stringValue = "Nhấn E để rung chuông";
+            iso.FindProperty("radius").floatValue = 3.6f;
+            iso.ApplyModifiedPropertiesWithoutUndo();
+            var summitScript = bellSpot.gameObject.AddComponent<HorseSummit>();
+            var sso = new SerializedObject(summitScript);
+            sso.FindProperty("horse").objectReferenceValue = horseGo.GetComponent<HorseStall>();
+            sso.FindProperty("runner").objectReferenceValue = runner;
+            sso.FindProperty("rung").objectReferenceValue = rung;
+            sso.ApplyModifiedPropertiesWithoutUndo();
+            // a guide arrow floating over the horse (it replaced a tall pillar of light): points down, turns and bobs (QuestArrow)
+            Material glow = MapDecor.Lit("Mat_QuestArrow", new Color(1f, 0.82f, 0.25f), 0f, 0.2f, true);
+            glow.EnableKeyword("_EMISSION"); glow.SetColor("_EmissionColor", new Color(1f, 0.7f, 0.15f) * 2.5f); EditorUtility.SetDirty(glow);
+            var arrow = new GameObject("GuideArrow");
+            arrow.transform.SetParent(horseGo.transform, false);
+            arrow.transform.position = horseAt + Vector3.up * 4.2f;   // the tip, a little over the horse's head
+            arrow.AddComponent<MeshFilter>().sharedMesh = ArrowMesh();
+            arrow.AddComponent<MeshRenderer>().sharedMaterial = glow;
+            arrow.AddComponent<QuestArrow>();
+
+            var director = ev.gameObject.AddComponent<HorseQuestDirector>();
+            var d = new SerializedObject(director);
+            SerializedProperty list = d.FindProperty("thieves"); list.arraySize = thieves.Length;
+            for (int i = 0; i < thieves.Length; i++) list.GetArrayElementAtIndex(i).objectReferenceValue = thieves[i];
+            list = d.FindProperty("spots"); list.arraySize = spots.Length;
+            for (int i = 0; i < spots.Length; i++) list.GetArrayElementAtIndex(i).objectReferenceValue = spots[i];
+            d.FindProperty("clearingCenter").objectReferenceValue = centre;
+            d.FindProperty("clearingRadius").floatValue = 11f;
+            d.FindProperty("triggerRadius").floatValue = 17f;
+            d.FindProperty("playerMark").objectReferenceValue = playerMark;
+            d.FindProperty("barricade").objectReferenceValue = barricade.gameObject;
+            d.FindProperty("summitHorse").objectReferenceValue = horseGo;
+            d.FindProperty("stableHorse").objectReferenceValue = stableHorse;
+            d.FindProperty("runner").objectReferenceValue = runner;
+            d.FindProperty("ambush").objectReferenceValue = ambush;
+            d.ApplyModifiedPropertiesWithoutUndo();
+        }
+
+        // ---------- stable: the Meshy thatched bamboo stable (VillageModelSetup), the gate side to the yard, a hay trough inside its front
+        // fence; without the model: 4.6 m deep, 3.4 m wide, open front with the hay trough, roof on four posts ----------
+
+        static GameObject BuildStable(Transform parent, Vector3 ground, float yaw, out Vector3 horseSpot, out Vector2 half)
         {
             Transform s = MapDecor.Empty("Stable", parent, ground, yaw);
+            var model = VillageModelSetup.Prefab(VillageModelSetup.Kind.Stable);
+            if (model != null) return BuildModelStable(s, model, out horseSpot, out half);
+            half = new Vector2(1.7f, 2.3f);
             Material wood = MapDecor.Lit("Mat_Wood", new Color(0.33f, 0.22f, 0.12f), 0f, 0.15f);
             Material plank = MapDecor.Lit("Mat_Plank", new Color(0.45f, 0.31f, 0.18f), 0f, 0.1f);
             Material thatch = MapDecor.Lit("Mat_Thatch", new Color(0.50f, 0.40f, 0.20f), 0f, 0.05f, true);
@@ -172,6 +317,43 @@ namespace SonTinhThuyTinh.EditorTools
             return s.gameObject;
         }
 
+        static GameObject BuildModelStable(Transform s, GameObject prefab, out Vector3 horseSpot, out Vector2 half)
+        {
+            var go = (GameObject)PrefabUtility.InstantiatePrefab(prefab, s);
+            go.transform.localPosition = Vector3.zero; go.transform.localRotation = Quaternion.identity;
+            Bounds b = VillageModelSetup.LocalBounds(go, s);
+            go.transform.localPosition = Vector3.up * (VillageModelSetup.LowestGround(terrain, s, b) - s.position.y - 0.08f);
+            half = new Vector2(b.extents.x, b.extents.z);
+
+            // the horse grazes facing the gate: fresh grass in a trough just inside the front fence, its root 1.2 m behind it (EatGrass)
+            Material plank = MapDecor.Lit("Mat_Plank", new Color(0.45f, 0.31f, 0.18f), 0f, 0.1f);
+            Material grass = MapDecor.Lit("Mat_FreshGrass", new Color(0.36f, 0.62f, 0.22f), 0f, 0.1f);
+            float troughZ = b.max.z - 1.3f, floor = FloorHeight(s, go, new Vector3(0f, 0f, troughZ - 1.2f));
+            MapDecor.Part(PrimitiveType.Cube, "TroughBox", s, new Vector3(0f, floor + 0.3f, troughZ), new Vector3(2.4f, 0.5f, 0.5f), Quaternion.identity, plank, true);
+            MapDecor.Part(PrimitiveType.Cube, "TroughHay", s, new Vector3(0f, floor + 0.57f, troughZ), new Vector3(2.2f, 0.08f, 0.38f), Quaternion.identity, grass);
+            var tufts = new[] { "Grass_01", "Grass_02", "Grass_03" }.Select(n => AssetDatabase.LoadAssetAtPath<GameObject>(IdyllicPack + n + ".prefab")).Where(p => p != null).ToArray();
+            for (int i = 0; i < 4; i++)
+            {
+                var at = new Vector3(-0.8f + i * 0.55f, floor + 0.61f, troughZ + ((i % 2) - 0.5f) * 0.12f);
+                if (tufts.Length > 0) Prop(tufts[i % tufts.Length], s, at, i * 37f, 0.42f);
+                else MapDecor.Part(PrimitiveType.Sphere, "FreshGrass", s, at + Vector3.up * 0.02f, new Vector3(0.45f, 0.16f, 0.32f), Quaternion.Euler(0f, i * 37f, 0f), grass);
+            }
+            horseSpot = s.TransformPoint(new Vector3(0f, floor, troughZ - 1.2f));
+            return s.gameObject;
+        }
+
+        // Top of the stable's floor under a local point (a ray down on its mesh collider), or the terrain if the ray misses.
+        static float FloorHeight(Transform s, GameObject model, Vector3 local)
+        {
+            Physics.SyncTransforms();
+            Vector3 top = s.TransformPoint(local) + Vector3.up * 1.5f;
+            float best = float.MinValue;
+            foreach (var c in model.GetComponentsInChildren<MeshCollider>())
+                if (c.Raycast(new Ray(top, Vector3.down), out RaycastHit hit, 3f) && hit.point.y < top.y - 0.4f) best = Mathf.Max(best, hit.point.y);
+            if (best == float.MinValue) best = Ground(new Vector2(top.x, top.z)).y;
+            return best - s.position.y;
+        }
+
         // ---------- around the stable: a haystack, a rail fence behind, a flowering tree, bushes, flowers and grass tufts ----------
         // No pack has a stilt house, a stable or a fence, so those stay built from blocks; the plants come from Idyllic Fantasy Nature
         // (skipped if it is not imported). Everything stands beside or behind the stable: the yard in front of it stays clear.
@@ -189,8 +371,10 @@ namespace SonTinhThuyTinh.EditorTools
             return go;
         }
 
-        static void DressYard(Transform root, Transform stable)
+        // `half` = the stable's half width (x) and half depth (z): everything keeps the same gap to it whatever its size.
+        static void DressYard(Transform root, Transform stable, Vector2 half)
         {
+            float wx = half.x - 1.7f, dz = half.y - 2.3f;   // growth over the old 3.4 x 4.6 m block stable
             var yard = new GameObject("StableYard").transform;
             yard.SetParent(root);
             var rng = new System.Random(845);
@@ -209,7 +393,7 @@ namespace SonTinhThuyTinh.EditorTools
             Material hay = MapDecor.Lit("Mat_Hay", new Color(0.78f, 0.68f, 0.30f), 0f, 0.05f);
 
             // the haystack (đống rơm) on the house side: a round stack on a pole, its top rounded off
-            Vector3 stack = At(-3.4f, -0.6f);
+            Vector3 stack = At(-3.4f - wx, -0.6f);
             var stackRoot = MapDecor.Empty("Haystack", yard, stack, 0f);
             MapDecor.Part(PrimitiveType.Cylinder, "Stack", stackRoot, new Vector3(0f, 0.65f, 0f), new Vector3(1.8f, 0.65f, 1.8f), Quaternion.identity, hay, true);
             MapDecor.Part(PrimitiveType.Sphere, "Top", stackRoot, new Vector3(0f, 1.3f, 0f), new Vector3(1.8f, 1.1f, 1.8f), Quaternion.identity, hay);
@@ -217,7 +401,7 @@ namespace SonTinhThuyTinh.EditorTools
 
             // a rail fence behind the stable, from the haystack to the far side (posts every 1.6 m, two rails)
             var fence = new GameObject("Fence").transform; fence.SetParent(yard);
-            const float fenceZ = -3.6f, fenceFrom = -5.2f, fenceTo = 5.2f;
+            float fenceZ = -3.6f - dz, fenceFrom = -5.2f - wx, fenceTo = 5.2f + wx;
             for (float x = fenceFrom; x <= fenceTo + 0.01f; x += 1.6f)
             {
                 Vector3 p = At(x, fenceZ);
@@ -234,25 +418,62 @@ namespace SonTinhThuyTinh.EditorTools
             GameObject[] flowers = Load("Flower_Red", "Flower_Yellow", "Flower_Pink", "Flower_White", "Flower_YellowRed");
             GameObject[] patches = Load("FlowerMeadow_RedOrange", "FlowerMeadow_White", "FlowerMeadow_PurpleRedPink");
             GameObject[] grass = Load("Grass_01", "Grass_02", "Grass_03"), stones = Load("Stones_01", "Stones_02");
-            if (blossom.Length > 0) Put(blossom[0], At(4.6f, -2.2f) - Vector3.up * 0.1f, 1.25f);   // a peach tree shading the stable's far side
-            foreach (var (x, z) in new[] { (-3.8f, -4.8f), (-0.6f, -4.9f), (2.6f, -4.8f) })
+            if (blossom.Length > 0) Put(blossom[0], At(4.6f + wx, -2.2f) - Vector3.up * 0.1f, 1.25f);   // a peach tree shading the stable's far side
+            foreach (var (x, z) in new[] { (-3.8f - wx, -4.8f - dz), (-0.6f, -4.9f - dz), (2.6f + wx, -4.8f - dz) })
                 if (bushes.Length > 0) Put(bushes[rng.Next(bushes.Length)], At(x, z), Rand(0.9f, 1.15f));
             for (int i = 0; i < 12; i++)   // flowers along the fence and the sides of the stable
             {
-                float x = i < 7 ? Rand(-4.8f, 4.8f) : (i % 2 == 0 ? -2.3f : 2.3f), z = i < 7 ? fenceZ + Rand(0.25f, 0.6f) : Rand(-1.8f, 1.8f);
+                float x = i < 7 ? Rand(-4.8f - wx, 4.8f + wx) : (i % 2 == 0 ? -2.3f - wx : 2.3f + wx), z = i < 7 ? fenceZ + Rand(0.25f, 0.6f) : Rand(-1.8f - dz, 1.8f + dz);
                 if (i % 3 == 0 && patches.Length > 0) Put(patches[rng.Next(patches.Length)], At(x, z), Rand(2f, 2.8f));
                 else if (flowers.Length > 0) Put(flowers[rng.Next(flowers.Length)], At(x, z), Rand(0.9f, 1.3f));
             }
             for (int i = 0; i < 10; i++)   // grass tufts at the posts and round the haystack
             {
                 float a = Rand(0f, Mathf.PI * 2f);
-                (float x, float z) = i < 5 ? (-3.4f + Mathf.Sin(a) * 1.15f, -0.6f + Mathf.Cos(a) * 1.15f) : (i % 2 == 0 ? -1.85f : 1.85f, Rand(-2.3f, 2.3f));
+                (float x, float z) = i < 5 ? (-3.4f - wx + Mathf.Sin(a) * 1.15f, -0.6f + Mathf.Cos(a) * 1.15f) : (i % 2 == 0 ? -1.85f - wx : 1.85f + wx, Rand(-2.3f - dz, 2.3f + dz));
                 if (grass.Length > 0) Put(grass[rng.Next(grass.Length)], At(x, z), Rand(0.7f, 1.1f));
             }
-            if (stones.Length > 0) { Put(stones[0], At(2.6f, 3.1f), 0.9f); Put(stones[stones.Length - 1], At(-4.6f, 1.4f), 0.8f); }
+            if (stones.Length > 0) { Put(stones[0], At(2.6f + wx, 3.1f + dz), 0.9f); Put(stones[stones.Length - 1], At(-4.6f - wx, 1.4f), 0.8f); }
         }
 
-        // ---------- the bell: a glowing placeholder cube on a stone, a beam of light over it ----------
+        // A downward arrow, tip at the origin: a cone head 1.4 m high (radius 0.85) under a 1.4 m shaft (radius 0.25). Saved as an asset.
+        internal static Mesh ArrowMesh()
+        {
+            const string path = "Assets/Art/Maps/Decor/Mesh_QuestArrow.asset";
+            const int n = 20;
+            const float headH = 1.4f, headR = 0.85f, shaftR = 0.25f, shaftH = 1.4f;
+            var v = new System.Collections.Generic.List<Vector3>();
+            var t = new System.Collections.Generic.List<int>();
+            v.Add(Vector3.zero);                                   // 0: the tip
+            for (int i = 0; i < n; i++) { float a = Mathf.PI * 2f * i / n; v.Add(new Vector3(Mathf.Cos(a) * headR, headH, Mathf.Sin(a) * headR)); }   // 1..n: the head's rim
+            for (int i = 0; i < n; i++) t.AddRange(new[] { 0, 1 + (i + 1) % n, 1 + i });
+            int centre = v.Count; v.Add(new Vector3(0f, headH, 0f));
+            for (int i = 0; i < n; i++) t.AddRange(new[] { centre, 1 + i, 1 + (i + 1) % n });   // the flat top of the head
+            int shaftBottom = v.Count;
+            for (int i = 0; i < n; i++) { float a = Mathf.PI * 2f * i / n; v.Add(new Vector3(Mathf.Cos(a) * shaftR, headH, Mathf.Sin(a) * shaftR)); }
+            int shaftTop = v.Count;
+            for (int i = 0; i < n; i++) { float a = Mathf.PI * 2f * i / n; v.Add(new Vector3(Mathf.Cos(a) * shaftR, headH + shaftH, Mathf.Sin(a) * shaftR)); }
+            for (int i = 0; i < n; i++)
+            {
+                int j = (i + 1) % n;
+                t.AddRange(new[] { shaftBottom + i, shaftTop + i, shaftTop + j, shaftBottom + i, shaftTop + j, shaftBottom + j });
+            }
+            int cap = v.Count; v.Add(new Vector3(0f, headH + shaftH, 0f));
+            for (int i = 0; i < n; i++) t.AddRange(new[] { cap, shaftTop + (i + 1) % n, shaftTop + i });
+
+            var mesh = AssetDatabase.LoadAssetAtPath<Mesh>(path);
+            if (mesh == null) { mesh = new Mesh { name = "Mesh_QuestArrow" }; AssetDatabase.CreateAsset(mesh, path); }
+            else mesh.Clear();
+            mesh.SetVertices(v);
+            mesh.SetTriangles(t, 0);
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+            EditorUtility.SetDirty(mesh);
+            return mesh;
+        }
+
+        // ---------- the bell: the Meshy heirloom bell (VillageModelSetup; a glowing cube without it), bobbing and turning, a beam of light
+        // over it ----------
 
         static GameObject BuildBell(Transform parent, Vector3 ground)
         {
@@ -261,7 +482,15 @@ namespace SonTinhThuyTinh.EditorTools
             var content = new GameObject("Content").transform; content.SetParent(root, false);
             Material bronze = MapDecor.Lit("Mat_BellBronze", new Color(0.78f, 0.52f, 0.20f), 0.8f, 0.6f);
             bronze.EnableKeyword("_EMISSION"); bronze.SetColor("_EmissionColor", new Color(1f, 0.6f, 0.2f) * 0.8f); EditorUtility.SetDirty(bronze);
-            var visual = MapDecor.Part(PrimitiveType.Cube, "Visual", content, new Vector3(0f, 0.9f, 0f), new Vector3(0.35f, 0.35f, 0.35f), Quaternion.Euler(0f, 45f, 0f), bronze).transform;
+            Transform visual;
+            var bellModel = VillageModelSetup.Prefab(VillageModelSetup.Kind.Bell);
+            if (bellModel != null)
+            {
+                visual = new GameObject("Visual").transform; visual.SetParent(content, false); visual.localPosition = new Vector3(0f, 0.9f, 0f);
+                var bellGo = (GameObject)PrefabUtility.InstantiatePrefab(bellModel, visual);
+                bellGo.transform.localPosition = new Vector3(0f, -0.3f, 0f);   // the 0.6 m bell centred on the bob point
+            }
+            else visual = MapDecor.Part(PrimitiveType.Cube, "Visual", content, new Vector3(0f, 0.9f, 0f), new Vector3(0.35f, 0.35f, 0.35f), Quaternion.Euler(0f, 45f, 0f), bronze).transform;
             var lightGo = new GameObject("Glow"); lightGo.transform.SetParent(content, false); lightGo.transform.localPosition = new Vector3(0f, 1.4f, 0f);
             var light = lightGo.AddComponent<Light>(); light.type = LightType.Point; light.color = new Color(1f, 0.75f, 0.35f); light.range = 8f; light.intensity = 4f;
             Material beam = MapDecor.Lit("Mat_QuestBeam", new Color(1f, 0.82f, 0.4f), 0f, 0f);
@@ -276,14 +505,35 @@ namespace SonTinhThuyTinh.EditorTools
             var pso = new SerializedObject(pickup);
             pso.FindProperty("content").objectReferenceValue = content.gameObject;
             pso.FindProperty("visual").objectReferenceValue = visual;
+            pso.FindProperty("itemName").stringValue = "Chuông cổ gia truyền";
             pso.ApplyModifiedPropertiesWithoutUndo();
             return root.gameObject;
+        }
+
+        // The dialogue runner is rebuilt with the quest, so the other quests of the map (the rooster's director, encounter triggers...) would
+        // still point at the deleted one: every empty DialogueRunner field in the scene gets the new runner.
+        static int RelinkDialogueRunner(Scene scene, DialogueRunner runner)
+        {
+            int count = 0;
+            foreach (var root in scene.GetRootGameObjects())
+                foreach (var mb in root.GetComponentsInChildren<MonoBehaviour>(true))
+                {
+                    if (mb == null) continue;
+                    var so = new SerializedObject(mb);
+                    var it = so.GetIterator();
+                    bool changed = false;
+                    while (it.Next(true))
+                        if (it.propertyType == SerializedPropertyType.ObjectReference && it.type == "PPtr<$DialogueRunner>" && it.objectReferenceValue == null)
+                        { it.objectReferenceValue = runner; changed = true; count++; }
+                    if (changed) so.ApplyModifiedPropertiesWithoutUndo();
+                }
+            return count;
         }
 
         // ---------- UI ----------
 
         // The Prologue's dialogue canvas + runner, copied into this map (the runner is moved under the canvas while copying so their links survive).
-        static DialogueRunner CopyDialogueUi(Scene target)
+        internal static DialogueRunner CopyDialogueUi(Scene target)
         {
             var prologue = EditorSceneManager.OpenScene(ProloguePath, OpenSceneMode.Additive);
             var roots = prologue.GetRootGameObjects();
@@ -306,7 +556,7 @@ namespace SonTinhThuyTinh.EditorTools
             return runner;
         }
 
-        static void BuildPrompt(Transform parent, DialogueRunner runner)
+        internal static void BuildPrompt(Transform parent, DialogueRunner runner)
         {
             var canvasGo = new GameObject("InteractionCanvas", typeof(Canvas), typeof(CanvasScaler));
             canvasGo.transform.SetParent(parent);
@@ -344,25 +594,38 @@ namespace SonTinhThuyTinh.EditorTools
                 {
                     (Keeper, "Chào chàng trai! Dáng đi vững như núi thế kia, chắc chàng là Sơn Tinh, chúa vùng non cao phải không?"),
                     (Hero, "Đúng vậy. Ta đang tìm ngựa chín hồng mao để dâng vua Hùng làm sính lễ, cầu hôn Mị Nương."),
-                    (Keeper, "Thế thì chàng đến đúng nhà rồi! Con ngựa chín hồng mao đang ăn cỏ trong chuồng nhà tôi đấy. Tôi nuôi nó từ khi nó còn là con ngựa non."),
-                    (Keeper, "Có điều mấy hôm trước núi lở, tôi chạy vội nên đánh rơi chiếc chuông đồng ông nội để lại trên đường núi phía trên. Không có tiếng chuông ấy, nó chẳng chịu theo ai."),
-                    (Keeper, "Chàng tìm giúp tôi chiếc chuông nhé. Mang được về đây, tôi xin gửi chàng con ngựa quý."),
-                    ("", "Nhiệm vụ: tìm chuông đồng gia truyền của người chăn ngựa. Nơi chuông rơi đã có cột sáng đánh dấu trên đường núi."),
+                    (Keeper, "Thế thì chàng đến đúng lúc, mà cũng đến chậm mất rồi! Đêm qua sấm nổ rất lớn, con ngựa chín hồng mao nhà tôi hoảng sợ, đứt dây cương chạy thoát lên núi."),
+                    (Keeper, "Tệ hơn nữa, tôi thấy một bọn trộm ngựa áo đen cũng lần theo vết chân nó. Chúng mà bắt được thì tôi chẳng còn gì để nói."),
+                    (Keeper, "Đây là chiếc chuông đồng ông nội tôi để lại. Nó nghe tiếng chuông này từ thuở bé, chỉ cần rung lên là nó bình tĩnh ngay. Chàng đuổi theo giúp tôi nhé!"),
+                    (Hero, "Ông yên tâm. Ta sẽ đưa nó về."),
+                    ("", "Nhiệm vụ: đuổi theo ngựa chín hồng mao lên đường núi sau làng. Vượt bậc đá, bậc thang và vực gãy, đánh bọn trộm ngựa ở bãi đá rồi lên đỉnh gò rung chuông. Có cột sáng chỉ chỗ con ngựa. Đừng chạy nhanh khi lại gần nó."),
                 }),
                 ("Reminder", new[]
                 {
-                    (Keeper, "Chiếc chuông rơi ở đoạn đường núi phía trên kia, chỗ có cột sáng ấy. Đường dốc lắm, chàng đi cẩn thận nhé!"),
+                    (Keeper, "Chàng cứ men đường núi sau làng, qua vực gãy rồi tới bãi đá, bọn trộm ngựa chắc ở đó. Con ngựa ở trên đỉnh gò, chỗ có cột sáng. Tới gần thì đi chậm thôi, nó nhát lắm!"),
                 }),
                 ("Thanks", new[]
                 {
-                    (Hero, "Chiếc chuông đồng đây. Ta tìm thấy nó bên đường núi."),
-                    (Keeper, "Đúng nó rồi! Tiếng chuông này tôi nghe từ thuở bé... Cảm ơn chàng nhiều lắm!"),
-                    (Keeper, "Nghe kìa, con ngựa ngẩng đầu lên rồi. Nó nhận ra tiếng chuông nhà tôi đấy."),
+                    (Hero, "Ta đã rung chuông trên đỉnh gò, con ngựa bình tĩnh lại rồi chạy xuống núi. Chắc nó về tới chuồng rồi."),
+                    (Keeper, "Đúng nó rồi! Nghe tiếng chân quen thuộc ngoài sân kìa... Cảm ơn chàng nhiều lắm, lại còn đánh đuổi được cả bọn trộm ngựa!"),
                     (Keeper, "Ngựa chín hồng mao xin gửi chàng. Tôi cứ để nó ở chuồng, ăn no cỏ non, đến ngày chàng mang sính lễ lên kinh thì nó theo về."),
                 }),
                 ("After", new[]
                 {
                     (Keeper, "Con ngựa vẫn khoẻ lắm, ngày nào tôi cũng cắt cỏ non cho nó. Chúc chàng sớm cưới được Mị Nương!"),
+                }),
+                ("Bandits", new[]
+                {
+                    (Thief, "Đứng lại! Con ngựa chín hồng mao này bọn ta lần theo trước, ngươi định cướp phần à?"),
+                    (Hero, "Nó là ngựa của người chăn ngựa dưới làng, cũng là sính lễ ta dâng Vua Hùng. Tránh đường!"),
+                    (Thief, "Muốn lên đỉnh gò thì bước qua xác bọn ta. Anh em, xông lên!"),
+                }),
+                ("Summit", new[]
+                {
+                    ("", "Trên đỉnh gò, con ngựa chín hồng mao run rẩy bên mép vực. Sơn Tinh nhẹ nhàng rung chiếc chuông đồng."),
+                    ("", "Keng... keng... Con ngựa ngẩng đầu, tai vểnh lại rồi từ từ bình tĩnh."),
+                    (Hero, "Ngoan nào. Về nhà thôi."),
+                    ("", "Con ngựa hí vang rồi phi xuống núi, chạy thẳng về chuồng cũ. Hãy quay về làng báo cho người chăn ngựa."),
                 }),
             };
             var result = new string[sets.Length];

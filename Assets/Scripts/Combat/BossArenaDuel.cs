@@ -104,6 +104,15 @@ namespace SonTinhThuyTinh.Combat
         {
             // Fight over: the bar just fades away through the existing Show(false) alpha tween.
             if (bar != null) bar.Show(false);
+            StartCoroutine(VictoryRoutine());
+        }
+
+        // Short pause so the death animation can play, then the ending cutscene loads.
+        System.Collections.IEnumerator VictoryRoutine()
+        {
+            yield return new WaitForSecondsRealtime(2.5f);
+            GameSession.Outcome = DuelOutcome.PlayerWon;
+            SceneLoader.Load(SceneNames.Ending);
         }
 
         void OnBossDamaged(DamageInfo info)

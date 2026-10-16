@@ -1,0 +1,44 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_Sea_Elder_Offer
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: "Tr\u01B0\u1EDFng l\xE0ng"
+    text: "D\xE2n l\xE0ng ch\xE0i xin ch\xE0o ch\xFAa v\xF9ng n\u01B0\u1EDBc. L\xE3o
+      ch\xE0i ngo\xE0i b\u1EBFn \u0111\xE3 nh\u1EAFn tin r\u1ED3i: ng\xE0i \u0111\xE3
+      d\u1EB9p ng\u01B0 t\u1EB7c gi\xFAp ch\xFAng t\xF4i."
+    illustration: {fileID: 0}
+  - speaker: "Tr\u01B0\u1EDFng l\xE0ng"
+    text: "Ng\u1ECDn h\u1EA3i \u0111\u0103ng tr\xEAn \u0111\u1ED3i ph\xEDa \u0111\xF4ng
+      l\xE0 con m\u1EAFt c\u1EE7a v\u1ECBnh n\xE0y. T\u1EEB khi vi\xEAn ng\u1ECDc
+      b\u1ECB c\u01B0\u1EDBp, \u0111\xE8n t\u1EAFt, ma n\u01B0\u1EDBc t\u1EEB s\u01B0\u01A1ng
+      k\xE9o v\u1EC1 chi\u1EBFm ch\xE2n th\xE1p."
+    illustration: {fileID: 0}
+  - speaker: "Th\u1EE7y Tinh"
+    text: "Ta s\u1EBD l\xEAn \u0111\xF3, \u0111u\u1ED5i ma n\u01B0\u1EDBc v\xE0 th\u1EAFp
+      l\u1EA1i \u0111\xE8n."
+    illustration: {fileID: 0}
+  - speaker: "Tr\u01B0\u1EDFng l\xE0ng"
+    text: "\u0110\xE8n s\xE1ng th\xEC s\u01B0\u01A1ng tan, l\u1ED1i v\xE0o V\u1ECBnh
+      M\u1EADp m\u1EDBi hi\u1EC7n ra. M\u1EADp Ch\xEDn V\xE2y \u1EDF trong \u0111\xF3,
+      n\xF3 \u0111ang gi\u1EADn l\u1EAFm. C\xF2n S\u1EA5u Ch\xEDn \u0110u\xF4i gi\u1EEF
+      ng\u1ECDc d\u01B0\u1EDBi \u0111\xE1y h\u1ED3 ph\xEDa t\xE2y, R\xF9a Ch\xEDn
+      Ch\xE2n ng\u1EF1 \u1EDF \u0111\u1EC1n ch\xECm cu\u1ED1i \u0111\u01B0\u1EDDng
+      \u0111\u1EAFp."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "Nhi\u1EC7m v\u1EE5: l\xEAn H\u1EA3i \u0111\u0103ng \u1EDF ph\xEDa \u0111\xF4ng
+      l\xE0ng, \u0111u\u1ED5i ma n\u01B0\u1EDBc v\xE0 th\u1EAFp \u0111\xE8n. Sau
+      \u0111\xF3 v\xE0o V\u1ECBnh M\u1EADp, r\u1ED3i t\u1EDBi \u0111\u1EA3o S\u1EA5u
+      v\xE0 \u0111\u1EC1n ch\xECm."
+    illustration: {fileID: 0}

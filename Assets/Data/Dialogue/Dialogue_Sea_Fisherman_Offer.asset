@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_Sea_Fisherman_Offer
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: "L\xE3o ch\xE0i"
+    text: "N\xE0y, ch\xE0ng trai \xE1o xanh! D\xE1ng \u0111i, th\u1EA7n s\u1EAFc
+      th\u1EBF kia... c\xF3 ph\u1EA3i Th\u1EE7y Tinh, ch\xFAa v\xF9ng n\u01B0\u1EDBc
+      \u0111\xE2y kh\xF4ng?"
+    illustration: {fileID: 0}
+  - speaker: "Th\u1EE7y Tinh"
+    text: "Ch\xEDnh l\xE0 ta. Ta \u0111ang \u0111i t\xECm ba linh th\xFA c\u1EE7a
+      v\xF9ng n\u01B0\u1EDBc l\xE0m s\xEDnh l\u1EC5 d\xE2ng Vua H\xF9ng, \u0111\u1EC3
+      c\u1EA7u h\xF4n M\u1ECB N\u01B0\u01A1ng."
+    illustration: {fileID: 0}
+  - speaker: "L\xE3o ch\xE0i"
+    text: "\xD4i, ng\xE0i \u0111\u1EBFn \u0111\xFAng l\xFAc m\xE0 c\u0169ng \u0111\u1EBFn
+      tr\u1EC5! M\u1EA5y th\xE1ng nay b\u1ECDn ng\u01B0 t\u1EB7c chi\u1EBFm B\u1EBFn
+      Thuy\u1EC1n, \u0111\u1ED1t thuy\u1EC1n, x\xE9 l\u01B0\u1EDBi, c\u01B0\u1EDBp
+      c\u1EA3 vi\xEAn ng\u1ECDc l\xE0m \u0111\xE8n cho h\u1EA3i \u0111\u0103ng."
+    illustration: {fileID: 0}
+  - speaker: "L\xE3o ch\xE0i"
+    text: "H\u1EA3i \u0111\u0103ng t\u1EAFt th\xEC s\u01B0\u01A1ng c\u1EE9 d\xE0y
+      l\xEAn m\u1ED7i ng\xE0y. M\u1EADp Ch\xEDn V\xE2y, S\u1EA5u Ch\xEDn \u0110u\xF4i,
+      R\xF9a Ch\xEDn Ch\xE2n \u0111\u1EC1u n\u1ED5i gi\u1EADn, t\u01B0\u1EDFng ch\xEDnh
+      d\xE2n ch\xE0i \u0111\xE3 ph\u1EA3n b\u1ED9i h\u1ECD."
+    illustration: {fileID: 0}
+  - speaker: "Th\u1EE7y Tinh"
+    text: "V\u1EADy ta s\u1EBD d\u1EB9p b\u1ECDn ng\u01B0 t\u1EB7c tr\u01B0\u1EDBc."
+    illustration: {fileID: 0}
+  - speaker: "L\xE3o ch\xE0i"
+    text: "Ch\xFAng canh ngay tr\xEAn s\xE0n b\u1EBFn ph\xEDa tr\u01B0\u1EDBc kia.
+      D\xE2y x\xEDch ch\u1EAFn \u0111\u01B0\u1EDDng sang l\xE0ng ch\u1EC9 g\u1EE1
+      \u0111\u01B0\u1EE3c khi b\u1ECDn ch\xFAng g\u1EE5c. C\u1EA7u mong th\u1EA7n
+      th\u1EE7y ph\xF9 h\u1ED9 ng\xE0i!"
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "Nhi\u1EC7m v\u1EE5: d\u1EB9p b\u1ECDn ng\u01B0 t\u1EB7c \u1EDF B\u1EBFn
+      Thuy\u1EC1n, m\u1EDF d\xE2y x\xEDch ch\u1EAFn \u0111\u01B0\u1EDDng t\u1EDBi
+      L\xE0ng Ch\xE0i. Sau \u0111\xF3 l\xEAn H\u1EA3i \u0111\u0103ng th\u1EAFp l\u1EA1i
+      ng\u1ECDn \u0111\xE8n, r\u1ED3i \u0111i thu\u1EA7n ph\u1EE5c ba linh th\xFA."
+    illustration: {fileID: 0}

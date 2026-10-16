@@ -4,8 +4,9 @@ using UnityEngine;
 namespace SonTinhThuyTinh.Quest
 {
     // The old horse keeper beside his stable. Talking to him (E) moves HorseQuest along:
-    // NotStarted -> asks for his bronze bell (Accepted); Accepted -> a reminder; HasBell -> thanks, gives Ngựa Chín Hồng Mao (the gift
-    // banner says so) and the horse leaves the stable (Completed); Completed -> a friendly line.
+    // NotStarted -> tells how the horse bolted and hands over his bronze bell (Accepted); Accepted / Cleared -> a reminder;
+    // Calmed (the bell was rung on the summit, the horse is back in the stable) -> thanks, gives Ngựa Chín Hồng Mao (the gift banner says
+    // so) and the horse leaves the stable (Completed); Completed -> a friendly line.
     [RequireComponent(typeof(Interactable))]
     public class HorseQuestVillager : MonoBehaviour
     {
@@ -25,6 +26,8 @@ namespace SonTinhThuyTinh.Quest
         {
             // the horse may already be ours (e.g. a test that collected the gift directly): never give it twice
             if (horseGift != null && GiftTracker.Has(horseGift)) HorseQuest.Set(HorseQuestState.Completed);
+            // a state left from an earlier game whose gifts were cleared: the errand starts over
+            else if (horseGift != null && HorseQuest.State == HorseQuestState.Completed) HorseQuest.Reset();
         }
 
         void Talk()
@@ -33,12 +36,13 @@ namespace SonTinhThuyTinh.Quest
             switch (HorseQuest.State)
             {
                 case HorseQuestState.NotStarted:
-                    QuestDialogue.Play(runner, offer, () => HorseQuest.Set(HorseQuestState.Accepted));
+                    QuestDialogue.Play(runner, offer, Accept);
                     break;
                 case HorseQuestState.Accepted:
+                case HorseQuestState.Cleared:
                     QuestDialogue.Play(runner, reminder);
                     break;
-                case HorseQuestState.HasBell:
+                case HorseQuestState.Calmed:
                     if (horse != null) horse.LookUp();
                     QuestDialogue.Play(runner, thanks, GiveHorse);
                     break;
@@ -46,6 +50,12 @@ namespace SonTinhThuyTinh.Quest
                     QuestDialogue.Play(runner, afterwards);
                     break;
             }
+        }
+
+        void Accept()
+        {
+            HorseQuest.Set(HorseQuestState.Accepted);
+            GiftTracker.Announce("Đã nhận <b>Chuông đồng gia truyền</b>\nĐuổi theo ngựa lên đường núi sau làng");
         }
 
         void GiveHorse()

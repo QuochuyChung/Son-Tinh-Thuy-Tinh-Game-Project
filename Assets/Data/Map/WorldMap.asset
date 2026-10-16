@@ -15,16 +15,34 @@ MonoBehaviour:
   texture: {fileID: 2800000, guid: 287ffc1c28008034fb97f411c65d4a47, type: 3}
   places:
   - label: "R\u1EEBng R\u1ED1i"
-    position: {x: 0.06508944, y: 0.4751016}
+    position: {x: 0.2573846, y: 0.4751016}
   - label: "Khu r\u1EEBng linh"
-    position: {x: 0.22799234, y: 0.6587943}
+    position: {x: 0.3482602, y: 0.6587943}
   - label: "L\xE0ng s\u01A1n c\u01B0\u1EDBc"
-    position: {x: 0.10410402, y: 0.86360675}
+    position: {x: 0.27862287, y: 0.8541124}
+  - label: "V\u1EF1c g\xE3y"
+    position: {x: 0.14063916, y: 0.6220703}
+  - label: "B\xE3i th\xFA d\u1EEF"
+    position: {x: 0.08485404, y: 0.5992839}
+  - label: "G\xF2 H\u1ED3ng Mao"
+    position: {x: 0.035267256, y: 0.54003906}
+  - label: "\u0110\u1EA5u tr\u01B0\u1EDDng Voi"
+    position: {x: 0.3322119, y: 0.41927084}
   - label: "Cung \u0111i\u1EC7n Vua H\xF9ng"
     position: {x: 0.5, y: 0.14583333}
   - label: "V\u1ECBnh \u0110\u1EA7m L\u1EA7y"
-    position: {x: 0.8778076, y: 0.79123694}
+    position: {x: 0.74256015, y: 0.7728285}
   - label: "Th\xE1c M\u1EDD S\u01B0\u01A1ng"
-    position: {x: 0.90570176, y: 0.5332031}
+    position: {x: 0.64367664, y: 0.5332031}
   - label: "Hang Ch\xECm"
-    position: {x: 0.91375834, y: 0.647759}
+    position: {x: 0.92877686, y: 0.7486482}
+  - label: "B\u1EBFn Thuy\u1EC1n"
+    position: {x: 0.756906, y: 0.69953847}
+  - label: "L\xE0ng Ch\xE0i"
+    position: {x: 0.79881084, y: 0.68359375}
+  - label: "H\u1EA3i \u0110\u0103ng"
+    position: {x: 0.86286044, y: 0.59244794}
+  - label: "\u0110\u1EA3o Th\u1EE7y Cung"
+    position: {x: 0.9225701, y: 0.7349356}
+  - label: "V\u1ECBnh M\u1EADp"
+    position: {x: 0.7979771, y: 0.52802795}

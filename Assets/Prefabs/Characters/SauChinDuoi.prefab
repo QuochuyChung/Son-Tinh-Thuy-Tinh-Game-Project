@@ -70,7 +70,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7bafa886d25d8b438b0909de7e335e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.Health
-  max: 600
+  max: 420
 --- !u!114 &8225191197201471639
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,21 +98,21 @@ MonoBehaviour:
   wakeRadius: 13
   leashRadius: 26
   walkSpeed: 2.4
-  chargeSpeed: 9
+  chargeSpeed: 7
   turnSpeed: 110
-  biteDamage: 16
+  biteDamage: 7
   biteRange: 4.6
   biteReach: 3
   biteRadius: 2.3
-  sweepDamage: 20
+  sweepDamage: 9
   sweepRadius: 7
-  spitDamage: 12
+  spitDamage: 5
   spitSpeed: 16
-  slamDamage: 28
+  slamDamage: 12
   slamRadius: 8.5
   slamSmallRadius: 2.6
-  chargeDamage: 18
-  phase2Speedup: 1.3
+  chargeDamage: 8
+  phase2Speedup: 1.15
 --- !u!1001 &2149431156306164783
 PrefabInstance:
   m_ObjectHideFlags: 0

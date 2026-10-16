@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_Sea_Ghosts_Ambush
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: "Ma n\u01B0\u1EDBc"
+    text: "\xC1nh s\xE1ng... ch\xFAng ta gh\xE9t \xE1nh s\xE1ng... \u0110\u1EEBng
+      ch\u1EA1m v\xE0o ng\u1ECDn \u0111\xE8n!"
+    illustration: {fileID: 0}
+  - speaker: "Th\u1EE7y Tinh"
+    text: "Ng\u1ECDn \u0111\xE8n n\xE0y soi \u0111\u01B0\u1EDDng cho d\xE2n ch\xE0i.
+      Tan \u0111i!"
+    illustration: {fileID: 0}

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_HorseQuest_Summit
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: 
+    text: "Tr\xEAn \u0111\u1EC9nh g\xF2, con ng\u1EF1a ch\xEDn h\u1ED3ng mao run
+      r\u1EA9y b\xEAn m\xE9p v\u1EF1c. S\u01A1n Tinh nh\u1EB9 nh\xE0ng rung chi\u1EBFc
+      chu\xF4ng \u0111\u1ED3ng."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "Keng... keng... Con ng\u1EF1a ng\u1EA9ng \u0111\u1EA7u, tai v\u1EC3nh
+      l\u1EA1i r\u1ED3i t\u1EEB t\u1EEB b\xECnh t\u0129nh."
+    illustration: {fileID: 0}
+  - speaker: "S\u01A1n Tinh"
+    text: "Ngoan n\xE0o. V\u1EC1 nh\xE0 th\xF4i."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "Con ng\u1EF1a h\xED vang r\u1ED3i phi xu\u1ED1ng n\xFAi, ch\u1EA1y th\u1EB3ng
+      v\u1EC1 chu\u1ED3ng c\u0169. H\xE3y quay v\u1EC1 l\xE0ng b\xE1o cho ng\u01B0\u1EDDi
+      ch\u0103n ng\u1EF1a."
+    illustration: {fileID: 0}

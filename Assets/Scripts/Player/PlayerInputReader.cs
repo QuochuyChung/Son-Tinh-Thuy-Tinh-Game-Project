@@ -45,8 +45,13 @@ namespace SonTinhThuyTinh.Player
         public Vector2 Look => look.ReadValue<Vector2>();
         public bool LookFromMouse => look.activeControl?.device is Pointer;
 
-        void Awake()
+        void Awake() => Init();
+
+        // Also called from OnEnable: after a script recompile in the middle of Play the fields above are not serialized and come back empty
+        // (the reader used to throw a NullReferenceException there and the keyboard stayed dead until Play was restarted).
+        void Init()
         {
+            if (runtimeActions != null && spells[0] != null) return;
             // Private copy: disabling one reader (e.g. destroying a player) must not disable another reader's input.
             runtimeActions = Instantiate(actions);
             map = runtimeActions.FindActionMap("Player", throwIfNotFound: true);
@@ -64,6 +69,7 @@ namespace SonTinhThuyTinh.Player
 
         void OnEnable()
         {
+            Init();
             dodge.performed += OnDodge;
             jump.performed += OnJump;
             slide.performed += OnSlide;
@@ -77,6 +83,7 @@ namespace SonTinhThuyTinh.Player
 
         void OnDisable()
         {
+            if (runtimeActions == null || spells[0] == null) return;   // never set up (or wiped by a recompile): nothing to unhook
             dodge.performed -= OnDodge;
             jump.performed -= OnJump;
             slide.performed -= OnSlide;

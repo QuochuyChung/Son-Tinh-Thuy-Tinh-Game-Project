@@ -19,7 +19,7 @@ MonoBehaviour:
   hitEnd: 1.0272727
   comboStart: 1.0909091
   staminaCost: 15
-  damage: 22
+  damage: 44
   heavy: 1
   superArmor: 0
   hitCenter: {x: 0, y: 0.8, z: 1.7}

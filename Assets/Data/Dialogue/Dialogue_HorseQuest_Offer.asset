@@ -24,24 +24,31 @@ MonoBehaviour:
       M\u1ECB N\u01B0\u01A1ng."
     illustration: {fileID: 0}
   - speaker: "Ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a"
-    text: "Th\u1EBF th\xEC ch\xE0ng \u0111\u1EBFn \u0111\xFAng nh\xE0 r\u1ED3i! Con
-      ng\u1EF1a ch\xEDn h\u1ED3ng mao \u0111ang \u0103n c\u1ECF trong chu\u1ED3ng
-      nh\xE0 t\xF4i \u0111\u1EA5y. T\xF4i nu\xF4i n\xF3 t\u1EEB khi n\xF3 c\xF2n
-      l\xE0 con ng\u1EF1a non."
+    text: "Th\u1EBF th\xEC ch\xE0ng \u0111\u1EBFn \u0111\xFAng l\xFAc, m\xE0 c\u0169ng
+      \u0111\u1EBFn ch\u1EADm m\u1EA5t r\u1ED3i! \u0110\xEAm qua s\u1EA5m n\u1ED5
+      r\u1EA5t l\u1EDBn, con ng\u1EF1a ch\xEDn h\u1ED3ng mao nh\xE0 t\xF4i ho\u1EA3ng
+      s\u1EE3, \u0111\u1EE9t d\xE2y c\u01B0\u01A1ng ch\u1EA1y tho\xE1t l\xEAn n\xFAi."
     illustration: {fileID: 0}
   - speaker: "Ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a"
-    text: "C\xF3 \u0111i\u1EC1u m\u1EA5y h\xF4m tr\u01B0\u1EDBc n\xFAi l\u1EDF, t\xF4i
-      ch\u1EA1y v\u1ED9i n\xEAn \u0111\xE1nh r\u01A1i chi\u1EBFc chu\xF4ng \u0111\u1ED3ng
-      \xF4ng n\u1ED9i \u0111\u1EC3 l\u1EA1i tr\xEAn \u0111\u01B0\u1EDDng n\xFAi ph\xEDa
-      tr\xEAn. Kh\xF4ng c\xF3 ti\u1EBFng chu\xF4ng \u1EA5y, n\xF3 ch\u1EB3ng ch\u1ECBu
-      theo ai."
+    text: "T\u1EC7 h\u01A1n n\u1EEFa, t\xF4i th\u1EA5y m\u1ED9t b\u1ECDn tr\u1ED9m
+      ng\u1EF1a \xE1o \u0111en c\u0169ng l\u1EA7n theo v\u1EBFt ch\xE2n n\xF3. Ch\xFAng
+      m\xE0 b\u1EAFt \u0111\u01B0\u1EE3c th\xEC t\xF4i ch\u1EB3ng c\xF2n g\xEC \u0111\u1EC3
+      n\xF3i."
     illustration: {fileID: 0}
   - speaker: "Ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a"
-    text: "Ch\xE0ng t\xECm gi\xFAp t\xF4i chi\u1EBFc chu\xF4ng nh\xE9. Mang \u0111\u01B0\u1EE3c
-      v\u1EC1 \u0111\xE2y, t\xF4i xin g\u1EEDi ch\xE0ng con ng\u1EF1a qu\xFD."
+    text: "\u0110\xE2y l\xE0 chi\u1EBFc chu\xF4ng \u0111\u1ED3ng \xF4ng n\u1ED9i
+      t\xF4i \u0111\u1EC3 l\u1EA1i. N\xF3 nghe ti\u1EBFng chu\xF4ng n\xE0y t\u1EEB
+      thu\u1EDF b\xE9, ch\u1EC9 c\u1EA7n rung l\xEAn l\xE0 n\xF3 b\xECnh t\u0129nh
+      ngay. Ch\xE0ng \u0111u\u1ED5i theo gi\xFAp t\xF4i nh\xE9!"
+    illustration: {fileID: 0}
+  - speaker: "S\u01A1n Tinh"
+    text: "\xD4ng y\xEAn t\xE2m. Ta s\u1EBD \u0111\u01B0a n\xF3 v\u1EC1."
     illustration: {fileID: 0}
   - speaker: 
-    text: "Nhi\u1EC7m v\u1EE5: t\xECm chu\xF4ng \u0111\u1ED3ng gia truy\u1EC1n c\u1EE7a
-      ng\u01B0\u1EDDi ch\u0103n ng\u1EF1a. N\u01A1i chu\xF4ng r\u01A1i \u0111\xE3
-      c\xF3 c\u1ED9t s\xE1ng \u0111\xE1nh d\u1EA5u tr\xEAn \u0111\u01B0\u1EDDng n\xFAi."
+    text: "Nhi\u1EC7m v\u1EE5: \u0111u\u1ED5i theo ng\u1EF1a ch\xEDn h\u1ED3ng mao
+      l\xEAn \u0111\u01B0\u1EDDng n\xFAi sau l\xE0ng. V\u01B0\u1EE3t b\u1EADc \u0111\xE1,
+      b\u1EADc thang v\xE0 v\u1EF1c g\xE3y, \u0111\xE1nh b\u1ECDn tr\u1ED9m ng\u1EF1a
+      \u1EDF b\xE3i \u0111\xE1 r\u1ED3i l\xEAn \u0111\u1EC9nh g\xF2 rung chu\xF4ng.
+      C\xF3 c\u1ED9t s\xE1ng ch\u1EC9 ch\u1ED7 con ng\u1EF1a. \u0110\u1EEBng ch\u1EA1y
+      nhanh khi l\u1EA1i g\u1EA7n n\xF3."
     illustration: {fileID: 0}
