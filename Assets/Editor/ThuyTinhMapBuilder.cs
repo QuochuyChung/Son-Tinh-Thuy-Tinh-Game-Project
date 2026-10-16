@@ -690,7 +690,8 @@ namespace SonTinhThuyTinh.EditorTools
             so.FindProperty("requiredQuest").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GiftQuest>(SauChinDuoiBuilder.QuestPath);
             so.ApplyModifiedProperties();
 
-            MapDecor.Gate(root, center - Vector3.up * 0.3f, Mathf.Atan2(tangent.x, tangent.z) * Mathf.Rad2Deg, 8f, new Color(0.10f, 0.45f, 0.55f));
+            DragonLanternGateSetup.UseNewVisual(
+                MapDecor.Gate(root, center - Vector3.up * 0.3f, Mathf.Atan2(tangent.x, tangent.z) * Mathf.Rad2Deg, 8f, new Color(0.10f, 0.45f, 0.55f)));
 
             if (rock == null) return;
             foreach (float sign in new[] { -1f, 1f })
