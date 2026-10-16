@@ -162,9 +162,44 @@ namespace SonTinhThuyTinh.EditorTools
                 }
             }
 
+            // A boat's hull is long and turned any way: it is tested as a row of boxes along its keel (its prow is taller than the rest).
+            IEnumerable<Bounds> HullBoxes(Item it, Bounds fp)
+            {
+                var hull = it.root.Find("Longboat");
+                var rs = (hull != null ? hull : it.root).GetComponentsInChildren<MeshRenderer>();
+                float scale = it.root.lossyScale.x, length = 6.6f * scale, width = 2.0f * scale;
+                Vector3 fwd = it.root.forward; fwd.y = 0f; fwd.Normalize();
+                Vector3 centre = new Vector3(fp.center.x, 0f, fp.center.z);
+                float yMin = rs.Length > 0 ? rs.Min(r => r.bounds.min.y) : fp.min.y;
+                float yMax = rs.Length > 0 ? rs.Max(r => r.bounds.max.y) : fp.max.y;
+                for (int k = -4; k <= 4; k++)
+                {
+                    Vector3 c = centre + fwd * (k / 4f * length * 0.5f);
+                    float top = Mathf.Abs(k) >= 3 ? yMax : yMin + 1.4f * scale;
+                    yield return new Bounds(new Vector3(c.x, (yMin + 0.25f + top) * 0.5f, c.z), new Vector3(width, Mathf.Max(0.2f, top - yMin - 0.25f), width));
+                }
+            }
+
             bool Hits(Item it, Bounds fp, out Vector3 from)
             {
                 from = Vector3.zero;
+                if (it.boat)
+                {
+                    foreach (var box in HullBoxes(it, fp))
+                    {
+                        foreach (var s in structures)
+                        {
+                            var e = s; e.Expand(0.05f);
+                            if (e.Intersects(box) && !(box.min.y > s.max.y + 0.05f)) { from = s.center; return true; }
+                        }
+                        foreach (var o in items)
+                        {
+                            if (o.root == it.root || o.boat || o.rank <= it.rank && o.rank != Rank.Prop) continue;
+                            if (o.fp.Intersects(box)) { from = o.fp.center; return true; }
+                        }
+                    }
+                    return false;
+                }
                 foreach (var s in structures)
                 {
                     var e = s; e.Expand(0.1f);
@@ -222,7 +257,7 @@ namespace SonTinhThuyTinh.EditorTools
                         it.root.position = new Vector3(p.x, it.boat ? basePos.y : gy + lift, p.z);
                         it.fp = fp; moved++; done = true;
                     }
-                if (!done && it.rank != Rank.Prop) { Object.DestroyImmediate(it.root.gameObject); it.root = null; removed++; }
+                if (!done && it.rank != Rank.Prop && !it.boat) { Object.DestroyImmediate(it.root.gameObject); it.root = null; removed++; }
             }
             // banners and torches that stand in a clump: one of them stays
             int thinned = 0;

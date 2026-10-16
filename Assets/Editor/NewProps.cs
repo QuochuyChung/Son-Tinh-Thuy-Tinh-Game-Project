@@ -19,7 +19,7 @@ namespace SonTinhThuyTinh.EditorTools
         const string Dir = "Assets/Art/Props/";
         const string PrefabDir = "Assets/Prefabs/Props";
 
-        public enum Kind { Brazier, Throne, Hat, Longboat, Drum, Banner, Bridge, GemRed, CrystalBlue, RockSlate, RockKaya, RockMonolith, RockFormation, RockFragment, RockBig, RockTundra, RockCave }
+        public enum Kind { Brazier, Throne, Hat, Longboat, Drum, Banner, Bridge, GemRed, CrystalBlue, RockSlate, RockKaya, RockMonolith, RockFormation, RockFragment, RockBig, RockTundra, RockCave, Watchtower }
 
         struct Spec
         {
@@ -47,6 +47,7 @@ namespace SonTinhThuyTinh.EditorTools
             [Kind.RockBig] = new Spec { file = "rock_big", prefab = "RockBig", size = 4f },
             [Kind.RockTundra] = new Spec { file = "rock_tundra", prefab = "RockTundra", size = 4f },
             [Kind.RockCave] = new Spec { file = "rock_cave", prefab = "RockCave", size = 4f },
+            [Kind.Watchtower] = new Spec { file = "watchtower", prefab = "Watchtower", size = 18f, byHeight = true },
         };
 
         public static GameObject Prefab(Kind kind) => Prefab(kind, false);
@@ -117,7 +118,7 @@ namespace SonTinhThuyTinh.EditorTools
                     break;
                 }
                 case Kind.RockSlate: case Kind.RockKaya: case Kind.RockMonolith: case Kind.RockFormation:
-                case Kind.RockFragment: case Kind.RockBig: case Kind.RockTundra: case Kind.RockCave:
+                case Kind.RockFragment: case Kind.RockBig: case Kind.RockTundra: case Kind.RockCave: case Kind.Watchtower:
                 {
                     foreach (var mf in model.GetComponentsInChildren<MeshFilter>(true))
                         mf.gameObject.AddComponent<MeshCollider>().sharedMesh = mf.sharedMesh;
