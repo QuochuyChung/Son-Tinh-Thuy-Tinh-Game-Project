@@ -16,6 +16,8 @@ namespace SonTinhThuyTinh.Quest
     // Everything is switched by HorseQuest.State, also when the map is loaded again.
     public class HorseQuestDirector : MonoBehaviour
     {
+        public Vector3 ClearingPosition => clearingCenter != null ? clearingCenter.position : transform.position;
+
         [Header("Thieves")]
         [SerializeField] NinjaEnemy[] thieves;
         [SerializeField] Transform[] spots;

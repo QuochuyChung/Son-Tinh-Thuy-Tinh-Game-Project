@@ -57,6 +57,11 @@ namespace SonTinhThuyTinh.Quest
             if (entering || SceneLoader.IsLoading || QuestDialogue.IsPlaying || GiftTracker.Has(gift) || !GameSession.CanStartEncounter) return;
             PlayerController player = other.GetComponentInParent<PlayerController>();
             if (player == null || player.Health.IsDead) return;
+            if (!QuestQuizProgress.IsUnlocked(gift))
+            {
+                QuestQuizProgress.AnnounceLocked(gift);
+                return;
+            }
 
             Vector3 away = player.transform.position - transform.position;
             away.y = 0f;

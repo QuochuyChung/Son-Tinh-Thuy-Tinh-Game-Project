@@ -33,7 +33,7 @@ namespace SonTinhThuyTinh.Quest
         PlayerController player;
         Image bossFill;
         GameObject hud;
-        bool fightOn, running, won;
+        bool fightOn, running, won, lockedWarned;
         DialogueSequence intro;
 
         void Start()
@@ -43,9 +43,11 @@ namespace SonTinhThuyTinh.Quest
 
             boss.SetArena(arenaCentre.position, arenaRadius);
             boss.Health.SetMaximum(bossMaxHealth);
+            boss.Health.IsInvulnerable = true;
             boss.Health.Died += OnBossDied;
             boss.enabled = false;   // asleep until the player comes in
             boss.transform.SetPositionAndRotation(bossMark.position, bossMark.rotation);
+            boss.AlignFeetToGround();
         }
 
         void OnDestroy()
@@ -60,6 +62,16 @@ namespace SonTinhThuyTinh.Quest
             if (player == null || running) return;
 
             float d = Flat(player.transform.position - arenaCentre.position).magnitude;
+            if (!QuestQuizProgress.IsUnlocked(gift))
+            {
+                if (d < triggerRadius && !lockedWarned)
+                {
+                    lockedWarned = true;
+                    QuestQuizProgress.AnnounceLocked(gift);
+                }
+                else if (d > triggerRadius + 3f) lockedWarned = false;
+                return;
+            }
             if (!fightOn)
             {
                 if (d < triggerRadius && !player.Health.IsDead) StartCoroutine(Begin());
@@ -70,6 +82,10 @@ namespace SonTinhThuyTinh.Quest
 
         void LateUpdate()
         {
+            // The AI is disabled during the intro, but the Animator is still running.
+            // Ground the model from its four animated foot bones in both states.
+            if (!won && boss != null) boss.AlignFeetToGround();
+
             // the elephant walks after the player: keep it on the floor of the arena
             if (!fightOn || won || boss == null) return;
             Vector3 off = Flat(boss.transform.position - arenaCentre.position);
@@ -93,6 +109,7 @@ namespace SonTinhThuyTinh.Quest
             if (player == null || player.Health.IsDead) { running = false; yield break; }
             ShowHud(true);
             boss.ResetForRetry();
+            boss.Health.IsInvulnerable = false;
             boss.enabled = true;
             fightOn = true;
             running = false;
@@ -117,7 +134,9 @@ namespace SonTinhThuyTinh.Quest
             boss.enabled = false;
             boss.SetBattleEnded();
             boss.Health.Revive();
+            boss.Health.IsInvulnerable = true;
             boss.transform.SetPositionAndRotation(bossMark.position, bossMark.rotation);
+            boss.AlignFeetToGround();
             ShowHud(false);
         }
 

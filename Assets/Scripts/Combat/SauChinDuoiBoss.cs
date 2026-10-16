@@ -93,7 +93,7 @@ namespace SonTinhThuyTinh.Combat
 
         Health health;
         PlayerController player;
-        bool awake, busy, phase2, phase2Pending, dead, resetting;
+        bool awake, busy, phase2, phase2Pending, dead, resetting, lockedWarned;
         float slowFactor = 1f, slowUntil;
         float flash;
         float poise;
@@ -148,6 +148,20 @@ namespace SonTinhThuyTinh.Combat
             FindPlayer();
             if (player == null) return;
 
+            Vector3 centre = arenaCenter.position;
+            float fromCentre = Flat(player.transform.position - centre).magnitude;
+            if (!QuestQuizProgress.IsUnlocked(reward))
+            {
+                if (awake) Sleep();
+                if (fromCentre < wakeRadius && !lockedWarned)
+                {
+                    lockedWarned = true;
+                    QuestQuizProgress.AnnounceLocked(reward);
+                }
+                else if (fromCentre > wakeRadius + 3f) lockedWarned = false;
+                return;
+            }
+
             if (player.Health.IsDead)
             {
                 if (awake && !resetting) { StopAllAttacks(); StartCoroutine(ResetAfterDefeat()); }
@@ -155,8 +169,6 @@ namespace SonTinhThuyTinh.Combat
             }
             if (busy || resetting) return;
 
-            Vector3 centre = arenaCenter.position;
-            float fromCentre = Flat(player.transform.position - centre).magnitude;
             if (!awake)
             {
                 if (fromCentre < wakeRadius) StartCoroutine(Wake());

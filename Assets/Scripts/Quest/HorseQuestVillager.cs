@@ -36,6 +36,11 @@ namespace SonTinhThuyTinh.Quest
             switch (HorseQuest.State)
             {
                 case HorseQuestState.NotStarted:
+                    if (!QuestQuizProgress.IsUnlocked(horseGift))
+                    {
+                        QuestQuizProgress.AnnounceLocked(horseGift);
+                        return;
+                    }
                     QuestDialogue.Play(runner, offer, Accept);
                     break;
                 case HorseQuestState.Accepted:
