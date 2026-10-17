@@ -45,6 +45,11 @@ namespace SonTinhThuyTinh.Quest
         void OnTriggerEnter(Collider other)
         {
             if (other.GetComponentInParent<PlayerController>() == null) return;
+            if (!QuestQuizProgress.IsUnlocked(gift))
+            {
+                QuestQuizProgress.AnnounceLocked(gift);
+                return;
+            }
             if (!GiftTracker.Collect(gift)) return;
 
             if (collectEffect != null) Instantiate(collectEffect, transform.position, Quaternion.identity);

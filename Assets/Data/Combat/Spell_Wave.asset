@@ -19,7 +19,7 @@ MonoBehaviour:
   hitEnd: 0
   comboStart: 1.0869565
   staminaCost: 0
-  damage: 31
+  damage: 70
   heavy: 1
   superArmor: 1
   hitCenter: {x: 0, y: 1, z: 1.4}
@@ -48,4 +48,7 @@ MonoBehaviour:
   effectDuration: 6
   tickDamage: 2
   tickInterval: 0.5
-  slowFactor: 0.5
+  slowFactor: 0.45
+  stunSeconds: 1.6
+  bossStunScale: 0.5
+  slowAfterHit: 3

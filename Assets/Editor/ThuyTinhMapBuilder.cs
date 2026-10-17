@@ -219,8 +219,8 @@ namespace SonTinhThuyTinh.EditorTools
             terrain.terrainData = data;
             terrain.GetComponent<TerrainCollider>().terrainData = data;
             terrain.transform.position = new Vector3(XMin, 0f, ZMin);
-            terrain.heightmapPixelError = 4f;
-            terrain.basemapDistance = 400f;
+            terrain.heightmapPixelError = 1f;
+            terrain.basemapDistance = 1000f;
             EditorUtility.SetDirty(data);
             return terrain;
         }
@@ -342,7 +342,8 @@ namespace SonTinhThuyTinh.EditorTools
             plane.transform.SetParent(root, false);
             plane.transform.position = new Vector3(XMin + Width * 0.5f, WaterY, ZMin + Length * 0.5f);
             plane.transform.localScale = new Vector3(Width / 10f * 2.5f, 1f, Length / 10f * 2.5f);   // the sea goes on past the terrain
-            Object.DestroyImmediate(plane.GetComponent<Collider>());   // water is only a surface, nothing to stand on
+            Object.DestroyImmediate(plane.GetComponent<Collider>());   // water is only a surface, nothing to stand on ...
+            plane.AddComponent<SonTinhThuyTinh.Player.WaterSurface>();   // ... except for Thủy Tinh (WaterWalker)
             var renderer = plane.GetComponent<MeshRenderer>();
             Material material = preferWaterWorks ? WaterMaterial() : EnsureWaterMaterial();
             if (material != null) renderer.sharedMaterial = material;
@@ -689,7 +690,8 @@ namespace SonTinhThuyTinh.EditorTools
             so.FindProperty("requiredQuest").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GiftQuest>(SauChinDuoiBuilder.QuestPath);
             so.ApplyModifiedProperties();
 
-            MapDecor.Gate(root, center - Vector3.up * 0.3f, Mathf.Atan2(tangent.x, tangent.z) * Mathf.Rad2Deg, 8f, new Color(0.10f, 0.45f, 0.55f));
+            DragonLanternGateSetup.UseNewVisual(
+                MapDecor.Gate(root, center - Vector3.up * 0.3f, Mathf.Atan2(tangent.x, tangent.z) * Mathf.Rad2Deg, 8f, new Color(0.10f, 0.45f, 0.55f)));
 
             if (rock == null) return;
             foreach (float sign in new[] { -1f, 1f })

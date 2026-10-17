@@ -83,6 +83,7 @@ namespace SonTinhThuyTinh.EditorTools
                 ("slamDamage", 10f), ("slamWindup", 1.3f), ("slamDuration", 1.8f),
                 ("chargeDamage", 13f), ("chargeWindup", 1.1f), ("chargeDuration", 1.5f),
                 ("moveSpeed", 2.4f),
+                ("rockDamage", 16f), ("rockWindup", 1.4f),   // the rock volley Huy added (merge 17/10): 22 -> 16, a longer warning
             })
                 bso.FindProperty(field).floatValue = value;
             bso.ApplyModifiedPropertiesWithoutUndo();

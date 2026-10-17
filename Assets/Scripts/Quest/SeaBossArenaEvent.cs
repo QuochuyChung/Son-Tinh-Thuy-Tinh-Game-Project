@@ -39,7 +39,7 @@ namespace SonTinhThuyTinh.Quest
         PlayerController player;
         Image bossFill;
         GameObject hud;
-        bool fightOn, running, won;
+        bool fightOn, running, won, lockedWarned;
 
         void Start()
         {
@@ -49,6 +49,7 @@ namespace SonTinhThuyTinh.Quest
             if (GiftTracker.Has(gift)) { boss.gameObject.SetActive(false); won = true; Open(); return; }
 
             ai.Health.SetMaximum(bossMaxHealth);
+            ai.Health.IsInvulnerable = true;
             ai.Health.Died += OnBossDied;
             boss.enabled = false;   // asleep until the player comes in
             boss.transform.SetPositionAndRotation(bossMark.position, bossMark.rotation);
@@ -66,6 +67,16 @@ namespace SonTinhThuyTinh.Quest
             if (player == null || running) return;
 
             float d = Flat(player.transform.position - arenaCentre.position).magnitude;
+            if (!QuestQuizProgress.IsUnlocked(gift))
+            {
+                if (d < triggerRadius && !lockedWarned)
+                {
+                    lockedWarned = true;
+                    QuestQuizProgress.AnnounceLocked(gift);
+                }
+                else if (d > triggerRadius + 3f) lockedWarned = false;
+                return;
+            }
             if (!fightOn)
             {
                 if (d < triggerRadius && !player.Health.IsDead) StartCoroutine(Begin());
@@ -99,6 +110,7 @@ namespace SonTinhThuyTinh.Quest
             if (player == null || player.Health.IsDead) { running = false; yield break; }
             ShowHud(true);
             ai.ResetForRetry();
+            ai.Health.IsInvulnerable = false;
             boss.enabled = true;
             fightOn = true;
             running = false;
@@ -123,6 +135,7 @@ namespace SonTinhThuyTinh.Quest
             boss.enabled = false;
             ai.SetBattleEnded();
             ai.Health.Revive();
+            ai.Health.IsInvulnerable = true;
             boss.transform.SetPositionAndRotation(bossMark.position, bossMark.rotation);
             ShowHud(false);
         }

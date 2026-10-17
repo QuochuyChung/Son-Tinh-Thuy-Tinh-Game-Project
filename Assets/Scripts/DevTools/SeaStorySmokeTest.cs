@@ -28,6 +28,7 @@ namespace SonTinhThuyTinh.DevTools
             yield return new WaitForSecondsRealtime(1.5f);   // (the opening narration freezes the game's time from the first frame)
             player = FindObjectsByType<PlayerController>(FindObjectsSortMode.None).First(p => p.isActiveAndEnabled);
             runner = FindFirstObjectByType<DialogueRunner>(FindObjectsInactive.Include);
+            UnlockAllGifts();   // the keeper's quiz (QuestQuizProgress) gates the errands and the bosses: skip it here
             Log($"start: state {SeaQuest.State}, ghosts {SeaQuest.GhostsCleared}, lamp {SeaQuest.LampLit}, fog {RenderSettings.fogDensity:F4}");
 
             // 0. opening narration (the player spawns inside its radius)
@@ -115,6 +116,13 @@ namespace SonTinhThuyTinh.DevTools
 
             File.WriteAllText(Path.Combine(Application.dataPath, "../Temp/sea_story_test.txt"), log.ToString());
             Log("done");
+        }
+
+        static void UnlockAllGifts()
+        {
+            var spawner = FindFirstObjectByType<PlayerSpawner>();
+            var quest = spawner != null ? spawner.Roster.Get(spawner.Character).GiftQuest : null;
+            if (quest != null) foreach (GiftItem gift in quest.RequiredGifts) QuestQuizProgress.Unlock(gift);
         }
 
         static object Field(object o, string name) => o.GetType().GetField(name, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(o);

@@ -1,4 +1,5 @@
 using SonTinhThuyTinh.Dialogue;
+using SonTinhThuyTinh.Player;
 using UnityEngine;
 
 namespace SonTinhThuyTinh.Quest
@@ -12,6 +13,8 @@ namespace SonTinhThuyTinh.Quest
     public class SeaNpc : MonoBehaviour
     {
         public enum Role { Fisherman, Elder }
+
+        public Role NpcRole => role;
 
         [SerializeField] Role role;
         [SerializeField] DialogueRunner runner;
@@ -35,6 +38,13 @@ namespace SonTinhThuyTinh.Quest
             switch (SeaQuest.State)
             {
                 case SeaQuestState.NotStarted:
+                    PlayerSpawner spawner = FindAnyObjectByType<PlayerSpawner>();
+                    GiftItem next = spawner != null ? QuestQuizProgress.NextGift(spawner.Roster.Get(spawner.Character).GiftQuest) : null;
+                    if (!QuestQuizProgress.IsUnlocked(next))
+                    {
+                        QuestQuizProgress.AnnounceLocked(next);
+                        return;
+                    }
                     QuestDialogue.Play(runner, offer, () =>
                     {
                         SeaQuest.Set(SeaQuestState.Accepted);

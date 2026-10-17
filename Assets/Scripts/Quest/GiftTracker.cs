@@ -29,7 +29,11 @@ namespace SonTinhThuyTinh.Quest
             return true;
         }
 
-        public static void Reset() => collected.Clear();
+        public static void Reset()
+        {
+            collected.Clear();
+            QuestQuizProgress.Reset();
+        }
 
         // Keeps state clean when Enter Play Mode Options skip the domain reload.
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]

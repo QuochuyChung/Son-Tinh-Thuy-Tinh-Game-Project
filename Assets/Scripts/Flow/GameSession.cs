@@ -54,6 +54,8 @@ namespace SonTinhThuyTinh.Flow
             HorseQuest.Reset();
             RoosterQuest.Reset();
             VoiChinNgaQuest.Reset();
+            SeaQuest.Reset();   // Map_ThuyTinh's story: pirates, village elder, lighthouse lamp
+            SonTinhThuyTinh.Cutscene.MapIntroCutscene.ResetAll();   // the map films play again
             SonTinhThuyTinh.Combat.SauChinDuoiBoss.ResetIntro();
             ResetEncounter();
         }

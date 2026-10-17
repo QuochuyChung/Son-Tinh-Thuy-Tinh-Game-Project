@@ -34,6 +34,8 @@ namespace SonTinhThuyTinh.Dialogue
         bool typing;
 
         public bool IsPlaying => lines != null;
+        public TMP_FontAsset Font => bodyText != null ? bodyText.font : null;
+        public Canvas PanelCanvas => panel != null ? panel.GetComponentInParent<Canvas>() : null;
         public event Action<DialogueLine> LineStarted;
 
         void Awake()

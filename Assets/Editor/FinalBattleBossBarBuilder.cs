@@ -140,6 +140,7 @@ namespace SonTinhThuyTinh.EditorTools
             so.FindProperty("phaseLabel").objectReferenceValue = phaseLabel;
             so.FindProperty("phaseDot1").objectReferenceValue = dot1;
             so.FindProperty("phaseDot2").objectReferenceValue = dot2;
+            so.FindProperty("emblemSprite").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Art/UI/HUD/hud_fire_bird_emblem.png");   // behind the boss's head
             so.ApplyModifiedPropertiesWithoutUndo();
             barGo.GetComponent<CanvasGroup>().alpha = 0f;
             return bar;

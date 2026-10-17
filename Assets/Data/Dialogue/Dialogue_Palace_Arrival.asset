@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_Palace_Arrival
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: 
+    text: "Kinh \u0111\xF4 V\u0103n Lang. Sau bao gian nan, ng\u01B0\u01A1i \u0111\xE3
+      mang \u0111\u1EE7 ba s\xEDnh l\u1EC5 v\u1EC1 \u0111\u1EBFn ch\xE2n cung \u0111i\u1EC7n
+      Vua H\xF9ng."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "H\xE0nh tr\xECnh l\u1EA5y s\xEDnh l\u1EC5 \u0111\xE3 xong. Ch\u1EC9 c\xF2n
+      m\u1ED9t vi\u1EC7c: d\xE2ng l\u1EC5 l\xEAn Vua H\xF9ng \u0111\u1EC3 ng\xE0i
+      ph\xE1n x\xE9t."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "H\xE3y \u0111i th\u1EB3ng theo con \u0111\u01B0\u1EDDng l\xE1t \u0111\xE1
+      gi\u1EEFa hai h\xE0ng \u0111u\u1ED1c, qua s\xE2n \u0111i\u1EC7n r\u1ED3i b\u01B0\u1EDBc
+      v\xE0o ch\xEDnh \u0111i\u1EC7n."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "\u1EDE trong kia, Vua H\xF9ng v\xE0 M\u1ECB N\u01B0\u01A1ng \u0111ang
+      \u0111\u1EE3i. \u0110\u1ED1i th\u1EE7 c\u1EE7a ng\u01B0\u01A1i c\u0169ng \u0111\xE3
+      c\xF3 m\u1EB7t."
+    illustration: {fileID: 0}

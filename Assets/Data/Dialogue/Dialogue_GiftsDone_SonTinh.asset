@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_GiftsDone_SonTinh
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: 
+    text: "\u0110\xE3 \u0111\u1EE7 ba s\xEDnh l\u1EC5! \u1EDE v\xF9ng n\xFAi n\xE0y
+      kh\xF4ng c\xF2n vi\u1EC7c g\xEC ph\u1EA3i l\xE0m n\u1EEFa."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "H\xE3y qua c\xE1nh c\u1ED5ng \u0111\xE1 \u1EDF cu\u1ED1i con \u0111\u01B0\u1EDDng
+      \u0111\u1EC3 v\u1EC1 cung \u0111i\u1EC7n d\xE2ng l\u1EC5 l\xEAn Vua H\xF9ng."
+    illustration: {fileID: 0}

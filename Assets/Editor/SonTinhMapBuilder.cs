@@ -234,8 +234,8 @@ namespace SonTinhThuyTinh.EditorTools
             terrain.terrainData = data;
             terrain.GetComponent<TerrainCollider>().terrainData = data;
             terrain.transform.position = new Vector3(XMin, 0f, ZMin);
-            terrain.heightmapPixelError = 4f;
-            terrain.basemapDistance = 400f;
+            terrain.heightmapPixelError = 1f;
+            terrain.basemapDistance = 1000f;
             EditorUtility.SetDirty(data);
             return terrain;
         }
@@ -311,7 +311,11 @@ namespace SonTinhThuyTinh.EditorTools
                 if (light.type == LightType.Directional) sun = light;
             if (sun != null)
             {
-                sun.transform.rotation = Quaternion.Euler(46f, -32f, 0f);
+                // 50, not 46: at 46 the sun grazes the ridge behind spawn (world ~11,26,-17) and
+                // its terminator lands ~7 m in front of the camera as a hard line across the
+                // ground that reads as a rendering bug. 50 clears the ridge - measured, both
+                // angles render otherwise identically.
+                sun.transform.rotation = Quaternion.Euler(50f, -32f, 0f);
                 sun.color = new Color(1f, 0.93f, 0.78f);
                 sun.intensity = 2.1f;
                 sun.shadows = LightShadows.Soft;
@@ -506,7 +510,8 @@ namespace SonTinhThuyTinh.EditorTools
             so.ApplyModifiedProperties();
 
             // the gate (a dinh-style arch with a tiled roof) on top of the climb
-            MapDecor.Gate(root, center - Vector3.up * 0.3f, Mathf.Atan2(tangent.x, tangent.z) * Mathf.Rad2Deg, 8f, new Color(0.62f, 0.12f, 0.08f));
+            DragonLanternGateSetup.UseNewVisual(
+                MapDecor.Gate(root, center - Vector3.up * 0.3f, Mathf.Atan2(tangent.x, tangent.z) * Mathf.Rad2Deg, 8f, new Color(0.62f, 0.12f, 0.08f)));
 
             if (rock == null) return;
             foreach (float sign in new[] { -1f, 1f })

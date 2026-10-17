@@ -162,7 +162,7 @@ namespace SonTinhThuyTinh.Audio
             switch (n)
             {
                 case "MainMenu": case "CharacterSelect": sceneMusic = LoopId.MusicMenu; sceneAmbience = LoopId.None; break;
-                case "Prologue": case "Cutscene_PhanXu": sceneMusic = LoopId.MusicCutscene; sceneAmbience = LoopId.None; break;
+                case "Prologue": case "Cutscene_Opening": case "Cutscene_PhanXu": case "Cutscene_Ending": sceneMusic = LoopId.MusicCutscene; sceneAmbience = LoopId.None; break;
                 case "Map_SonTinh": sceneMusic = LoopId.MusicSonTinh; sceneAmbience = LoopId.AmbForest; break;
                 case "Map_ThuyTinh": sceneMusic = LoopId.MusicThuyTinh; sceneAmbience = LoopId.AmbWater; break;
                 case "Map_HungVuong": sceneMusic = LoopId.MusicPalace; sceneAmbience = LoopId.AmbPalace; break;

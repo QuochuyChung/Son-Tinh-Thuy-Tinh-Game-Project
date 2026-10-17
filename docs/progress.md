@@ -142,7 +142,8 @@ Nên thử cả 2 nhân vật. Các phần Gà / Ngựa / Sấu / Ninja mới ch
 - ~~Mesh kiếm rất nặng (239.000 tam giác)~~: **đã giảm còn 7.000 (05/10)**, xem mục "Vũ khí". Chưa soi cận cảnh xem họa tiết có mất chi tiết so với bản gốc không (texture giữ nguyên).
 - File phím mẫu `Assets/InputSystem_Actions.inputactions` của template vẫn đang được đặt làm "project-wide actions" trong Project Settings. Game không dùng tới, vô hại, có thể gỡ khi dọn project.
 - Vài cảnh báo **"The referenced script (Unknown) on this Behaviour is missing!"** (khoảng 7–19 dòng) hiện lúc vào/ra Play: **vô hại**, nguồn là `Assets/Settings/DefaultVolumeProfile.asset` (profile mặc định của template URP, có 2 volume component thử nghiệm `CopyPasteTestComponent2` và `VolumeComponentSupportedEverywhere` mà script chỉ có trong gói test của URP). Đã quét mọi scene/prefab của project (trừ các gói Asset Store): không có script nào bị thiếu. Muốn hết cảnh báo thì mở profile đó trong Inspector, gỡ 2 component bị "Missing" (chưa đụng vào vì là file của template).
-- **Cần chốt**: GDD ghi dùng HDRP nhưng project đang chạy **URP**. Đề xuất giữ URP (nhẹ, đủ đẹp cho phong cách stylized; đổi sang HDRP phải chuyển lại toàn bộ material).
+- ~~**Cần chốt**: GDD ghi dùng HDRP nhưng project đang chạy URP~~: **đã chốt giữ URP (13/10)**. Toàn bộ 13 scene trong build đang dùng URP và `GraphicsSettings` trỏ tới `PC_RPAsset`; các asset HDRP trong project không scene nào dùng. Đổi sang HDRP nghĩa là phải chuyển lại hơn 100 material và làm lại shader VFX/nước. Phần môi trường (skybox, ánh sáng, fog, post-processing) đã làm trực tiếp trên URP — xem mục "Môi trường & thời tiết".
+- **Bẫy khi kiểm tra bằng ảnh chụp (chỉ xảy ra trong editor)**: ngay sau khi mở một scene, hoặc sau khi Unity reimport asset, mặt đất hay hiện **trơn, xám nhạt, không có texture** trong vài giây. Đó là shader chưa biên dịch xong — **không phải lỗi ánh sáng, Volume hay weather**. Đã có lúc nhầm đây là "mưa dày làm trắng mặt đất": cùng một scene, cùng số hạt, ảnh chụp lúc t=0 bị trắng mà t=8s là bình thường. Khi screenshot để kiểm tra, luôn chờ khoảng 8 giây sau khi mở scene rồi mới chụp.
 
 ## 8. Việc tiếp theo — chia theo người, làm xong hết là đủ game
 
@@ -857,3 +858,130 @@ Theo kế hoạch `docs/ke-hoach-thuy-tinh-su-kien.md`. Mập Chín Vây và Rù
 - **Cách dùng**: mở `VoiceLibrary.asset` → sửa giọng / rate / pitch ngay trên Inspector (voice chọn từ dropdown) → bấm **Regenerate Missing Clips**. Thêm câu thoại mới: thêm dòng vào dialogue asset rồi bấm lại Regenerate Missing (chỉ sinh clip còn thiếu).
 - **Chưa chốt / còn lại**: (1) đang so sánh 14 sample giọng mới cho Sơn Tinh + Thủy Tinh (`VoiceCompare/NewVoices/`) để có thể đổi giọng sau — clip sinh theo text hash nên đổi giọng chỉ cần regen All, không đụng dialogue; (2) edge-tts thỉnh thoảng ngắt WS giữa chừng → đã có retry 4 lần, câu fail nằm trong log `[Voice] FAIL ...`, bấm Regenerate Missing để làm lại; (3) volume / pitch phát lúc runtime lấy từ asset nên chỉnh xong không cần regen.
 - **Người nói của nhánh Thủy Tinh (11/10, Claude)**: đã thêm vào `VoiceLibrary` Lão chài, Trưởng làng, Ngư tặc, Ma nước, Mập Chín Vây, Rùa Chín Chân (giọng nam NamMinh, khác nhau ở pitch/rate); chạy **Tools ▸ Voice ▸ Regenerate Missing Clips** để sinh mp3 cho các thoại `Dialogue_Sea_*` (mục 9.27). Nhớ thêm người nói mới vào `VoiceLibrary` trước khi sinh, nếu không câu đó im lặng.
+
+### 9.30 Môi trường, ánh sáng và thời tiết cho cả 13 scene (13/10)
+
+**Chốt giữ URP** (xem mục 7). Mọi việc dưới đây làm trực tiếp trong Unity Editor qua `unity` CLI, không sửa tay file YAML.
+
+- **Fix "nhựa" trên nhân vật**: `_BumpScale` của `M_SonTinh_v2_Body.mat` đang là 0 → đặt lại 1, cộng thêm pass môi trường (ambient + reflection + post) làm da/giáp đọc ra chất liệu thay vì bóng loáng. Đã soi lại Sơn Tinh bằng preview harness: giáp, da, trang sức tách bạch rõ, không còn kiểu nhựa.
+- **Skybox**: 11 material `Skybox/Procedural` tại `Assets/Art/Skyboxes/`, mỗi theme một bầu trời (núi, đầm, đấu trường...). Lý do không dùng HDRI: Blender MCP không kết nối được, còn asset Asset Store bị `.gitignore` chặn commit (giấy phép). Không dùng `Skybox/Panoramic` vì không có texture panorama trong project.
+- **Post-processing**: 11 profile tại `Assets/Settings/VolumeProfiles/`, mỗi scene một profile global (7 component: Bloom, Vignette, CA, Tonemapping, Color Adjustments, ShadowsMidtonesHighlights, SplitToning). Đã fix lỗi whitelist: đặt `ShadowsMidtoneHighlights.midtones.w = 1` kết hợp `SplitToning` làm cả frame trắng bệch — đã sửa trong cả 11 profile.
+- **Pass môi trường đã áp cho cả 13 scene** và đã save: skybox, ambient 1.0–1.1, fog, reflection probes, post-processing trên camera, color grading HDR (`PC_RPAsset.m_ColorGradingMode = 1`).
+- **Thời tiết**: 3 script `Assets/Scripts/Environment/` (`RainController`, `MistController`, `FogController`) + 3 prefab `Assets/Prefabs/Environment/`. Đã đặt vào `Map_SonTinh` (sương + sương mù), `Map_ThuyTinh` (mưa + sương + sương mù), `Map_FinalBattle` (mưa bão + sương mù). Mưa bão = `RainController.intensity` 1.6, hai map còn lại 0.9.
+- **Bẫy API quan trọng**: `ParticleSystem.EmissionModule.rateOverTimeMultiplier` **cùng vùng nhớ với `rateOverTime`** trong Unity 6 này — gán multiplier sẽ **thay luôn** tần số gốc, chứ không nhân lên. Nghĩa là `SetIntensity(1)` làm mưa 3200/s rớt còn 1 giọt/giây. Cả `RainController` và `MistController` đều phải cache tần số gốc lúc `Awake` rồi gán lại `rateOverTime = gốc × intensity`. Đã đo để xác nhận: gán `rateOverTime = 3200` cho đúng 4320 hạt sống (3200 × 1.35s lifetime).
+- **Splashes và Ripples không scale theo intensity** (`fixedRateEmitters` trên `RainController`): chỉ giọt mưa dày lên khi tăng intensity, còn phản hồi mặt đất giữ nguyên tần số gốc.
+- **Cảnh báo**: các builder trong `Assets/Editor/` (map builders) có block ghi đè `RenderSettings`. Nếu ai chạy lại builder thì skybox/fog/lighting của pass này sẽ bị mất — cần cập nhật builder cho khớp hoặc không chạy lại builder nữa.
+
+### 9.31 Fix "đường sương trên mặt đất" (14/10)
+
+User báo thấy một **đường ngang rõ trên mặt đất**, nghi ngờ mình chỉ dùng quad có shader. Điều tra ra là **hai lỗi khác nhau** gộp lại thành một:
+
+**1. Sương (mist) thật sự sai thiết kế** — có sửa:
+- `Weather_Mist/Billboards` dùng **quad 10–20 m** (bản gốc `startSize 10..20`) nhồi trong hộp `44×9×44`. Với kích thước đó, đáy mỗi quad đâm xuyên qua địa hình và bị depth-cut, sinh ra mép cứng. Đã thu về **3–6 m**, hộp Y `9→5`, `maxParticleSize 1→0.5`, và nâng tần số `10→18` để giữ độ dày (252 hạt sống / max 260).
+- `Mat_Mist.mat` có `_MainTex` **để trống** → shader `Sprites/Default` vẽ ra **hình vuông đặc** không có falloff. Đã gán `vfx_dot` (radial: alpha 0.00 ở rìa, 0.98 ở tâm) — material này đang được `Assets/Editor/ThuyTinhStoryBuilder.cs:179` dùng nên là fix thật, không phải dọn dẹp.
+- **Bẫy đọc nhầm của chính mình**: thấy `Billboards` ở `worldY=10` tưởng root đặt cao 6 m so với mặt đất (nền ở y≈4). Thực ra 10 là **local offset của child**, root vẫn ở đúng `4.00` (ThuyTinh) / `3.82` (Sơn Tinh) — đã neo lại đúng giá trị cũ. **Đừng nhìn `ps.transform.position` rồi kết luận root đặt sai.**
+
+**2. Đường kẻ đó thực ra là seam shadow, không phải sương** — chứng minh bằng 4 phép thử độc lập:
+- Tắt `Weather_Mist` → đường **vẫn còn** (nên không phải mist/fog).
+- Quay mặt trời +90° → đường **biến mất hoàn toàn**.
+- `shadowDistance 40 → 400` → đường **biến mất**; `cascade2Split 0.33 → 0.90` → đường **biến mất**. Cả hai đều là thay đổi layout cascade, không đụng geometry.
+- Dò ngược tia về phía mặt trời từ các điểm trên đường: **1849 renderer đang cast shadow, không có ai cản sáng**; terrain cũng không → **không có caster**, là artifact của cascade chứ không phải bóng của vật thể.
+
+**Fix**: `ProjectSettings/QualitySettings.asset` → `shadowDistance 40 → 150` trên **cả 2 level** (Mobile + PC), giữ nguyên `cascade2Split = 0.33333334`. Boundary chuyển từ `0.33×40 = 13.2 m` (ngay giữa vùng chơi) ra `0.33×150 ≈ 50 m` (ngoài vùng nhìn gần). Đã soi lại clean ở `Map_SonTinh`, `Map_ThuyTinh`, `Map_FinalBattle`.
+
+**Bẫy khi fix lần này**:
+- `QualitySettings` chỉ nằm trong RAM tới khi `AssetDatabase.SaveAssets()` — disk vẫn ghi `40` sau khi đã set xong, phải check lại file mới tin là đã persist.
+- Round-trip `cascade2Split` qua số thập phân viết lại `0.33333334` thành `0.33` (change ngoài ý muốn) — khôi phục bằng `1f/3f`.
+- Mở + save scene làm Unity tự ghi thêm churn của TextMeshPro (`m_fontColor32.rgba`, `m_TextStyleHashCode 0 → -1183493901`) trên ~17 component. Không liên quan tới thay đổi nào — nếu scene đó không có thay đổi thật thì `git checkout` thẳng, đừng commit kèm.
+
+### 9.32 Sửa sai §9.31: sương thành "chấm", và đường kẻ KHÔNG phải cascade (15/10)
+
+**§9.31 phần 1 sai — thu nhỏ quad là lỗi của mình, đã hoàn nguyên.**
+Hạ quad 10–20 m xuống 3–6 m là hành động theo giả thuyết "đường kẻ do mist gây ra" — mà giả thuyết đó đã bị chứng minh là sai. Hệ quả: mật độ chồng phủ mất nên từng hạt hiện ra thành **những chấm tròn đếm được**, user báo "nó không giống sương". Đã trả lại đúng giá trị gốc `startSize 10..20`, hộp Y `9`, `rate 10`, `maxParticleSize 1`.
+
+**Vấn đề thật của quad 10–20 m**: đáy quad đâm xuống đất bị terrain cắt → mép thẳng giữa khung. Không thu nhỏ (vì ra chấm) mà dùng **soft particle**: tạo `Assets/Art/Environment/Mat_MistSoft.mat` bằng shader `Universal Render Pipeline/Particles/Unlit`, bật `_SoftParticlesEnabled` + keyword `_SOFTPARTICLES_ON`/`_FADING_ON`, `_BaseMap = vfx_dot`, blend trong suốt, gán vào renderer của `Weather_Mist.prefab`. `PC_RPAsset.supportsCameraDepthTexture` vốn đã `True`. **Kết quả: không chấm, và mép giữa khung biến mất.**
+
+**§9.31 phần 2 sai — đường kẻ KHÔNG phải cascade seam, `shadowDistance 40→150` là red herring, đã hoàn nguyên về 40.**
+Chứng minh lại từ đầu:
+- `shadowNormalBias 0.40→1.50` + `shadowBias 0.05→0.30` → đường kẻ **không đổi** ⇒ không phải acne.
+- `Terrain.shadowCastingMode = Off` (giữ `sun.shadows = Soft`) → đường kẻ **biến mất hẳn** ⇒ **Terrain chính là caster**. Đây cũng là lý do lần điều tra trước không tìm ra: `Terrain` là `Behaviour`, không phải `Renderer`, nên sweep 1849 renderer bỏ sót nó hoàn toàn.
+- `On` (front-face) → đường kẻ **vẫn còn** ⇒ không phải lỗi do `TwoSided`.
+- Trace **heightmap** bằng `Terrain.SampleHeight` (không tin `Physics.RaycastAll` nữa): điểm tối nhất bị che bởi terrain ở **world (11, 26, -17)** — một gờ dốc cách máy ảnh ~30 m phía sau — với ray **vừa khít** (terrain 26.4 vs ray 26.1). Từ điểm ngay trên đường kẻ thì "open sky". Vị trí cắt này khớp đúng y≈560 đã thấy.
+
+**Tại sao trước đây kết luận sai**: chính script `SpinSun` của mình đã gán sun X = 50° và không trả về giá trị gốc. Scene sau đó được `open_scene` reload → sun trở về đúng giá trị author `Euler(46, -32, 0)` từ `SonTinhMapBuilder.cs:314` (`-32 ≡ 328`). Ở **50°** ray lọt qua gờ nên không có bóng; ở **46°** thì sượt qua gờ nên có bóng. Nên phép thử `shadowDistance 400` / `split 0.90` trước đó sạch là nhờ **mặt trời đang ở 50°**, không phải do distance. **Bài học: trước khi tin một A/B, phải confirm biến mình không cố ý đổi đã được trả đúng về.**
+
+**Bẫy mới trong lần này**:
+- `GameObject.Find` **không tìm object đang inactive** → `MistProbe.Off()` tắt sương rồi script "bật lại" im lặng không chạy gì, làm material mới tưởng như render ra nothing. Phải dùng `FindObjectsByType<Transform>(FindObjectsInactive.Include, ...)`.
+- `ParticleSystem` **không có `.enabled`** (nó là `Component`, không phải `Behaviour`).
+- Unity 6: `ShaderPropertyType` đã chuyển vào `UnityEngine.Rendering.ShaderPropertyType`.
+- Property soft particle của URP là `_SoftParticlesNearFadeDistance` / `_SoftParticlesFarFadeDistance` (+ `_SoftParticleFadeParams`), **không phải** `_DepthFade`. Không đoán keyword — liệt kê qua `shader.keywordSpace.keywords` rồi bật cái khớp.
+
+**Đang mở (chưa chốt)**: đường kẻ cuối cùng là **bóng thật của gờ núi phía sau máy ảnh** chứ không phải bug rendering. Cách xử lý: (a) để nguyên, (b) nâng mặt trời `SonTinhMapBuilder` từ 46° lên ~50° để đường chân bóng ra khỏi khung, (c) tắt `Terrain.shadowCastingMode`. Chờ user chọn.
+
+### 9.33 Chốt: nâng mặt trời 46° → 50° cho Map_SonTinh (15/10)
+
+User chọn phương án **nâng mặt trời**. Trước khi sửa đã **verify trước** ở đúng giá trị author (`shadowDistance=40`, `split=0.3333`, `terrain=TwoSided`): chỉ đổi sun X 46→50 là đường kẻ **biến mất hoàn toàn**, mọi thứ khác giữ nguyên. Nhờ vậy không sửa theo giả thuyết thêm lần nào nữa.
+
+Thay đổi:
+- `Assets/Editor/SonTinhMapBuilder.cs:314` — `Euler(46f, -32f, 0f)` → `Euler(50f, -32f, 0f)`, kèm comment giải thích *tại sao* là 50 (chỉ ghi "46" thì người sau sẽ sửa ngược về).
+- `Assets/Scenes/Map_SonTinh.unity` — xoay `Directional Light` theo, để scene và builder không lệch nhau (nếu lệch thì lần rebuild sau đường kẻ quay lại ngay).
+
+**Bẫy mới**: bật/tắt `Weather_Mist` trong lúc chẩn đoán làm Unity ghi thêm một **prefab override `m_IsActive`** vào scene instance. Nó không đổi hành vi (giá trị trùng với prefab) nhưng là noise trong diff. Xóa bằng `PrefabUtility.GetPropertyModifications` rồi `SetPropertyModifications` với mảng đã lọc.
+
+**Lưu ý API Unity 6**: `PrefabUtility.RemovePrefabInstancePropertyOverrides` **và** `ResetPrefabInstancePropertyOverrides` đều **không tồn tại** ở bản này. Phải dùng `GetPropertyModifications` + `SetPropertyModifications`. Sửa override tốn 3 lần thử vì đoán tên API — đáng lẽ phải liệt kê method qua reflection ngay từ đầu.
+
+### 9.34 Merge `origin/main`: conflict trong `.unity` là do Unity renumber fileID (15/10)
+
+Merge `origin/main` (cutscene 3D + Thủy Tinh đi trên nước) vào `DuyLD_SourceCode`. 70 files auto-merge sạch, **chỉ 1 conflict**: `Assets/Scenes/Map_SonTinh.unity`.
+
+**Cách nhận ra conflict "giả"**: mở 3 version (base/ours/theirs) rồi so `m_CorrespondingSourceObject`. Cả ba đều là
+`{fileID: 1271676567480154378, guid: ba191c1b54de11d45a38ba3bb4049c71}` — **cùng một prefab instance**. Chỉ có local fileID khác nhau (base `1597947988`, ours `1627851895`, theirs `504611575`) vì **mỗi lần Unity save scene là nó renumber ID**. Git thấy hai đoạn khác nhau nên giữ cả hai → elephant bị render **2 lần đè lên nhau**. Khối `PrefabInstance` của cả ba bên **giống hệt nhau sau khi bỏ fileID** (57 dòng) — chứng minh được bằng normalize-so-sánh, không cần đoán.
+
+**Đây là cái bẫy lặp lại vô hạn với scene Unity**: *mỗi lần* hai branch cùng mở và save một scene `.unity` là y hệt kiểu conflict này. Cách xử lý đúng: giữ **một** bên, xóa **cả khối** (PrefabInstance + stripped Transform) của bên kia. Giữ mỗi child entry mà không xóa khối là sai — `m_TransformParent` vẫn trỏ về parent nên Unity tự re-parent khi load, duplicate quay lại.
+
+**Bẫy lớn hơn: KHÔNG dùng Unity Editor để resolve conflict scene.** Đã thử và hỏng 2 kiểu, cả hai đều im lặng:
+1. Unity đang chạy với **asset database cũ** (chưa `recompile` để ingest file mới của main) → nó **ghi đè `EditorBuildSettings.asset` và xóa mất scene `Cutscene_Opening.unity`** mà main vừa thêm.
+2. `EditorSceneManager.GetActiveScene()` trả `path` **rỗng** → `OpenScene("")` + `SaveScene()` làm scene trên đĩa **trở về đúng phiên bản trước merge** (hash khớp blob của HEAD cũ). Nội dung merge mất trắng.
+
+Phải **khôi phục bằng git**: `git checkout --merge -- <scene>` sinh lại kết quả 3-way kèm marker. (Lưu ý label marker là `ours`/`theirs`, không phải `HEAD`/`origin/main` — grep `origin/main` sẽ ra rỗng và làm bạn tưởng marker không tồn tại.)
+
+**Bẫy PowerShell suýt phá file**: một hàm PowerShell **vừa `return` array vừa `Write-Output` log** thì log string sẽ bị **nối vào mảng kết quả**. Viết thẳng vào scene được ~2 dòng rác. Chỉ hiện ra nhờ invariant check yêu cầu "ours IDs fully gone". **Đưa log ra `Write-Host`**, không dùng `Write-Output`, trong mọi hàm trả về dữ liệu.
+
+**Bài học chung**: resolve YAML nhạy cảm theo **text + invariant asserts** (abort không ghi nếu bất kỳ check nào fail), không qua Unity. Rẻ hơn nhiều so với để editor ghi đè dữ liệu theo cách không kiểm soát được.
+
+### 9.35 Chỉnh phần Thủy Tinh cho khớp bản merge 17/10 (Claude)
+
+Sau khi merge `origin/main` (câu đố Người Giữ Nhiệm Vụ, Thủy Tinh đi trên nước, môi trường mới, voi mới) thì cốt truyện biển ở 9.27 cần các điều chỉnh sau (đã làm trong code, chưa chạy lại trong Play vì Unity chưa kết nối khi viết):
+- **New game reset**: `GameSession.StartNewGame` giờ gọi thêm `SeaQuest.Reset()` (ngư tặc, trưởng làng, ma nước, đèn hải đăng, các đoạn thoại mở đầu chạy lại). Trước đó chơi lại từ menu thì map Thủy Tinh còn nguyên trạng thái cũ. `QuestQuizProgress` đã được reset sẵn qua `GiftTracker.Reset`.
+- **Câu đố**: Lão chài chỉ giao việc khi sính lễ kế tiếp của nhân vật đã mở khoá (`QuestQuizProgress.IsUnlocked`, `SeaNpc.TalkFisherman`); `SeaBossArenaEvent` và `SeaFoeDirector` giữ boss/kẻ địch bất khả xâm phạm khi chưa mở khoá hoặc chưa tới lượt (`Fightable`). Thứ tự sính lễ của `Quest_SinhLe_ThuyTinh` (Mập → Sấu/Minh châu → Rùa) khớp thứ tự cốt truyện. Các test `SeaStorySmokeTest` / `SeaBossEventSmokeTest` mở khoá hết sính lễ trước khi chạy.
+- **Sương hải đăng** (`SeaLampBeacon`): scene Thủy Tinh có `Weather_Fog` (`FogController` của zuyzz) ghi `RenderSettings.fogDensity` mỗi frame nên hai bên từng đánh nhau (đèn sáng rồi sương vẫn dao động 0,0045–0,0053). Giờ `SeaLampBeacon` tìm `FogController` và **điều khiển `SetAmount` của nó**: đèn tắt → biên độ 1 (sương dao động tới đỉnh 0,006, dày), đèn sáng → biên độ 0 (ghim ở giá trị cài sẵn 0,0042, mỏng); không có `FogController` thì quay lại cách cũ (nhân mật độ cài sẵn 1,3 / 0,7). Đã đo trong Play: đèn tắt 0,0044–0,0050 dao động, sau khi thắp về đúng 0,00420.
+- **Voi mới** (có chiêu ném đá, Huy): `ElephantArenaBuilder` thêm nerf cho `rockDamage` 22 → 16 và `rockWindup` 1,05 → 1,4. **Con voi đang nằm trong scene Map_SonTinh vẫn mang số cũ cho tới khi chạy lại menu "Build Elephant Arena Event"** (menu đó chỉ dựng lại `ElephantEvent`, không đụng cutscene hay môi trường).
+- **Thủy Tinh đi trên nước** (`WaterWalker`): đứng trên mặt biển nên không chạm điều kiện "nước sâu" của `DeepWaterGuard`, nghĩa là Thủy Tinh có thể đi vòng rào xích bến, lưới Vịnh Mập từ hai bên (Sơn Tinh thì không). Tường sương và vòng karst quanh Vịnh Mập vẫn chặn. Chưa chặn thêm, coi như năng lực riêng của Thủy Tinh; nếu muốn chặn thì cho `DeepWaterGuard` tính cả trường hợp đang đứng trên mặt nước sâu.
+- **Giao diện thu nhỏ 1,3 lần** (`UiScaleBootstrap`) áp luôn lên canvas mới của cutscene 3D và câu đố (cùng chuẩn 1920×1080).
+- **Cảnh báo builder**: `ThuyTinhMapBuilder` ghi đè `RenderSettings` (skybox, sương, ánh sáng) của pass môi trường 9.30; chỉ chạy lại khi cần và kiểm lại môi trường sau đó.
+
+### 9.36 Cutscene giới thiệu map sính lễ + voice Hùng Vương (17/10, Claude)
+
+**Yêu cầu**: thêm cảnh phim dựng bằng Unity ở đầu Map_SonTinh và Map_ThuyTinh giới thiệu sơ lược ba sính lễ; sửa đoạn Hùng Vương đầu game không có voice.
+
+- **`Assets/Scripts/Cutscene/MapIntroCutscene.cs`** (component `MapIntro` trong scene): chạy 1 lần mỗi ván (set `seen` tĩnh, reset khi vào Play), ngay sau khi map load. Giữ game bằng `QuestDialogue.Play` (timeScale 0), tự tạo `MapIntroCamera` (copy Main Camera, post-processing + volume mask của camera chính), ẩn HUD/bản đồ/prompt (các Canvas overlay trừ hộp thoại), hai dải đen trên-dưới, fade vào/ra. Mỗi câu thoại = một cảnh quay (`DialogueRunner.LineStarted`): camera trượt từ `from` → `to` nhìn `look`, FOV đổi dần (thời gian thực), rồi lắc nhẹ tới câu sau. Space/Enter/click chuyển câu, **Esc bỏ qua cả đoạn**. Cảnh cuối đặt camera sau lưng nhân vật (`clearView` kéo camera lại trước vật cản bằng Linecast).
+- **`Assets/Editor/MapIntroBuilder.cs`** (menu `Tools ▸ Son Tinh Thuy Tinh ▸ Build Map Intro (open gift map)`): chạy trong scene đang mở (Map_SonTinh hoặc Map_ThuyTinh), chỉ tạo object `MapIntro` + 2 asset thoại, **không chạy lại builder của map**. Mốc camera đặt theo toạ độ (x, độ cao trên mặt đất/mặt nước, z) nên bám địa hình. Sửa góc máy = sửa bảng `SonTinhShots()` / `ThuyTinhShots()` rồi chạy lại menu.
+- **Thoại**: `Assets/Data/Dialogue/Dialogue_Intro_SonTinh.asset` (6 câu: Núi Tản Viên → Ngựa chín hồng mao → Gà chín cựa → Voi chín ngà → cổng → Sơn Tinh) và `Dialogue_Intro_ThuyTinh.asset` (7 câu: bến cảng → Mập chín vây → Sấu chín đuôi → Rùa chín chân → hải đăng → cổng → Thủy Tinh). Narrator + 1 câu nhân vật, đều có voice qua `DialogueVoicePlayer`.
+- **Map_ThuyTinh**: cutscene đánh dấu `SeaQuest.MarkIntroSeen("Opening")` nên đoạn dẫn chuyện ngắn cũ ở bến cảng (`SeaIntroTrigger "Opening"`) không phát đè.
+- **Test**: `Assets/Scripts/DevTools/MapIntroSmokeTest.cs` (chụp ảnh camera cutscene mỗi câu vào `Temp/intro_<scene>_NN.png`, tự bấm hết thoại, kiểm tra sau đó game thả ra: timeScale 1, camera/screen bị huỷ, Main Camera bật). Cả hai map pass: 6/7 câu, 6/7 ảnh, game trở lại bình thường.
+- **Voice**: `Dialogue_Opening` (dòng Hùng Vương "Sính lễ là sáu linh thú…"), `Dialogue_PhanXu_*`, `Dialogue_HorseQuest_Bandits` và 13 dòng của hai cutscene mới ban đầu chưa có mp3. Menu `Tools ▸ Voice ▸ Regenerate Missing Clips` **đang hỏng**: Microsoft đã đổi chữ ký `Sec-MS-GEC` sang v2 (`<CS64 16 hex>-<SHA256>`, version `2-143.0.3650.75`) nên `EdgeTtsClient` (còn dùng v1) bị server trả 403, Unity hiện là "Unable to connect to the remote server". Đã sinh 22 mp3 thiếu bằng thư viện Python `edge-tts` 7.3.1 (venv tạm, cùng voice/rate/volume của `VoiceLibrary`, file đặt đúng `Assets/Resources/Audio/Voice/<folder>/<sha1 16 hex>.mp3`); kiểm lại: 148/148 dòng thoại có clip. Dòng thoại mới thêm sau này vẫn cần sinh bằng cách đó cho tới khi `EdgeTtsClient` được cập nhật theo `edge_tts/drm.py` (CS64 + SHA256 sửa đổi).
+
+### 9.37 Người giữ nhiệm vụ theo chặng, cutscene theo tiến độ, hoàng hôn, chiêu thức (17/10, Claude)
+
+- **3 Người Giữ Nhiệm Vụ mỗi map sính lễ** (trước đây chỉ 1 ở đầu map, phải chạy ngược về sau mỗi con boss): `QuestKeeperMark` (số thứ tự sính lễ 0/1/2) đặt trong object `QuestKeepers` của Map_SonTinh / Map_ThuyTinh; `PlayerSpawner → QuestKeeperNpc.Spawn` dựng một NPC ở mỗi mark (không có mark thì vẫn một NPC cạnh điểm xuất phát như cũ). Vị trí: người 1 cạnh điểm xuất phát, người 2 và 3 trên đường chính ngay trước chặng của sính lễ 2 và 3 (Sơn Tinh z≈148 và 206, Thủy Tinh z≈150 và 226, tìm chỗ khô, phẳng, không vướng collider). Mỗi người chỉ hỏi sính lễ của chặng mình; hỏi lệch thứ tự thì báo "hãy lấy X trước". Đã sửa luôn lỗi người giữ nhiệm vụ đầu bị raycast từ 30 m lên đứng trên nóc vật cản (y≈13 ở Map_SonTinh): giờ chỉ "đặt xuống đất" trong 2 m quanh mark.
+- **Cutscene theo tiến độ** (`MapIntroCutscene` có thêm `giftCountTrigger`; builder `MapIntroBuilder` dựng cả 4 scene, menu `Tools ▸ Son Tinh Thuy Tinh ▸ Build Map Intro (open gift map)`):
+  - đầu map: tổng quan → **giới thiệu Người Giữ Nhiệm Vụ và cách dùng (E, 3 câu hỏi)** → ba linh thú (đã sửa đúng chỗ thật: Ngựa chín hồng mao ở đỉnh núi phía tây, Voi ở trường đấu (31,235); Thủy Tinh: Mập chín vây ở đầm (78,192)) → cổng;
+  - sau sính lễ thứ 1 và 2 (`MapGift1`, `MapGift2`, phát 3 giây sau khi nhặt): camera chỉ **người giữ nhiệm vụ kế tiếp** rồi cảnh chặng sau;
+  - đủ 3 sính lễ (`MapGiftsDone`): bay tới cổng đá, dặn qua cổng về cung điện;
+  - `Map_HungVuong` (`MapPalace`): đang ở đâu trong hành trình + chỉ đường theo hai hàng đuốc vào chính điện; `Map_FinalBattle` (`MapFinalIntro`): giới thiệu thung lũng, hai tượng, phím J / chuột phải / U-I-O, và giai đoạn cuồng nộ ở nửa máu.
+  - `GameSession.StartNewGame` gọi `MapIntroCutscene.ResetAll()` nên chơi mới thì phim phát lại. Map_HungVuong và Map_FinalBattle chưa có hộp thoại nên builder tự chép hộp thoại của Prologue (`HorseQuestBuilder.CopyDialogueUi`).
+  - Voice: 26 câu mới sinh bằng `edge-tts` như 9.36 (menu Regenerate vẫn hỏng). 18 mp3 mồ côi (câu cũ không còn dùng) nằm trong `Assets/Resources/Audio/Voice/`: xoá hay không tuỳ nhóm.
+- **Hoàng hôn** cho `Map_HungVuong`, `Cutscene_PhanXu` (skybox mới `Sky_Sunset_PhanXu`, để `Sky_Cutscene` của Opening/Ending không đổi) và `Map_FinalBattle`: mặt trời thấp, màu cam, sương ấm, skybox tint tím nhạt; arena cuối nâng cao mặt trời (24°) và ambient 1,7 để sàn không đen.
+- **UI**: bảng danh sách sính lễ và banner (`GiftTrackerHUD`) dùng khung vàng + nền xanh đậm **bo góc** như thanh máu (`UiFrame`, dựng lúc chạy, không phải dựng lại scene). Thanh máu boss ở trận cuối có **mặt đối thủ + phượng lửa** bên trái (`BossHealthBar.Bind(..., portrait)`, emblem gán trong scene, `FinalBattleBossBarBuilder` cũng gán).
+- **Chiêu thức** (cả hai nhân vật): sát thương U/I/O tăng (Gọi gió/Núi non 11/20 → 32/38, Sóng nước/Núi mọc 31 → 70, mưa/Núi dâng 2 → 6 mỗi nhịp, làm chậm mạnh hơn 0,5 → 0,35), **thêm choáng**: `SpellData.stunSeconds` (Gió/Núi non 1,2 s, Sóng/Núi mọc 1,6 s) + `slowAfterHit`; boss chỉ nhận 50% thời gian (`bossStunScale`); hiện chữ "Choáng!". `IHitReceiver.ApplyStun` (mặc định = làm chậm gần như đứng yên) và `NinjaEnemy` có choáng thật (mất đòn đang ra, đứng sững) và giờ cũng **bị làm chậm** bởi Hô mưa/Núi dâng (trước đây `ApplySlow` rỗng). Đòn **chuột phải** (Attack_Heavy / Uppercut) giảm 60 → 34.
+- **Chưa kiểm trong chiến đấu thật**: choáng/chậm lên ninja và boss mới chỉ biên dịch và chạy qua test phim; cần chơi thử một trận. Hội thoại hỏi/đáp của 3 người giữ nhiệm vụ cũng mới được kiểm ở mức xuất hiện đúng chỗ và báo đúng câu, chưa chạy trọn vẹn quiz.

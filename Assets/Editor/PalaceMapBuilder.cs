@@ -205,8 +205,8 @@ namespace SonTinhThuyTinh.EditorTools
             terrain.terrainData = data;
             terrain.GetComponent<TerrainCollider>().terrainData = data;
             terrain.transform.position = new Vector3(-Size * 0.5f, BaseY, -Size * 0.5f);
-            terrain.heightmapPixelError = 4f;
-            terrain.basemapDistance = 500f;
+            terrain.heightmapPixelError = 1f;
+            terrain.basemapDistance = 1000f;
             EditorUtility.SetDirty(data);
             return terrain;
         }
