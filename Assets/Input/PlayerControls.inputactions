@@ -346,6 +346,17 @@
                 },
                 {
                     "name": "",
+                    "id": "b2c3d4e5-2222-4b1c-9d1e-000000000016",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Slide",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "b2c3d4e5-2222-4b1c-9d1e-000000000017",
                     "path": "<Gamepad>/rightShoulder",
                     "interactions": "",

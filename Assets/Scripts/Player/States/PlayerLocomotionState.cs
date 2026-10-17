@@ -27,6 +27,14 @@ namespace SonTinhThuyTinh.Player.States
                 return;
             }
 
+            // F: slide immediately while grounded. C stays available for the third spell.
+            if (input.ConsumeSlide() && player.CanSlide &&
+                (player.Slide.staminaCost <= 0f || player.Stamina.TryConsume(player.Slide.staminaCost)))
+            {
+                player.ChangeState(player.SlideState);
+                return;
+            }
+
             // Space: jump up; Space while sprinting: running jump. Next to a ledge it climbs instead (characters that can).
             if (input.ConsumeJump() && player.IsGrounded)
             {

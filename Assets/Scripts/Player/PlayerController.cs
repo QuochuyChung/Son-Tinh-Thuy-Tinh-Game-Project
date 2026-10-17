@@ -41,7 +41,7 @@ namespace SonTinhThuyTinh.Player
         [Header("Jump (Space; Space while sprinting = running jump)")]
         [SerializeField] JumpSettings jump = new();
 
-        [Header("Slide (C while sprinting)")]
+        [Header("Slide (F)")]
         [SerializeField] SlideSettings slide = new();
 
         [Header("Climb (Space next to a ledge; off = cannot climb)")]
@@ -78,9 +78,9 @@ namespace SonTinhThuyTinh.Player
         public float RunSpeed => runSpeed;
         public float SprintSpeed => sprintSpeed;
         public bool IsGrounded => body.isGrounded;
-        // Shift held and really running (not just starting to walk): what the running jump and the slide need.
+        // Shift held and really running (not just starting to walk): what the running jump needs.
         public bool IsSprinting => input.SprintHeld && input.Move.sqrMagnitude > 0.25f && CurrentSpeed >= runSpeed * 0.8f;
-        public bool CanSlide => Time.time >= slideReadyAt && IsSprinting && body.isGrounded;
+        public bool CanSlide => Time.time >= slideReadyAt && body.isGrounded;
         public bool IsInvulnerable
         {
             get => health.IsInvulnerable;

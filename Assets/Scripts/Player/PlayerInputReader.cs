@@ -104,7 +104,7 @@ namespace SonTinhThuyTinh.Player
         // Space / gamepad South. Becomes a running jump when the character is sprinting (decided by the locomotion state).
         public bool ConsumeJump() => Consume(ref jumpPressedAt);
 
-        // Gamepad right shoulder only. Keyboard C is reserved for Water Tower.
+        // F / gamepad right shoulder. Keyboard C remains reserved for the third spell.
         public bool ConsumeSlide() => Consume(ref slidePressedAt);
 
         // A tap of J, or the left mouse button.

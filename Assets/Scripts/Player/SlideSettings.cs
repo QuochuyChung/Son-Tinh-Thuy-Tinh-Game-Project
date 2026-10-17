@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SonTinhThuyTinh.Player
 {
-    // Tuning for the slide (C while sprinting). Distance and timing are the Mixamo "Running Slide" clip's own: 1.53 s, 6.5 m.
+    // Tuning for the slide (F). Distance and timing are the Mixamo "Running Slide" clip's own: 1.53 s, 6.5 m.
     [Serializable]
     public class SlideSettings
     {

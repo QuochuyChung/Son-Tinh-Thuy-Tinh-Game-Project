@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SonTinhThuyTinh.Player.States
 {
-    // Slide along the facing direction (C while sprinting): a fast glide that eases out, no steering.
+    // Slide along the facing direction (F): a fast glide that eases out, no steering.
     public sealed class PlayerSlideState : IState
     {
         static readonly int SlideHash = Animator.StringToHash("Slide");
