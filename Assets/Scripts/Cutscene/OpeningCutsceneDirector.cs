@@ -64,7 +64,7 @@ namespace SonTinhThuyTinh.Cutscene
             miNuong.Release(0.01f);
             miNuong.LookAt(king.transform, 0.6f, new Vector3(0f, 1.2f, 0f));
             king.LookAt(miNuong.transform, 0.5f, new Vector3(0f, 1.4f, 0f));
-            StartCoroutine(stage.Mood(Dawn, 1.15f, DawnFog, 0.0035f, 1.05f, 0.05f, 0.15f, 12f, DawnTint));
+            StartCoroutine(stage.Mood(Dawn, 1.55f, DawnFog, 0.0032f, 1.1f, 0.05f, 0.3f, 13f, DawnTint));
             stage.Rain(0f);
             cam.Handheld = 0.5f;
         }
@@ -246,7 +246,7 @@ namespace SonTinhThuyTinh.Cutscene
         IEnumerator KingJudges()
         {
             stage.Rain(0f);
-            Go(stage.Mood(Dawn, 1.15f, DawnFog, 0.0035f, 1.05f, 3.5f, 0.15f, 12f, DawnTint));
+            Go(stage.Mood(Dawn, 1.55f, DawnFog, 0.0032f, 1.1f, 3.5f, 0.3f, 13f, DawnTint));
             Go(stage.RainTo(0f, 3f, ThuyPos));
             king.Play("Talk", 0.4f);
             king.LookAt(sonTinh.transform, 1f, new Vector3(0f, 1.5f, 0f));

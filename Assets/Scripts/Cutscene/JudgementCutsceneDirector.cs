@@ -34,8 +34,8 @@ namespace SonTinhThuyTinh.Cutscene
         float s;   // the chosen character's side of the avenue: -1 left (Sơn Tinh), +1 right (Thủy Tinh)
         bool meIsSon;
 
-        static readonly Color Morning = new(1f, 0.88f, 0.70f), MorningFog = new(0.88f, 0.84f, 0.78f);
-        static readonly Color Tense = new(1f, 0.62f, 0.40f), TenseFog = new(0.72f, 0.52f, 0.42f);
+        static readonly Color Morning = new(1f, 0.82f, 0.60f), MorningFog = new(0.93f, 0.78f, 0.64f);   // (the opening's dawn: bright, warm)
+        static readonly Color Tense = new(1f, 0.70f, 0.48f), TenseFog = new(0.86f, 0.66f, 0.52f);   // (warm, no longer dark)
 
         static Vector3 P(float x, float y, float z) => new(x, y, z);
         Vector3 Mx(float x, float y, float z) => new(x * s, y, z);   // a point given for the chosen character on the left, mirrored if he is on the right
@@ -64,7 +64,7 @@ namespace SonTinhThuyTinh.Cutscene
             king.Release(0.01f); miNuong.Release(0.01f);
             king.Play("CrossArms", 0.01f);
             miNuong.LookAt(king.transform, 0.5f, new Vector3(0f, 1.4f, 0f));
-            StartCoroutine(stage.Mood(Morning, 1.1f, MorningFog, 0.003f, 1.05f, 0.05f));
+            StartCoroutine(stage.Mood(Morning, 1.3f, MorningFog, 0.0034f, 1.05f, 0.05f, 0.2f, 12f, new Color(1f, 0.95f, 0.9f)));
             stage.Rain(0f);
             cam.Handheld = 0.6f;
         }
@@ -193,7 +193,7 @@ namespace SonTinhThuyTinh.Cutscene
         IEnumerator KingSetsDuel()
         {
             king.Play("Point", 0.35f);
-            Go(stage.Mood(Tense, 0.95f, TenseFog, 0.0045f, 0.95f, 5f));
+            Go(stage.Mood(Tense, 1.25f, TenseFog, 0.0034f, 1.05f, 5f, 0.15f));
             cam.FocusOff();
             Go(cam.Move(P(2.8f, 14.5f, 28f), P(1.6f, 16.2f, 30.5f), Pt.On(king.transform, 1.6f), Pt.On(king.transform, 1.7f), 40f, 30f, 6f, Ease.Smooth));
             yield return Wait(6f);
@@ -235,7 +235,7 @@ namespace SonTinhThuyTinh.Cutscene
         {
             miNuong.Play("Talk", 0.4f);
             cam.FocusOff();
-            Go(stage.Mood(Tense, 0.95f, TenseFog, 0.0045f, 0.95f, 1f));
+            Go(stage.Mood(Tense, 1.25f, TenseFog, 0.0034f, 1.05f, 1f, 0.15f));
             cam.Focus(Pt.On(miNuong.transform, 1.5f), 2.3f);
             yield return cam.Move(P(-0.8f, 15.4f, 28.4f), P(-1.6f, 15.5f, 29.6f), Pt.On(miNuong.transform, 1.45f), 30f, 26f, 7f);
         }

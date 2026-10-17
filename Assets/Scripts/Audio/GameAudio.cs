@@ -6,13 +6,13 @@ namespace SonTinhThuyTinh.Audio
     // Does nothing when there is no AudioLibrary in Resources, so a missing clip can never break a scene. Volumes are saved in PlayerPrefs.
     public static class GameAudio
     {
-        const string MasterKey = "audio.master", MusicKey = "audio.music", SfxKey = "audio.sfx";
+        const string MasterKey = "audio.master", MusicKey = "audio.music.v2", SfxKey = "audio.sfx.v2";   // (v2: the defaults were lowered a lot, old saved values must not win)
 
         static float master = -1f, music = -1f, sfx = -1f;
 
         public static float MasterVolume { get => Get(ref master, MasterKey, 1f); set { Set(ref master, MasterKey, value); AudioListener.volume = master; } }
-        public static float MusicVolume { get => Get(ref music, MusicKey, 0.6f); set => Set(ref music, MusicKey, value); }
-        public static float SfxVolume { get => Get(ref sfx, SfxKey, 1f); set => Set(ref sfx, SfxKey, value); }
+        public static float MusicVolume { get => Get(ref music, MusicKey, 0.2f); set => Set(ref music, MusicKey, value); }
+        public static float SfxVolume { get => Get(ref sfx, SfxKey, 0.35f); set => Set(ref sfx, SfxKey, value); }
 
         public static void Play(Sfx id, float volume = 1f) => AudioManager.Instance?.PlaySfx(id, null, volume);
 

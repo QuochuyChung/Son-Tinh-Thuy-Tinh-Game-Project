@@ -313,6 +313,7 @@ namespace SonTinhThuyTinh.EditorTools
                     torchSide = -torchSide;
                 }
             }
+            BridgeModelSwap.DressPier(root, PierDeck);   // the Meshy bridge model along every stretch instead of the boards and rails
         }
 
         // ---------------------------------------------------------------- boats

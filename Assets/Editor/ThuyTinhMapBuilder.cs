@@ -642,6 +642,17 @@ namespace SonTinhThuyTinh.EditorTools
             }
         }
 
+        // The plank bridges of the open Map_ThuyTinh built again (the same call as the map build) without running the whole map builder.
+        public static int RebuildBridgesInOpenScene()
+        {
+            GameObject old = GameObject.Find("Bridges");
+            if (old == null || old.transform.parent == null) return 0;
+            Transform decor = old.transform.parent;
+            Object.DestroyImmediate(old);
+            BuildBridges(decor);
+            return decor.Find("Bridges") != null ? decor.Find("Bridges").childCount : 0;
+        }
+
         // Plank bridges from the causeway to each islet (the world map draws wooden bridges on this route). The boards have colliders.
         static void BuildBridges(Transform decor)
         {
