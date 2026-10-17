@@ -46,7 +46,7 @@ MonoBehaviour:
   speed: 14
   knockUpSpeed: 7
   effectDuration: 6
-  tickDamage: 6
+  tickDamage: 10
   tickInterval: 0.5
   slowFactor: 0.35
   stunSeconds: 0
