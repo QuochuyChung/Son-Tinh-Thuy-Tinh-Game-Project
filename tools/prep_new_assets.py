@@ -15,7 +15,9 @@ JOBS = [("bridge", "Cau-go", "Meshy_AI_Wooden_plank_bridge", 0), ("rock_slate", 
         ("rock_big", "Da-assets", "Meshy_AI_rock_", 12000), ("rock_tundra", "Da-assets", "Meshy_AI_\u82d4\u539f", 12000),
         ("rock_cave", "Da-assets", "Meshy_AI_\u98ce\u683c\u5316\u5927\u578b\u5c71\u6d1e", 14000), ("gem_red", "Da-quy-do", "Meshy_AI__", 0),
         ("crystal_blue", "Da-quy-xanh", "Meshy_AI_Azure_Crystal_Spire", 0),
-        ("watchtower", "Ngon-hai-dang", "Meshy_AI_Sunspire_Watchtower", 0)]
+        ("watchtower", "Ngon-hai-dang", "Meshy_AI_Sunspire_Watchtower", 0),
+        ("tiki_gate", "Cong-cau-thuy-tinh", "Meshy_AI_Seashell_Tiki_Gateway", 0), ("fence", "Cong-cau-thuy-tinh", "Meshy_AI_Wooden_Fence", 5000)] # grass_tuft: tools/make_grass_tuft.py (procedural, the scanned tuft is 1.6M faces)
+NO_EMISSION = {"fence", "grass_tuft"}
 os.makedirs(OUT, exist_ok=True)
 for name, folder, prefix, faces in JOBS:
     dirs = [d for d in glob.glob(os.path.join(ROOT, folder, prefix + "*_texture_fbx"))]
@@ -26,6 +28,7 @@ for name, folder, prefix, faces in JOBS:
     print(name, [l for l in out.splitlines() if l.startswith("PREP")])
     shutil.copy(stem + ".png", os.path.join(OUT, name + "_basecolor.png"))
     for suffix, target in (("_normal.png", "_normal.png"), ("_emission.png", "_emission.png")):
+        if suffix == "_emission.png" and name in NO_EMISSION: continue
         if os.path.exists(stem + suffix): shutil.copy(stem + suffix, os.path.join(OUT, name + target))
     if os.path.exists(stem + "_metallic.png") and os.path.exists(stem + "_roughness.png"):
         pack = [BLENDER, "-b", "--python", os.path.join(REPO, "tools", "pack_metallic_smoothness.py"), "--", stem + "_metallic.png", stem + "_roughness.png", os.path.join(OUT, name + "_metallic_smoothness.png")]

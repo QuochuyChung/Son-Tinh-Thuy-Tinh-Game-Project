@@ -19,7 +19,7 @@ namespace SonTinhThuyTinh.EditorTools
         const string Dir = "Assets/Art/Props/";
         const string PrefabDir = "Assets/Prefabs/Props";
 
-        public enum Kind { Brazier, Throne, Hat, Longboat, Drum, Banner, Bridge, GemRed, CrystalBlue, RockSlate, RockKaya, RockMonolith, RockFormation, RockFragment, RockBig, RockTundra, RockCave, Watchtower }
+        public enum Kind { Brazier, Throne, Hat, Longboat, Drum, Banner, Bridge, GemRed, CrystalBlue, RockSlate, RockKaya, RockMonolith, RockFormation, RockFragment, RockBig, RockTundra, RockCave, Watchtower, TikiGate, Fence, GrassTuft }
 
         struct Spec
         {
@@ -48,6 +48,9 @@ namespace SonTinhThuyTinh.EditorTools
             [Kind.RockTundra] = new Spec { file = "rock_tundra", prefab = "RockTundra", size = 4f },
             [Kind.RockCave] = new Spec { file = "rock_cave", prefab = "RockCave", size = 4f },
             [Kind.Watchtower] = new Spec { file = "watchtower", prefab = "Watchtower", size = 18f, byHeight = true },
+            [Kind.TikiGate] = new Spec { file = "tiki_gate", prefab = "TikiGate", size = 12f },
+            [Kind.Fence] = new Spec { file = "fence", prefab = "WoodFence", size = 4f },
+            [Kind.GrassTuft] = new Spec { file = "grass_tuft", prefab = "GrassTuft", size = 1.75f },
         };
 
         public static GameObject Prefab(Kind kind) => Prefab(kind, false);
@@ -122,6 +125,23 @@ namespace SonTinhThuyTinh.EditorTools
                 {
                     foreach (var mf in model.GetComponentsInChildren<MeshFilter>(true))
                         mf.gameObject.AddComponent<MeshCollider>().sharedMesh = mf.sharedMesh;
+                    break;
+                }
+                case Kind.TikiGate:
+                {
+                    // only the two pillars are solid (the opening and the lintel stay free): a box around each one's lower part
+                    var pts = new List<Vector3>();
+                    foreach (var mf in model.GetComponentsInChildren<MeshFilter>(true))
+                        foreach (var v in mf.sharedMesh.vertices) pts.Add(root.transform.InverseTransformPoint(mf.transform.TransformPoint(v)));
+                    foreach (float side in new[] { -1f, 1f })
+                    {
+                        var part = pts.Where(q => Mathf.Sign(q.x) == side && Mathf.Abs(q.x) > 0.28f * b.size.x && q.y < b.min.y + 0.75f * b.size.y).ToList();
+                        if (part.Count == 0) continue;
+                        Vector3 lo = part[0], hi = part[0];
+                        foreach (var q in part) { lo = Vector3.Min(lo, q); hi = Vector3.Max(hi, q); }
+                        var col = root.AddComponent<BoxCollider>();
+                        col.center = (lo + hi) * 0.5f; col.size = hi - lo;
+                    }
                     break;
                 }
                 case Kind.Banner:
