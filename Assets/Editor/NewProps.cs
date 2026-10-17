@@ -387,6 +387,7 @@ namespace SonTinhThuyTinh.EditorTools
         public static void BuildStraight(Transform bridge, Vector3 from, Vector3 to, float width)
         {
             var holder = new GameObject("Straight").transform; holder.SetParent(bridge, false);
+            if (BridgeModelSwap.BuildModelRun(holder, from, to, width, true) > 0) return;   // the Meshy bridge itself, copies end to end
             var plankMat = AssetDatabase.LoadAssetAtPath<Material>(Dir + "M_bridge.mat");
             var boardMat = new Material(plankMat) { name = "M_bridge_boards" };
             boardMat.SetTextureScale("_BaseMap", new Vector2(0.5f, 0.5f)); boardMat.SetTextureScale("_BumpMap", new Vector2(0.5f, 0.5f));

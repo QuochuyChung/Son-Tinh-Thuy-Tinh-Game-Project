@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf6267edb1d6bcb45903e249064007d5, type: 3}
   m_Name: VoiceLibrary
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.VoiceLibrary
-  masterVolume: 1
+  masterVolume: 0.45
   entries:
   - speaker: "S\u01A1n Tinh"
     folder: SonTinh

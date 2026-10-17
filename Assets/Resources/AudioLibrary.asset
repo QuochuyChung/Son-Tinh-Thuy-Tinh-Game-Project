@@ -296,16 +296,16 @@ MonoBehaviour:
   loops:
   - id: 7
     clip: {fileID: 8300000, guid: 00aa03fcb09191e4d98f948e9c0682c0, type: 3}
-    volume: 0.55
+    volume: 0.1
   - id: 8
     clip: {fileID: 8300000, guid: c28d9a5412a5f8b4da020fc646a1464d, type: 3}
-    volume: 0.55
+    volume: 0.1
   - id: 9
     clip: {fileID: 8300000, guid: 058b4fd85b3aa5a469c97906ba61b824, type: 3}
-    volume: 0.5
+    volume: 0.09
   - id: 10
     clip: {fileID: 8300000, guid: 16e838c85784599409cfc5836c011cfb, type: 3}
-    volume: 0.5
+    volume: 0.09
   - id: 1
     clip: {fileID: 8300000, guid: 4ab176ff71b300245bd51120c01ece41, type: 3}
     volume: 0.5
