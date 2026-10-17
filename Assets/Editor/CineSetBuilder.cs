@@ -56,6 +56,9 @@ namespace SonTinhThuyTinh.EditorTools
             var scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
             foreach (var root in scene.GetRootGameObjects())
                 if (RemoveRoots.Contains(root.name)) Object.DestroyImmediate(root);
+            // the map has its own intro dialogue UI now (MapIntroCutscene): the cutscene brings the Prologue's (MoveDialogueUi), two would overlap
+            foreach (var root in scene.GetRootGameObjects())
+                if (root != null && (root.name == "DialogueCanvas" || root.GetComponentInChildren<DialogueRunner>(true) != null)) Object.DestroyImmediate(root);
             var generated = scene.GetRootGameObjects().FirstOrDefault(g => g.name == "Generated");
             if (generated != null)
                 foreach (string n in RemoveGenerated) { var t = generated.transform.Find(n); if (t != null) Object.DestroyImmediate(t.gameObject); }
