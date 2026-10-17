@@ -27,13 +27,6 @@ namespace SonTinhThuyTinh.Player.States
                 return;
             }
 
-            // C while sprinting: slide. (A press while not sprinting is thrown away.)
-            if (input.ConsumeSlide() && player.CanSlide && (player.Slide.staminaCost <= 0f || player.Stamina.TryConsume(player.Slide.staminaCost)))
-            {
-                player.ChangeState(player.SlideState);
-                return;
-            }
-
             // Space: jump up; Space while sprinting: running jump. Next to a ledge it climbs instead (characters that can).
             if (input.ConsumeJump() && player.IsGrounded)
             {

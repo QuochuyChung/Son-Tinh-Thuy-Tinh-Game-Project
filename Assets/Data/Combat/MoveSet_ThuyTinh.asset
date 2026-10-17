@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: MoveSet_ThuyTinh
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.MoveSet
   lightCombo:
-  - {fileID: 11400000, guid: 721e136553b3871409d3e41ac0f5da2b, type: 2}
-  - {fileID: 11400000, guid: 5574600c6b0b7cc45962f826279e6a82, type: 2}
-  - {fileID: 11400000, guid: bbf88ce2e0032744eaff0ba01845682d, type: 2}
-  heavy: {fileID: 11400000, guid: 7bcdda1dddf9b094494286f15efbb0a3, type: 2}
+  - {fileID: 11400000, guid: 3d8e9765a71fec943942e6696f9113d3, type: 2}
+  - {fileID: 11400000, guid: 8c89a2c1344384343a55c17bf40836f4, type: 2}
+  - {fileID: 11400000, guid: f77df22512a8b9947bca4a609bd3de3f, type: 2}
+  heavy: {fileID: 11400000, guid: 782b138c9ad9a544f838787d13ea5906, type: 2}
   jumpAttack: {fileID: 11400000, guid: e0fe2560b4fdb3f468b57b0330e9386d, type: 2}
   spells:
   - {fileID: 11400000, guid: 711f79b9faf36c24fb2cc9e3b0e8de12, type: 2}

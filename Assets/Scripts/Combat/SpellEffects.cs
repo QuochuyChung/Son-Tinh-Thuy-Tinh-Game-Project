@@ -9,6 +9,8 @@ namespace SonTinhThuyTinh.Combat
         // Spawns the spell's effect prefab at the caster and lets it do its work.
         public static void Cast(PlayerController caster, SpellData spell)
         {
+            if (spell.kind == SpellKind.WaterPillar) { ThuyTinhWaterSpells.CastGroundWave(caster, spell); return; }
+            if (spell.kind == SpellKind.AquaShield) { ThuyTinhWaterSpells.CastShield(caster, spell); return; }
             if (spell.effectPrefab == null) return;
             Transform t = caster.transform;
             GameObject effect = Object.Instantiate(spell.effectPrefab, t.position, t.rotation);

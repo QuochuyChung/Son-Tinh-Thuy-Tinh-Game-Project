@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35d38355a28431c4a805a40fecf4e584, type: 3}
+  m_Name: Attack_WaterOrb_Left
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.ProjectileAttackData
+  stateName: Attack1
+  animSpeed: 1.35
+  duration: 0.8888889
+  hitStart: 0
+  hitEnd: 0
+  comboStart: 0.60444444
+  staminaCost: 5
+  damage: 25
+  heavy: 0
+  superArmor: 0
+  hitCenter: {x: 0, y: 1, z: 1.4}
+  hitSize: {x: 2.4, y: 2, z: 2.4}
+  hitAround: 0
+  knockback: 2.5
+  knockUp: 0.3
+  lungeDistance: 0
+  lungeStart: 0
+  lungeEnd: 0
+  hitStop: 0.04
+  shake: 0.16
+  swingEffect: {fileID: 0}
+  swingEffectTime: 0
+  swingEffectScale: 1
+  projectilePrefab: {fileID: 4988644356801275080, guid: d8b3309e03b9b4249a6871631921d14c, type: 3}
+  projectileTime: 0.42666665
+  projectileSpeed: 16
+  projectileRange: 14
+  projectileRadius: 0.65
+  projectileSpawnOffset: {x: 0, y: 1.25, z: 0.9}

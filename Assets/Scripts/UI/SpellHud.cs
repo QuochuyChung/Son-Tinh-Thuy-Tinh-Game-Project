@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace SonTinhThuyTinh.UI
 {
-    // The three spell slots (U / I / O) at the bottom, between the health bars and the map circle, with a clock-wipe for the cooldown. Built in code when a player with spells is
+    // The three spell slots (Z / X / C) at the bottom, between the health bars and the map circle, with a clock-wipe for the cooldown. Built in code when a player with spells is
     // spawned (PlayerSpawner), so no scene needs editing.
     public class SpellHud : MonoBehaviour
     {
@@ -66,7 +66,7 @@ namespace SonTinhThuyTinh.UI
             scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
             scaler.matchWidthOrHeight = 0.5f;
 
-            string[] keys = { "U", "I", "O" };
+            string[] keys = { "Z", "X", "C" };
             cooldown = new Image[spells.Length];
             timers = new TMP_Text[spells.Length];
             frames = new Image[spells.Length];

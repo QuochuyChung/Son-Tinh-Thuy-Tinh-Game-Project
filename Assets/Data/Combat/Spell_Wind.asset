@@ -14,18 +14,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.SpellData
   stateName: SpellWind
   animSpeed: 1.3
-  duration: 0.823077
+  duration: 1.2051283
   hitStart: 0
   hitEnd: 0
-  comboStart: 0.5
+  comboStart: 0.94000006
   staminaCost: 0
-  damage: 11
+  damage: 25
   heavy: 0
   superArmor: 1
   hitCenter: {x: 0, y: 1, z: 1.4}
   hitSize: {x: 2.4, y: 2, z: 2.4}
   hitAround: 0
-  knockback: 3
+  knockback: 14
   knockUp: 0
   lungeDistance: 0
   lungeStart: 0
@@ -35,16 +35,16 @@ MonoBehaviour:
   swingEffect: {fileID: 0}
   swingEffectTime: 0
   swingEffectScale: 1
-  displayName: "G\u1ECDi gi\xF3"
+  displayName: "S\xF3ng \u0111\u1EA9y"
   color: {r: 0.8, g: 0.95, b: 1, a: 1}
-  kind: 0
+  kind: 3
   cooldown: 8
   effectPrefab: {fileID: 4404422519363820822, guid: 484b4e25fd296d94cb694f7c1450185e, type: 3}
-  effectTime: 0.20769233
-  radius: 8
-  range: 10
-  speed: 9
-  knockUpSpeed: 7
+  effectTime: 0.5784616
+  radius: 4.5
+  range: 12
+  speed: 13
+  knockUpSpeed: 1
   effectDuration: 1.4
   tickDamage: 2
   tickInterval: 0.5

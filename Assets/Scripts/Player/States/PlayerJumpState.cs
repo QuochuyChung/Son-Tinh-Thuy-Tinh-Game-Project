@@ -1,4 +1,5 @@
 using SonTinhThuyTinh.Core;
+using SonTinhThuyTinh.Combat;
 using UnityEngine;
 
 namespace SonTinhThuyTinh.Player.States
@@ -10,8 +11,11 @@ namespace SonTinhThuyTinh.Player.States
     {
         static readonly int JumpUpHash = Animator.StringToHash("JumpUp");
         static readonly int RunJumpHash = Animator.StringToHash("RunJump");
+        static readonly int RightWaterSlashHash = Animator.StringToHash("SpellWaveRight");
         const float MaxAirTime = 4f;
         const float CrouchBrake = 12f;   // m/s^2, how fast the character stops during the crouch of a standing jump
+        const float AerialSlashImpactTime = 0.38f;
+        const float AerialSlashDuration = 0.72f;
 
         readonly PlayerController player;
         readonly bool running;
@@ -19,6 +23,14 @@ namespace SonTinhThuyTinh.Player.States
         float elapsed;
         float takeoffAt;
         bool launched;
+        bool aerialSlashActive;
+        bool aerialSlashFired;
+        float aerialSlashElapsed;
+
+        bool UsesProjectileCombat => player.MoveSet != null &&
+                                     player.MoveSet.lightCombo != null &&
+                                     player.MoveSet.lightCombo.Length > 0 &&
+                                     player.MoveSet.lightCombo[0] is ProjectileAttackData;
 
         public PlayerJumpState(PlayerController player, bool running)
         {
@@ -31,6 +43,11 @@ namespace SonTinhThuyTinh.Player.States
             JumpSettings settings = player.JumpSettings;
             elapsed = 0f;
             launched = false;
+            aerialSlashActive = false;
+            aerialSlashFired = false;
+            aerialSlashElapsed = 0f;
+            player.StopUpperBodyAttack();
+            player.SetTrail(false);
 
             float speed = running ? Mathf.Max(player.CurrentSpeed, player.RunSpeed) : player.CurrentSpeed * settings.standingMomentum;
             velocity = player.transform.forward * speed;
@@ -61,9 +78,25 @@ namespace SonTinhThuyTinh.Player.States
                 return;
             }
 
-            // attack button in the air: the jump attack (J / mouse buttons), for characters that have one
-            if (player.HasCombat && player.MoveSet.jumpAttack != null && (player.InputReader.ConsumeLight() || player.InputReader.ConsumeHeavy()))
-                if (player.TryAttack(player.MoveSet.jumpAttack, -1)) return;
+            UpdateAerialWaterSlash(deltaTime);
+
+            // Projectile characters keep their magic attacks in the air instead of switching to the legacy sword jump attack.
+            bool light = player.InputReader.ConsumeLight();
+            bool heavy = player.InputReader.ConsumeHeavy();
+            if (player.HasCombat && (light || heavy))
+            {
+                if (heavy && UsesProjectileCombat && !aerialSlashActive)
+                {
+                    BeginAerialWaterSlash();
+                }
+                else if (!aerialSlashActive)
+                {
+                    AttackData aerialAttack = player.MoveSet.jumpAttack;
+                    if (UsesProjectileCombat)
+                        aerialAttack = player.MoveSet.lightCombo[0];
+                    if (aerialAttack != null && player.TryAttack(aerialAttack, -1)) return;
+                }
+            }
 
             // steer with the stick; let go and the horizontal speed slowly bleeds off
             Vector3 wish = player.CameraRelative(player.InputReader.Move);
@@ -86,9 +119,43 @@ namespace SonTinhThuyTinh.Player.States
 
         public void Exit()
         {
+            aerialSlashActive = false;
+            player.StopUpperBodyAttack();
+            player.SetAnimSpeed(1f);
             // carry the speed into the run so landing a running jump does not stop the character dead
             player.SetSpeed(velocity.magnitude);
             player.InputReader.ClearBuffered();
+        }
+
+        void BeginAerialWaterSlash()
+        {
+            aerialSlashActive = true;
+            aerialSlashFired = false;
+            aerialSlashElapsed = 0f;
+            player.FaceInput(540f);
+            player.SetAnimSpeed(0.98f);
+            player.Animator.CrossFadeInFixedTime(RightWaterSlashHash, 0.06f, 0, 0f);
+        }
+
+        void UpdateAerialWaterSlash(float deltaTime)
+        {
+            if (!aerialSlashActive) return;
+
+            aerialSlashElapsed += deltaTime;
+            if (!aerialSlashFired && aerialSlashElapsed >= AerialSlashImpactTime)
+            {
+                aerialSlashFired = true;
+                SpellData slashSpell = player.MoveSet.spells != null && player.MoveSet.spells.Length > 2
+                    ? player.MoveSet.spells[2]
+                    : null;
+                ThuyTinhWaterSpells.CastSingleWaterSlash(player, slashSpell, 1f);
+            }
+
+            if (aerialSlashElapsed < AerialSlashDuration) return;
+            aerialSlashActive = false;
+            player.SetAnimSpeed(1f);
+            player.Animator.CrossFadeInFixedTime(running ? RunJumpHash : JumpUpHash, 0.08f, 0,
+                running ? 0.35f : player.JumpSettings.standingClipOffset);
         }
     }
 }
