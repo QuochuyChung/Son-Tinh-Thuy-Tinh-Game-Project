@@ -32,6 +32,7 @@ namespace SonTinhThuyTinh.DevTools
             yield return new WaitForSeconds(1.5f);
             player = FindObjectsByType<PlayerController>(FindObjectsSortMode.None).First(p => p.isActiveAndEnabled);
             runner = FindFirstObjectByType<DialogueRunner>(FindObjectsInactive.Include);
+            UnlockAllGifts();   // the keeper's quiz (QuestQuizProgress) gates the bosses: skip it here
             var evObject = GameObject.Find(eventName);
             var ev = evObject.GetComponent<SeaBossArenaEvent>();
             var bossBehaviour = (MonoBehaviour)Field(ev, "boss");
@@ -89,6 +90,13 @@ namespace SonTinhThuyTinh.DevTools
             Log($"gift owned {GiftTracker.Has(gift)}, gifts {GiftTracker.Count}, blockers: {string.Join(",", open.Select(o => o.name + "=" + o.activeSelf))}");
             File.WriteAllText(Path.Combine(Application.dataPath, $"../Temp/sea_{eventName}_test.txt"), log.ToString());
             Log("done");
+        }
+
+        static void UnlockAllGifts()
+        {
+            var spawner = FindFirstObjectByType<PlayerSpawner>();
+            var quest = spawner != null ? spawner.Roster.Get(spawner.Character).GiftQuest : null;
+            if (quest != null) foreach (GiftItem gift in quest.RequiredGifts) QuestQuizProgress.Unlock(gift);
         }
 
         static object Field(object o, string name) => o.GetType().GetField(name, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(o);

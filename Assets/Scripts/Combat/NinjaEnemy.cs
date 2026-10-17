@@ -67,6 +67,7 @@ namespace SonTinhThuyTinh.Combat
         Coroutine move;
         bool fighting, busy, dead, hasTurn;
         int strafeSide = 1;
+        float slowUntil, slowFactor = 1f, stunUntil;
         float nextStrafeFlip, nextAttackAt, nextKickAt, closeSince = -1f, flash, recentHits, lastHitAt = -10f;
         string loopState;
         MaterialPropertyBlock block;
@@ -187,7 +188,7 @@ namespace SonTinhThuyTinh.Combat
             {
                 ReleaseTurn();
                 Loop("Run");
-                Step(to.normalized * (runSpeed * Time.deltaTime));
+                Step(to.normalized * (runSpeed * SlowK * Time.deltaTime));
                 return;
             }
             if (Time.time >= nextAttackAt && TakeTurn())
@@ -196,7 +197,7 @@ namespace SonTinhThuyTinh.Combat
                 {
                     // its turn: straight at the player (a slower run), then the blow
                     Loop("Run", 0.85f);
-                    Step(to.normalized * (runSpeed * 0.85f * Time.deltaTime));
+                    Step(to.normalized * (runSpeed * 0.85f * SlowK * Time.deltaTime));
                     return;
                 }
                 float r = UnityEngine.Random.value;
@@ -208,7 +209,7 @@ namespace SonTinhThuyTinh.Combat
             Vector3 side = Vector3.Cross(Vector3.up, to.normalized) * strafeSide;
             Vector3 radial = to.normalized * Mathf.Clamp(dist - strafeRadius, -1f, 1f);
             Loop(strafeSide > 0 ? "Strafe" : "StrafeR");
-            Step((side + radial * 0.8f).normalized * (strafeSpeed * Time.deltaTime));
+            Step((side + radial * 0.8f).normalized * (strafeSpeed * SlowK * Time.deltaTime));
         }
 
         bool TakeTurn()
@@ -339,6 +340,7 @@ namespace SonTinhThuyTinh.Combat
         {
             busy = true;
             yield return new WaitForSeconds(after);
+            while (Time.time < stunUntil && !dead) yield return null;   // a hit's short flinch must not end a stun early
             busy = false; loopState = null;
         }
 
@@ -359,7 +361,28 @@ namespace SonTinhThuyTinh.Combat
             StartCoroutine(BackToLoop(info.IsHeavy ? 0.8f : 0.55f));
         }
 
-        public void ApplySlow(float factor, float seconds) { }
+        float SlowK => Time.time < slowUntil ? slowFactor : 1f;
+
+        // Hô mưa / Núi dâng: it runs and circles at `factor` of its speed, and waits longer between blows, for a while.
+        public void ApplySlow(float factor, float seconds)
+        {
+            if (dead) return;
+            slowFactor = Mathf.Clamp(factor, 0.2f, 1f);
+            slowUntil = Mathf.Max(slowUntil, Time.time + seconds);
+            nextAttackAt = Mathf.Max(nextAttackAt, Time.time + 0.4f / slowFactor);
+        }
+
+        // Choáng: the move it was making is lost and it stands dazed (Impact) for `seconds`.
+        public void ApplyStun(float seconds)
+        {
+            if (dead) return;
+            if (move != null) { StopCoroutine(move); move = null; }
+            ReleaseTurn();
+            Act("Impact", 0.05f);
+            stunUntil = Mathf.Max(stunUntil, Time.time + seconds);
+            nextAttackAt = Mathf.Max(nextAttackAt, stunUntil + 0.4f);
+            StartCoroutine(BackToLoop(seconds));
+        }
 
         void Die()
         {

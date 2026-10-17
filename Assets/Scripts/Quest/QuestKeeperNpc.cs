@@ -11,20 +11,42 @@ namespace SonTinhThuyTinh.Quest
     {
         GiftQuest quest;
         Transform body;
+        int giftIndex = -1;   // the gift this keeper asks about (QuestKeeperMark); -1 = one keeper for all of them
 
+        // One keeper per QuestKeeperMark of the scene (one at the start of each leg); a scene without marks gets a single keeper beside
+        // the entry point, which asks about whichever gift is next.
         public static QuestKeeperNpc Spawn(Transform entrance, GiftQuest giftQuest, CharacterId character, Player.PlayerController player)
         {
             QuestKeeperNpc existing = FindFirstObjectByType<QuestKeeperNpc>();
             if (existing != null) return existing;
 
-            var root = new GameObject("NPC_NguoiGiuNhiemVu");
-            Vector3 position = entrance.position + entrance.right * 4.2f + entrance.forward * 2.2f;
-            if (Physics.Raycast(position + Vector3.up * 30f, Vector3.down, out RaycastHit hit, 80f, ~0, QueryTriggerInteraction.Ignore))
-                position.y = hit.point.y;
-            root.transform.SetPositionAndRotation(position, Quaternion.LookRotation(-entrance.right, Vector3.up));
+            QuestKeeperMark[] marks = FindObjectsByType<QuestKeeperMark>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            if (marks.Length == 0)
+            {
+                Vector3 position = entrance.position + entrance.right * 4.2f + entrance.forward * 2.2f;
+                return Create(position, Quaternion.LookRotation(-entrance.right, Vector3.up), -1, giftQuest, character, player);
+            }
+
+            QuestKeeperNpc first = null;
+            System.Array.Sort(marks, (a, b) => a.giftIndex.CompareTo(b.giftIndex));
+            foreach (QuestKeeperMark mark in marks)
+            {
+                QuestKeeperNpc npc = Create(mark.transform.position, mark.transform.rotation, mark.giftIndex, giftQuest, character, player);
+                if (first == null) first = npc;
+            }
+            return first;
+        }
+
+        static QuestKeeperNpc Create(Vector3 position, Quaternion rotation, int index, GiftQuest giftQuest, CharacterId character, Player.PlayerController player)
+        {
+            var root = new GameObject(index < 0 ? "NPC_NguoiGiuNhiemVu" : "NPC_NguoiGiuNhiemVu_" + (index + 1));
+            if (Physics.Raycast(position + Vector3.up * 2f, Vector3.down, out RaycastHit hit, 6f, ~0, QueryTriggerInteraction.Ignore))
+                position.y = hit.point.y;   // marks are already on the ground: only settle it, never climb onto a roof or a branch
+            root.transform.SetPositionAndRotation(position, rotation);
 
             var npc = root.AddComponent<QuestKeeperNpc>();
             npc.quest = giftQuest;
+            npc.giftIndex = index;
             float targetHeight = 1.7f;
             if (player != null && player.TryGetComponent(out CharacterController controller))
                 targetHeight = controller.height * Mathf.Abs(player.transform.lossyScale.y) * 0.92f;
@@ -52,6 +74,22 @@ namespace SonTinhThuyTinh.Quest
             {
                 GiftTracker.Announce("Bạn đã thu thập đủ sính lễ. Hãy trở về cung điện Vua Hùng!");
                 return;
+            }
+
+            // a keeper of one leg only asks about its own gift
+            if (giftIndex >= 0 && giftIndex < quest.RequiredGifts.Count)
+            {
+                GiftItem mine = quest.RequiredGifts[giftIndex];
+                if (GiftTracker.Has(mine))
+                {
+                    GiftTracker.Announce($"Bạn đã có <b>{mine.DisplayName}</b> rồi\nHãy tới gặp Người Giữ Nhiệm Vụ ở chặng kế tiếp để hỏi về <b>{next.DisplayName}</b>");
+                    return;
+                }
+                if (next != mine)
+                {
+                    GiftTracker.Announce($"Hãy lấy <b>{next.DisplayName}</b> trước đã\nRồi mới tới hỏi chặng này");
+                    return;
+                }
             }
             if (QuestQuizProgress.IsUnlocked(next))
             {

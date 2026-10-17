@@ -49,3 +49,6 @@ MonoBehaviour:
   tickDamage: 2
   tickInterval: 0.5
   slowFactor: 0.5
+  stunSeconds: 1.2
+  bossStunScale: 0.5
+  slowAfterHit: 2

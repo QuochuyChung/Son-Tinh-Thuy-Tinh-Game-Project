@@ -87,7 +87,7 @@ namespace SonTinhThuyTinh.Combat
             phase2Entered = false;
             if (bar != null)
             {
-                bar.Bind(bossHealth, bossDef.DisplayName);
+                bar.Bind(bossHealth, bossDef.DisplayName, bossDef.Portrait);
                 bar.Show(true);
             }
         }

@@ -1,4 +1,5 @@
 using SonTinhThuyTinh.Dialogue;
+using SonTinhThuyTinh.Environment;
 using SonTinhThuyTinh.Player;
 using UnityEngine;
 
@@ -16,16 +17,22 @@ namespace SonTinhThuyTinh.Quest
         [SerializeField] Transform mistCentre;
         [SerializeField] DialogueRunner runner;
         [SerializeField] DialogueSequence lighting;
-        [SerializeField] float fogDark = 0.0054f;
-        [SerializeField] float fogClear = 0.0030f;
+        [Tooltip("Fog density before / after the lamp, as a multiple of the density the scene was authored with (per-scene environment pass).")]
+        [SerializeField] float fogDarkScale = 1.3f;
+        [SerializeField] float fogClearScale = 0.7f;
         [SerializeField] float beaconDim = 0.6f;
         [SerializeField] float beaconBright = 30f;
 
         PlayerController player;
         float nextWarningAt;
+        float baseFog;
+        FogController weather;      // the scene's own fog swell (zuyzz's Weather_Fog), when there is one: it writes the density every frame, so we steer it, not the density
+        float weatherAmount = 1f;
 
         void Start()
         {
+            weather = FindFirstObjectByType<FogController>(FindObjectsInactive.Include);
+            baseFog = RenderSettings.fogDensity;   // what the scene authored; the lamp moves the fog around it (when there is no FogController)
             lamp.Interacted.AddListener(LightLamp);
             Apply(1f);
         }
@@ -55,7 +62,13 @@ namespace SonTinhThuyTinh.Quest
         void Apply(float step)
         {
             bool lit = SeaQuest.LampLit;
-            RenderSettings.fogDensity = Mathf.MoveTowards(RenderSettings.fogDensity, lit ? fogClear : fogDark, step * 0.004f);
+            if (weather != null)
+            {
+                // the swell reaches its peak while the lamp is out (thick) and is pinned at the calm value once it is lit (thin)
+                weatherAmount = Mathf.MoveTowards(weatherAmount, lit ? 0f : 1f, step * 0.5f);
+                weather.SetAmount(weatherAmount);
+            }
+            else RenderSettings.fogDensity = Mathf.MoveTowards(RenderSettings.fogDensity, baseFog * (lit ? fogClearScale : fogDarkScale), step * 0.004f);
             if (beacon != null) beacon.intensity = Mathf.MoveTowards(beacon.intensity, lit ? beaconBright : beaconDim, step * 40f);
             if (mist != null && mist.activeSelf == lit) mist.SetActive(!lit);
         }
