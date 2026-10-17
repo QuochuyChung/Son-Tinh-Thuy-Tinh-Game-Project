@@ -61,6 +61,7 @@ namespace SonTinhThuyTinh.Player
         float[] spellReadyAt = new float[3];
         CinemachineImpulseSource shakeSource;
         int upperBodyCombatLayer = -1;
+        AfterImageTrail afterImages;
 
         public PlayerInputReader InputReader => input;
         public Animator Animator => animator;
@@ -71,6 +72,8 @@ namespace SonTinhThuyTinh.Player
         public JumpSettings JumpSettings => jump;
         public SlideSettings Slide => slide;
         public ClimbSettings Climb => climb;
+        // Fading copies left behind by the dodge roll (null when the character has no after-images).
+        public AfterImageTrail AfterImages => afterImages;
         public float CurrentSpeed { get; private set; }
         public float RunSpeed => runSpeed;
         public float SprintSpeed => sprintSpeed;
@@ -126,6 +129,10 @@ namespace SonTinhThuyTinh.Player
             if (swordTrail == null) swordTrail = GetComponentInChildren<SwordTrail>(true);
             shakeSource = GetComponent<CinemachineImpulseSource>();
             if (shakeSource == null && moveSet != null) shakeSource = gameObject.AddComponent<CinemachineImpulseSource>();
+
+            // The dodge's after-images. Added in code (not on the prefab) the same way as the impulse source, so a character whose dodge
+            // has no spacing set simply never gets the component.
+            if (dodge.afterImageSpacing > 0f) afterImages = gameObject.AddComponent<AfterImageTrail>();
         }
 
         void OnDestroy()
