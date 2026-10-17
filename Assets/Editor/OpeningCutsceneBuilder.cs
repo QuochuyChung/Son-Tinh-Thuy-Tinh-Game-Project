@@ -40,7 +40,7 @@ namespace SonTinhThuyTinh.EditorTools
 
             var marks = new GameObject("Marks").transform; marks.SetParent(set);
             Vector3 avenue = new(0f, 14f, 10f);
-            var seat = CineSetBuilder.Mark(marks, "KingSeat", CineSetBuilder.DaisCenter + new Vector3(0f, CineSetBuilder.DaisTop, 0.2f), avenue);
+            var seat = CineSetBuilder.Mark(marks, "KingSeat", CineSetBuilder.DaisCenter + new Vector3(0f, CineSetBuilder.DaisTop, CineSetBuilder.SeatZ), avenue);
             var miMark = CineSetBuilder.Mark(marks, "MiNuong", new Vector3(-2.9f, 14f, 32.2f), new Vector3(0f, 14f, 22f));
             var sonMark = CineSetBuilder.Mark(marks, "SonTinh", new Vector3(-4.2f, 14f, 21f), new Vector3(0f, 14f, 33f));
             var thuyMark = CineSetBuilder.Mark(marks, "ThuyTinh", new Vector3(4.2f, 14f, 21f), new Vector3(0f, 14f, 33f));
@@ -64,6 +64,7 @@ namespace SonTinhThuyTinh.EditorTools
             so.FindProperty("sonTinh").objectReferenceValue = son;
             so.FindProperty("thuyTinh").objectReferenceValue = thuy;
             so.FindProperty("kingSeat").objectReferenceValue = seat;
+            so.FindProperty("kingStand").objectReferenceValue = CineSetBuilder.Mark(marks, "KingStand", new Vector3(0f, CineSetBuilder.StepTop(0f, 32.7f), 32.7f), avenue);
             so.FindProperty("miNuongMark").objectReferenceValue = miMark;
             so.FindProperty("sonTinhMark").objectReferenceValue = sonMark;
             so.FindProperty("thuyTinhMark").objectReferenceValue = thuyMark;

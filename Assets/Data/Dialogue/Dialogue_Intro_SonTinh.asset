@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9f060c80f7fac4489c5efa5acdfa9b5, type: 3}
+  m_Name: Dialogue_Intro_SonTinh
+  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Dialogue.DialogueSequence
+  lines:
+  - speaker: 
+    text: "N\xFAi T\u1EA3n Vi\xEAn. T\u1EEB ch\xE2n n\xFAi n\xE0y, S\u01A1n Tinh
+      l\xEAn \u0111\u01B0\u1EDDng \u0111i t\xECm s\xEDnh l\u1EC5 d\xE2ng l\xEAn vua
+      H\xF9ng."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "\u1EDE m\u1ED7i ch\u1EB7ng \u0111\u01B0\u1EDDng \u0111\u1EC1u c\xF3 m\u1ED9t
+      Ng\u01B0\u1EDDi Gi\u1EEF Nhi\u1EC7m V\u1EE5. H\xE3y t\u1EDBi g\u1EA7n, nh\u1EA5n
+      E \u0111\u1EC3 n\xF3i chuy\u1EC7n v\xE0 tr\u1EA3 l\u1EDDi ba c\xE2u h\u1ECFi,
+      h\u1ECD s\u1EBD m\u1EDF kh\xF3a s\xEDnh l\u1EC5 k\u1EBF ti\u1EBFp cho ng\u01B0\u01A1i."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "S\xEDnh l\u1EC5 g\u1ED3m ba linh th\xFA. Tr\u01B0\u1EDBc h\u1EBFt l\xE0
+      Ng\u1EF1a ch\xEDn h\u1ED3ng mao, \u1EA9n tr\xEAn \u0111\u1EC9nh n\xFAi ph\xEDa
+      t\xE2y, qua con \u0111\u01B0\u1EDDng m\xF2n d\u1ED1c \u0111\u1EE9ng."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "Ti\u1EBFp theo l\xE0 G\xE0 ch\xEDn c\u1EF1a, canh gi\u1EEF khu r\u1EEBng
+      gi\u1EEFa \u0111\u01B0\u1EDDng l\xEAn n\xFAi."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "Cu\u1ED1i c\xF9ng l\xE0 Voi ch\xEDn ng\xE0, ch\xFAa t\u1EC3 c\u1EE7a \u0111\u1EA1i
+      ng\xE0n. Ph\u1EA3i khu\u1EA5t ph\u1EE5c n\xF3 m\u1EDBi \u0111\u1EE7 ba s\xEDnh
+      l\u1EC5."
+    illustration: {fileID: 0}
+  - speaker: 
+    text: "C\xF3 \u0111\u1EE7 ba linh th\xFA, h\xE3y qua c\xE1nh c\u1ED5ng \u1EDF
+      cu\u1ED1i \u0111\u01B0\u1EDDng \u0111\u1EC3 v\u1EC1 kinh \u0111\xF4 d\xE2ng
+      l\u1EC5 l\xEAn H\xF9ng V\u01B0\u01A1ng. Th\u1EE7y Tinh c\u0169ng \u0111\xE3
+      l\xEAn \u0111\u01B0\u1EDDng, \u0111\u1EEBng ch\u1EADm ch\xE2n!"
+    illustration: {fileID: 0}
+  - speaker: "S\u01A1n Tinh"
+    text: "S\xEDnh l\u1EC5 n\xE0y, nh\u1EA5t \u0111\u1ECBnh ta ph\u1EA3i mang v\u1EC1
+      tr\u01B0\u1EDBc. \u0110i th\xF4i!"
+    illustration: {fileID: 0}

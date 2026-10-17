@@ -40,7 +40,7 @@ namespace SonTinhThuyTinh.EditorTools
 
             var marks = new GameObject("Marks").transform; marks.SetParent(set);
             Vector3 avenue = new(0f, 14f, 10f), palace = new(0f, 14f, 34f);
-            var kingMark = CineSetBuilder.Mark(marks, "King", new Vector3(0f, 14.5f, 32.6f), avenue);
+            var kingMark = CineSetBuilder.Mark(marks, "King", new Vector3(0f, CineSetBuilder.StepTop(0f, 32.6f), 32.6f), avenue);
             var miMark = CineSetBuilder.Mark(marks, "MiNuong", new Vector3(-2.9f, 14f, 32.2f), new Vector3(0f, 14f, 22f));
             var sonMark = CineSetBuilder.Mark(marks, "SonTinh", new Vector3(-2.3f, 14f, 25.6f), palace);
             var thuyMark = CineSetBuilder.Mark(marks, "ThuyTinh", new Vector3(2.3f, 14f, 25.6f), palace);

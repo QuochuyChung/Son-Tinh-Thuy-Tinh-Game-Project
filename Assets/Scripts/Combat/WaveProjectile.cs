@@ -29,7 +29,9 @@ namespace SonTinhThuyTinh.Combat
             {
                 if (!hit.Add(h)) continue;
                 var info = new DamageInfo(spell.damage, caster.gameObject, h.transform.position, true);
-                if (h.TakeDamage(info)) h.GetComponentInParent<IHitReceiver>()?.OnHit(info, transform.forward * spell.knockback + Vector3.up * spell.knockUp);
+                if (!h.TakeDamage(info)) continue;
+                h.GetComponentInParent<IHitReceiver>()?.OnHit(info, transform.forward * spell.knockback + Vector3.up * spell.knockUp);
+                SpellEffects.StunAndSlow(h, spell);
             }
             if (Vector3.Distance(start, transform.position) >= spell.range)
             {

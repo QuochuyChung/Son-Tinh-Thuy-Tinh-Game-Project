@@ -19,6 +19,7 @@ namespace SonTinhThuyTinh.Combat
                 var info = new DamageInfo(spell.damage, caster.gameObject, h.transform.position, false);
                 if (!h.TakeDamage(info)) continue;
                 h.GetComponentInParent<IHitReceiver>()?.OnHit(info, pull * Mathf.Min(spell.speed, distance * 3f) + Vector3.up * spell.knockUpSpeed);
+                SpellEffects.StunAndSlow(h, spell);
             }
             transform.SetParent(caster.transform, true);
             Destroy(gameObject, spell.effectDuration);

@@ -309,8 +309,7 @@ namespace SonTinhThuyTinh.EditorTools
                 if (sinceTorch >= 30f)
                 {
                     sinceTorch = 0f;
-                    Vector2 m = (a + b) * 0.5f + side * (torchSide * (width * 0.5f + 0.5f));
-                    MapDecor.Torch(root, new Vector3(m.x, PierDeck - 0.05f, m.y));
+                    // (no torches on the walkways over the water: removed on request)
                     torchSide = -torchSide;
                 }
             }
@@ -368,6 +367,7 @@ namespace SonTinhThuyTinh.EditorTools
                 box.center = new Vector3(0f, 0.25f, 0f);
                 box.size = new Vector3(2.1f, 0.5f, 6.8f);
             }
+            NewProps.DressBoat(root, wreck);   // the carved longboat model replaces the junk's planks, mast and cabin, when it is in the project
             return root.gameObject;
         }
 

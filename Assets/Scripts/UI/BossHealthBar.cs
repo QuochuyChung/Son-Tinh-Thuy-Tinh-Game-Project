@@ -29,16 +29,55 @@ namespace SonTinhThuyTinh.UI
         [SerializeField] float trailDrainPerSecond = 0.3f;
         [SerializeField] float fadeSpeed = 3f;
 
+        [Header("Portrait (optional)")]
+        [Tooltip("Flame emblem drawn behind the boss's head, like the player's HUD.")]
+        [SerializeField] Sprite emblemSprite;
+        [SerializeField] float portraitSize = 170f;
+
         Health health;
         float shown = 1f, trailShown = 1f, trailHold, targetAlpha;
 
-        public void Bind(Health target, string displayName)
+        public void Bind(Health target, string displayName, Sprite portrait = null)
         {
             health = target;
             if (nameLabel != null) nameLabel.text = displayName;
+            ShowPortrait(portrait);
             shown = trailShown = health.Normalized;
             SetPhase2(false);
             Apply();
+        }
+
+        // The boss's head on a fire-bird emblem at the left end of the bar (the same look as the player's, bottom-left of the screen).
+        void ShowPortrait(Sprite portrait)
+        {
+            Transform old = transform.Find("BossPortrait");
+            if (old != null) Destroy(old.gameObject);
+            if (portrait == null) return;
+
+            var root = new GameObject("BossPortrait", typeof(RectTransform));
+            root.transform.SetParent(transform, false);
+            root.transform.SetAsFirstSibling();
+            var rootRect = (RectTransform)root.transform;
+            rootRect.anchorMin = rootRect.anchorMax = new Vector2(0f, 0.5f);
+            rootRect.pivot = new Vector2(0.5f, 0.5f);
+            rootRect.sizeDelta = Vector2.one * portraitSize;
+            rootRect.anchoredPosition = new Vector2(-portraitSize * 0.35f, -portraitSize * 0.28f);
+
+            if (emblemSprite != null) Picture(rootRect, "Emblem", emblemSprite, portraitSize * 1.5f);
+            Picture(rootRect, "Face", portrait, portraitSize);
+        }
+
+        static void Picture(RectTransform parent, string name, Sprite sprite, float size)
+        {
+            var go = new GameObject(name, typeof(RectTransform), typeof(Image));
+            go.transform.SetParent(parent, false);
+            var rect = (RectTransform)go.transform;
+            rect.anchorMin = rect.anchorMax = new Vector2(0.5f, 0.5f);
+            rect.sizeDelta = Vector2.one * size;
+            var image = go.GetComponent<Image>();
+            image.sprite = sprite;
+            image.preserveAspect = true;
+            image.raycastTarget = false;
         }
 
         public void Show(bool on)

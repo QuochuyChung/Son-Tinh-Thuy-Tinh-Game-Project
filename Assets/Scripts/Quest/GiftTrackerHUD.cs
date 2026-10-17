@@ -19,6 +19,15 @@ namespace SonTinhThuyTinh.Quest
 
         Coroutine bannerRoutine;
 
+        void Awake()
+        {
+            // the health-bar look (gold frame, dark blue track) with rounded corners, on the checklist and on the banner
+            if (checklistText != null && checklistText.transform.parent is RectTransform list)
+                UiFrame.Apply(list, new Color(0.03f, 0.05f, 0.12f, 0.92f), new Color(0.10f, 0.14f, 0.28f, 0.92f));
+            if (bannerText != null && bannerText.transform.parent is RectTransform note)
+                UiFrame.Apply(note, new Color(0.16f, 0.03f, 0.03f, 0.94f), new Color(0.36f, 0.08f, 0.06f, 0.94f));
+        }
+
         void OnEnable()
         {
             GiftTracker.Collected += OnCollected;

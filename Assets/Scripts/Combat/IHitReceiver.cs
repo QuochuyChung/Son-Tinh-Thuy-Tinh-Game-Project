@@ -11,5 +11,8 @@ namespace SonTinhThuyTinh.Combat
 
         // The target moves and acts at `factor` of its speed (0.5 = half) for `seconds`; calling again refreshes it.
         void ApplySlow(float factor, float seconds);
+
+        // Stunned: the target all but freezes for `seconds`. By default a very hard slow; NinjaEnemy overrides it with a real flinch.
+        void ApplyStun(float seconds) => ApplySlow(0.1f, seconds);
     }
 }

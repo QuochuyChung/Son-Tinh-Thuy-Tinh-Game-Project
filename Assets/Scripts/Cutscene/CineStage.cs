@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -16,6 +17,7 @@ namespace SonTinhThuyTinh.Cutscene
         [SerializeField] Material stone;
         [SerializeField] Material puddle;
         [SerializeField] GameObject[] rockPrefabs;
+        [SerializeField] GameObject[] mountainPrefabs;   // tall rock models that rise as Sơn Tinh's mountains (origin at their foot); empty = plain blocks
         [SerializeField] Volume volume;
         [SerializeField] Light sun;
         [SerializeField] CinematicFx fx;
@@ -179,7 +181,7 @@ namespace SonTinhThuyTinh.Cutscene
         // Boulders (the map's rock prefabs) push up out of the ground and stay until SinkRocks. They form an arc round `center` on the
         // side away from `awayFrom` (a point; null = a full ring) and never come within `clear` metres of it, so they cannot reach
         // another actor.
-        public IEnumerator RaiseRocks(Vector3 center, float radius, int count, float seconds = 1.4f, Vector3? awayFrom = null, float clear = 3.5f)
+        public IEnumerator RaiseRocks(Vector3 center, float radius, int count, float seconds = 1.4f, Vector3? awayFrom = null, float clear = 3.5f, bool blocks = false, float arcDegrees = 230f)
         {
             var rocks = new List<(Transform t, Vector3 from, Vector3 to, Quaternion rot, float delay)>();
             var rng = new System.Random(7);
@@ -187,7 +189,7 @@ namespace SonTinhThuyTinh.Cutscene
             if (awayFrom.HasValue)
             {
                 Vector3 away = center - awayFrom.Value; away.y = 0f;
-                centreAngle = Mathf.Atan2(away.x, away.z) * Mathf.Rad2Deg; span = 230f;
+                centreAngle = Mathf.Atan2(away.x, away.z) * Mathf.Rad2Deg; span = arcDegrees;
             }
             for (int i = 0; i < count; i++)
             {
@@ -203,7 +205,26 @@ namespace SonTinhThuyTinh.Cutscene
                 }
                 GameObject go;
                 float h = 3.0f + (float)rng.NextDouble() * 2.6f;   // metres tall
-                if (rockPrefabs != null && rockPrefabs.Length > 0)
+                float mountainScale = 1f;
+                if (blocks && mountainPrefabs != null && mountainPrefabs.Length > 0)
+                {
+                    go = Instantiate(mountainPrefabs[rng.Next(mountainPrefabs.Length)]);
+                    h = 8f + (float)rng.NextDouble() * 4f;
+                    var mr = go.GetComponentsInChildren<Renderer>(); var mb = mr[0].bounds; foreach (var q in mr) mb.Encapsulate(q.bounds);
+                    mountainScale = h / Mathf.Max(mb.size.y, 0.1f);
+                    go.transform.localScale = go.transform.localScale * mountainScale;
+                }
+                else if (blocks)
+                {
+                    // plain tall rectangular blocks: stand-ins for the mountains (to be swapped for a modelled mountain)
+                    h = 8f + (float)rng.NextDouble() * 4f;
+                    go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    go.transform.localScale = new Vector3(4.5f + (float)rng.NextDouble() * 2f, h, 4f + (float)rng.NextDouble() * 2f);
+                    var rend = go.GetComponent<Renderer>();
+                    if (stone != null) rend.sharedMaterial = stone;
+                    else { var m = new Material(Shader.Find("Universal Render Pipeline/Lit")); m.color = new Color(0.45f, 0.45f, 0.48f); rend.sharedMaterial = m; }
+                }
+                else if (rockPrefabs != null && rockPrefabs.Length > 0)
                 {
                     go = Instantiate(rockPrefabs[rng.Next(rockPrefabs.Length)]);
                     go.transform.localScale = new Vector3(1.8f + (float)rng.NextDouble() * 1.2f, h, 1.8f + (float)rng.NextDouble() * 1.2f);
@@ -216,9 +237,10 @@ namespace SonTinhThuyTinh.Cutscene
                 }
                 foreach (var c in go.GetComponentsInChildren<Collider>()) Destroy(c);
                 go.name = "StageRock";
-                Vector3 to = new Vector3(spot.x, center.y - 0.6f, spot.z);
+                Vector3 to = new Vector3(spot.x, center.y - 0.6f + (blocks && !(mountainPrefabs != null && mountainPrefabs.Length > 0) ? h * 0.5f : 0f), spot.z);
                 go.transform.position = to + Vector3.down * (h + 1.5f);
-                go.transform.rotation = Quaternion.Euler(((float)rng.NextDouble() - 0.5f) * 14f, (float)rng.NextDouble() * 360f, ((float)rng.NextDouble() - 0.5f) * 14f);
+                go.transform.rotation = blocks ? Quaternion.Euler(0f, (float)rng.NextDouble() * 360f, 0f) : Quaternion.Euler(((float)rng.NextDouble() - 0.5f) * 14f, (float)rng.NextDouble() * 360f, ((float)rng.NextDouble() - 0.5f) * 14f);
+                if (blocks) { float foot = (mountainPrefabs != null && mountainPrefabs.Length > 0 ? 4f * mountainScale : Mathf.Max(go.transform.localScale.x, go.transform.localScale.z)) * 1.45f + 3f; HideScenery(new Bounds(new Vector3(to.x, center.y + h * 0.5f, to.z), new Vector3(foot, h + 4f, foot))); }
                 spawned.Add(go);
                 rocks.Add((go.transform, go.transform.position, to, go.transform.rotation, (float)rng.NextDouble() * 0.5f));
             }
@@ -238,6 +260,41 @@ namespace SonTinhThuyTinh.Cutscene
             }
         }
 
+        // Trees, rocks, torches, banners... of the map that stand where a stage block rises are put away (so nothing is crossed by a
+        // block) and come back when the blocks have sunk.
+        readonly List<GameObject> hiddenScenery = new();
+        static readonly string[] SceneryNames = { "Tree", "Bush", "Rock", "Stone", "Plant", "Flower", "Grass", "Fern", "Mushroom", "Torch", "Banner", "Drum", "Crystal", "Fence", "Barricade" };
+
+        void HideScenery(Bounds area)
+        {
+            foreach (var r in FindObjectsByType<Renderer>(FindObjectsSortMode.None))
+            {
+                if (r is ParticleSystemRenderer || !r.enabled || !r.bounds.Intersects(area)) continue;
+                if (r.GetComponentInParent<ActorRig>() != null || r.GetComponentInParent<Canvas>() != null) continue;
+                var u = r.transform;
+                while (u.parent != null && u.parent.parent != null && u.parent.childCount <= 6) u = u.parent;
+                if (!u.gameObject.activeSelf || u.name.StartsWith("Stage")) continue;
+                string n = u.name, par = u.parent != null ? u.parent.name : "";
+                bool scenery = SceneryNames.Any(k => n.Contains(k) || par.Contains(k));
+                if (!scenery || n.Contains("Palace") || n.Contains("Throne")) continue;
+                u.gameObject.SetActive(false);
+                hiddenScenery.Add(u.gameObject);
+            }
+        }
+
+        void RestoreScenery()
+        {
+            foreach (var go in hiddenScenery) if (go != null) go.SetActive(true);
+            hiddenScenery.Clear();
+        }
+
+        // The blocks and the scenery put away for them are back at once (a skipped scene must not leave them standing).
+        public void ClearRocksNow()
+        {
+            foreach (var go in spawned.Where(g => g != null && g.name == "StageRock").ToList()) { spawned.Remove(go); Destroy(go); }
+            RestoreScenery();
+        }
+
         // The rocks sink back into the ground and are removed.
         public IEnumerator SinkRocks(float seconds = 1.4f)
         {
@@ -246,10 +303,11 @@ namespace SonTinhThuyTinh.Cutscene
             for (float t = 0f; t < seconds; t += Time.deltaTime)
             {
                 float k = t / seconds;
-                foreach (var r in list) if (r.t != null) r.t.position = r.from + Vector3.down * (k * k * 8f);
+                foreach (var r in list) if (r.t != null) r.t.position = r.from + Vector3.down * (k * k * 16f);
                 yield return null;
             }
             foreach (var r in list) if (r.t != null) { spawned.Remove(r.t.gameObject); Destroy(r.t.gameObject); }
+            RestoreScenery();
         }
 
         // ---------------------------------------------------------------- Thủy Tinh: water gathers

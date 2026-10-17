@@ -1,0 +1,110 @@
+[
+  {
+    "id": "STTT_HARD_01",
+    "difficulty": "Hard",
+    "category": "Thần tích & Phả hệ",
+    "question": "Theo các bản thần tích vùng Ba Vì và Đền Và, danh xưng lúc sinh thời của Sơn Tinh là gì?",
+    "options": ["Nguyễn Tuấn", "Nguyễn Sùng", "Nguyễn Hiển", "Đinh Tuấn"],
+    "correct_index": 0,
+    "explanation": "Sơn Tinh tên thật là Nguyễn Tuấn, sinh ra tại động Lăng Xương (nay thuộc Thanh Thủy, Phú Thọ)."
+  },
+  {
+    "id": "STTT_HARD_02",
+    "difficulty": "Hard",
+    "category": "Thần tích & Phả hệ",
+    "question": "Hai người em họ cùng phò tá Sơn Tinh, hợp xưng thành bộ ba 'Tam vị Đức Thánh Tản' là ai?",
+    "options": ["Cao Lỗ và Nồi Hầu", "Cao Sơn và Quý Minh", "Chử Đồng Tử và Quý Minh", "Dạ Trạch và Cao Sơn"],
+    "correct_index": 1,
+    "explanation": "Tam vị Tản Viên Sơn Thánh gồm Nguyễn Tuấn (Tản Viên), Nguyễn Sùng (Cao Sơn) và Nguyễn Hiển (Quý Minh)."
+  },
+  {
+    "id": "STTT_HARD_03",
+    "difficulty": "Hard",
+    "category": "Thần tích & Nhân vật",
+    "question": "Vị nữ thần cai quản non ngàn nào đã nhận Nguyễn Tuấn làm con nuôi và trao lại quyền quản lĩnh dãy núi Tản Viên?",
+    "options": ["Tây Thiên Quốc Mẫu", "Tiên Dung Công chúa", "Ma Thị Cao Sơn", "Liễu Hạnh Công chúa"],
+    "correct_index": 2,
+    "explanation": "Bà Ma Thị Cao Sơn nhận thấy Nguyễn Tuấn có đức độ nên nhận làm con nuôi và lập di chúc giao toàn quyền quản lĩnh núi Tản."
+  },
+  {
+    "id": "STTT_HARD_04",
+    "difficulty": "Hard",
+    "category": "Bảo vật Thần thoại",
+    "question": "Theo huyền tích, chiếc gậy thần có hai đầu (đầu sinh - đầu tử) mà Sơn Tinh được ban tặng làm bằng chất liệu gì?",
+    "options": ["Gỗ dâu ngàn năm", "Thân cây trúc", "Xương thú dữ", "Đồng đen đúc đặc"],
+    "correct_index": 1,
+    "explanation": "Thái Bạch Kim Tinh hóa thân thành đạo sĩ tặng Nguyễn Tuấn chiếc gậy bằng thân cây trúc trên đỉnh núi Tản, có một đầu cứu sống và một đầu chỉ chết."
+  },
+  {
+    "id": "STTT_HARD_05",
+    "difficulty": "Hard",
+    "category": "Thần tích & Danh xưng",
+    "question": "Trong các ngọc phả triều Hùng và văn khấn dân gian, công chúa Mị Nương (vợ Sơn Tinh) thường được gọi bằng mỹ hiệu nào?",
+    "options": ["Bạch Hoa công chúa", "Ngọc Hoa công chúa", "Tiên Dung công chúa", "Phương Dung công chúa"],
+    "correct_index": 1,
+    "explanation": "Theo thần phả đền Và và di tích đền Hùng, con gái Vua Hùng thứ 18 lấy Sơn Tinh có tên hiệu là Ngọc Hoa công chúa."
+  },
+  {
+    "id": "STTT_HARD_06",
+    "difficulty": "Hard",
+    "category": "Địa danh Lịch sử",
+    "question": "Di tích Động Lăng Xương - nơi ghi nhận là quê hương và nơi sinh của Tản Viên Sơn Thánh - hiện thuộc tỉnh nào?",
+    "options": ["Hà Nội", "Vĩnh Phúc", "Phú Thọ", "Hòa Bình"],
+    "correct_index": 2,
+    "explanation": "Động Lăng Xương nằm tại xã Trung Minh, huyện Thanh Thủy, tỉnh Phú Thọ, là nơi thờ thân mẫu và Sơn Tinh."
+  },
+  {
+    "id": "STTT_NIGHTMARE_01",
+    "difficulty": "Nightmare",
+    "category": "Văn bản Cổ thư",
+    "question": "Trong tác phẩm 'Lĩnh Nam Chích Quái' (thế kỷ XV), danh xưng ban đầu của Thủy Tinh khi vào bái kiến Hùng Vương là gì?",
+    "options": ["Hà Bá Thần Quân", "Động Đình Thiếu Chủ", "Thần Động Hải", "Bắc Hải Long Vương"],
+    "correct_index": 2,
+    "explanation": "Văn bản Lĩnh Nam Chích Quái chép rõ: 'Một người xưng là Thần Động Hải, một người xưng là Thần Núi Tản Viên'."
+  },
+  {
+    "id": "STTT_NIGHTMARE_02",
+    "difficulty": "Nightmare",
+    "category": "Bảo vật Thần thoại",
+    "question": "Bảo vật 'Sách Ước' (Ước thư) giúp Sơn Tinh có thể biến hóa vạn vật có nguồn gốc từ đâu theo huyền tích?",
+    "options": ["Được chôn dưới chân cột đá đỉnh Tản Viên", "Do Động Đình Long Vương tặng để tạ ơn cứu sống thái tử Tiểu Long", "Do Vua Hùng trao tặng cùng Mị Nương làm hồi môn", "Thái Thượng Lão Quân giáng trần trao vào đêm trăng tròn"],
+    "correct_index": 1,
+    "explanation": "Nguyễn Tuấn cứu sống con rắn nước (Tiểu Long - con Động Đình Long Vương), Long Vương cảm kích mời xuống thủy phủ và tặng cuốn Sách Ước màu xanh."
+  },
+  {
+    "id": "STTT_NIGHTMARE_03",
+    "difficulty": "Nightmare",
+    "category": "Văn hóa - Nhân học",
+    "question": "Dưới góc độ văn hóa - nhân học, danh sách sính lễ 'Voi 9 ngà, Gà 9 cựa, Ngựa 9 hồng mao' mang ý nghĩa ngầm định nào?",
+    "options": ["Sản vật chỉ có ở phương Bắc, ám chỉ liên minh ngoại giao", "Toàn bộ là sản vật vùng rừng núi, cho thấy sự thiên vị có chủ đích của Vua Hùng đối với bộ tộc trên cạn", "Các con số 9 tượng trưng cho 9 đạo quân tinh nhuệ của Thủy Tinh", "Là nghi thức thử thách của thị tộc mẫu hệ đối với rể hiền"],
+    "correct_index": 1,
+    "explanation": "Các lễ vật thách cưới hoàn toàn là sản vật trên cạn/vùng rừng núi, cho thấy liên minh cư dân nông nghiệp - trung du ưu tiên gắn kết với cư dân vùng cao hơn thế lực sông nước trũng thấp."
+  },
+  {
+    "id": "STTT_NIGHTMARE_04",
+    "difficulty": "Nightmare",
+    "category": "Lịch sử & Phả hệ",
+    "question": "Theo thần phả, khi Vua Hùng thứ 18 già yếu ngỏ ý muốn nhường ngai vàng, Sơn Tinh đã hành xử như thế nào?",
+    "options": ["Lên ngôi xưng vương hiệu là Hùng Duệ Vương", "Xin chia đôi bờ cõi, lấy sông Hồng làm ranh giới", "Từ chối và khuyên Vua Hùng nhường ngôi cho Thục Phán để giữ hòa khí dân tộc", "Rút lui vào rừng sâu tu tiên, cắt đứt quan hệ với triều đình"],
+    "correct_index": 2,
+    "explanation": "Sơn Tinh khuyên vua nên truyền ngôi cho Thục Phán (Ân vương/Âu Việt) để tránh nạn binh đao tương tàn, sau đó Thục Phán lập nên nước Âu Lạc."
+  },
+  {
+    "id": "STTT_NIGHTMARE_05",
+    "difficulty": "Nightmare",
+    "category": "Tín ngưỡng & Phong sắc",
+    "question": "Trong hệ thống thờ tự và sắc phong của các triều đại phong kiến Đại Việt, Sơn Tinh được tôn xưng bằng danh hiệu tối thượng nào?",
+    "options": ["Thiên Hạ Đô Thành Hoàng", "Thượng Đẳng Tối Linh Thần", "Nam Thiên Thần Tổ", "Bách Thần Thống Lĩnh Quân"],
+    "correct_index": 2,
+    "explanation": "Tản Viên Sơn Thánh đứng đầu hàng Tứ Bất Tử và được nhà nước phong kiến tôn vinh là 'Nam Thiên Thần Tổ' (Vị Thần Tổ của cõi trời Nam)."
+  },
+  {
+    "id": "STTT_NIGHTMARE_06",
+    "difficulty": "Nightmare",
+    "category": "Nghi lễ & Lễ hội",
+    "question": "Lễ hội Đền Và (thờ Tản Viên Sơn Thánh) có nghi thức rước kiệu vượt sông Hồng sang đền Ngự Dội (Vĩnh Phúc) tắm tượng được tổ chức theo chu kỳ địa chi nào?",
+    "options": ["Các năm Dần - Thân - Tỵ - Hợi", "Các năm Tý - Ngọ - Mão - Dậu", "Các năm Thìn - Tuất - Sửu - Mùi", "Chỉ tổ chức vào các năm Giáp và Kỷ"],
+    "correct_index": 1,
+    "explanation": "Đại hội Đền Và với nghi thức rước kiệu qua sông Hồng làm lễ Mộc Dục (tắm tượng) được tổ chức định kỳ vào các năm Tý - Ngọ - Mão - Dậu."
+  }
+]

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0150af9b7511ec942a27b9d2f3a361c7, type: 3}
   m_Name: Gift_MinhChauDayVuc
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Quest.GiftItem
-  displayName: "Minh ch\xE2u \u0111\xE1y v\u1EF1c"
+  displayName: "Sấu Chín Đuôi"
   description: "Vi\xEAn ng\u1ECDc s\xE1ng S\u1EA5u Ch\xEDn \u0110u\xF4i gi\u1EEF
     d\u01B0\u1EDBi \u0111\xE1y v\u1EF1c s\xE2u, s\xEDnh l\u1EC5 Th\u1EE7y Tinh d\xE2ng
     Vua H\xF9ng."

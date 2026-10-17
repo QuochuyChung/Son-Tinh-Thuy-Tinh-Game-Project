@@ -92,8 +92,8 @@ namespace SonTinhThuyTinh.EditorTools
             go.transform.SetParent(root, false);
             go.transform.position = new Vector3(XMin, BaseY, ZMin);
             var terrain = go.GetComponent<Terrain>();
-            terrain.heightmapPixelError = 4f;
-            terrain.basemapDistance = 500f;
+            terrain.heightmapPixelError = 1f;
+            terrain.basemapDistance = 1000f;
             terrain.shadowCastingMode = ShadowCastingMode.On;
             EditorUtility.SetDirty(data);
             return terrain;

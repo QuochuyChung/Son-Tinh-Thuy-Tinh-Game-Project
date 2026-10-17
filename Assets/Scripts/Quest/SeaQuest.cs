@@ -56,6 +56,17 @@ namespace SonTinhThuyTinh.Quest
         public static bool IntroSeen(string key) => introsSeen.Contains(key);
         public static void MarkIntroSeen(string key) => introsSeen.Add(key);
 
+        // A new game (GameSession.StartNewGame): the pirates are back, the lamp is out again, the intros play again.
+        public static void Reset()
+        {
+            State = SeaQuestState.NotStarted;
+            LampLit = false;
+            GhostsCleared = false;
+            ElderMet = false;
+            introsSeen.Clear();
+            Changed?.Invoke();
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         static void ResetOnPlay()
         {

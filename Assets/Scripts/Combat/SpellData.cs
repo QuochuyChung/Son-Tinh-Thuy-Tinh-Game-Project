@@ -34,5 +34,10 @@ namespace SonTinhThuyTinh.Combat
         public float tickInterval = 0.5f;
         [Tooltip("Rain: speed of targets inside (0.5 = half).")]
         public float slowFactor = 0.5f;
+        [Tooltip("Wind / Wave: how long what it hits is stunned (0 = no stun). Bosses are stunned for bossStunScale of it.")]
+        public float stunSeconds = 0f;
+        [Range(0f, 1f)] public float bossStunScale = 0.5f;
+        [Tooltip("Wave: also slows what it hits for this many seconds, at slowFactor.")]
+        public float slowAfterHit = 0f;
     }
 }
