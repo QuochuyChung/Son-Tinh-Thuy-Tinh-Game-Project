@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Spell_Wave
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.SpellData
   stateName: SpellWave
-  animSpeed: 1.15
+  animSpeed: 0.98
   duration: 1.5043479
   hitStart: 0
   hitEnd: 0
   comboStart: 1.0869565
   staminaCost: 0
-  damage: 70
+  damage: 20
   heavy: 1
   superArmor: 1
   hitCenter: {x: 0, y: 1, z: 1.4}
@@ -35,10 +35,10 @@ MonoBehaviour:
   swingEffect: {fileID: 0}
   swingEffectTime: 0
   swingEffectScale: 1
-  displayName: "S\xF3ng n\u01B0\u1EDBc"
+  displayName: "V\u1EA1n Th\u1EE7y Tr\u1EA3m"
   color: {r: 0.2, g: 0.85, b: 0.9, a: 1}
-  kind: 2
-  cooldown: 10
+  kind: 5
+  cooldown: 14
   effectPrefab: {fileID: 2530278053439715347, guid: f9c3bd4428b813448bac6e0abdb63395, type: 3}
   effectTime: 0.39130434
   radius: 2.5

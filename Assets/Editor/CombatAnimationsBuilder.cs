@@ -165,12 +165,12 @@ namespace SonTinhThuyTinh.EditorTools
                 string name = original.name;
                 if (thuy)
                 {
-                    // armed locomotion and jumps; slide, sprint and death stay the unarmed clips
+                    // Thuy Tinh keeps the mage locomotion overrides. Both jumps deliberately use
+                    // Son Tinh's unarmed clips so sprint-jumping cannot bring back the sword pose.
                     if (name == "Idle") mine = Clip("GS_Idle");
                     else if (name == "Walk") mine = Clip("GS_Walk");
                     else if (name == "Run") mine = Clip("GS_Run");
-                    else if (name == "JumpUp") mine = Clip("GS_Jump");
-                    else if (name == "RunJump") mine = Clip("GS_RunJump");
+                    else if (name == "JumpUp" || name == "RunJump") mine = original;
                     else if (name == "GS_Roll") mine = Clip("GS_Roll");
                     else if (CombatStates.Any(c => c.clip == name)) mine = original;
                 }

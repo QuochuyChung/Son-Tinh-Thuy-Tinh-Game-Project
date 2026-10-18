@@ -27,8 +27,9 @@ namespace SonTinhThuyTinh.Player.States
                 return;
             }
 
-            // C while sprinting: slide. (A press while not sprinting is thrown away.)
-            if (input.ConsumeSlide() && player.CanSlide && (player.Slide.staminaCost <= 0f || player.Stamina.TryConsume(player.Slide.staminaCost)))
+            // F: slide immediately while grounded. C stays available for the third spell.
+            if (input.ConsumeSlide() && player.CanSlide &&
+                (player.Slide.staminaCost <= 0f || player.Stamina.TryConsume(player.Slide.staminaCost)))
             {
                 player.ChangeState(player.SlideState);
                 return;

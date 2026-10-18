@@ -11,6 +11,7 @@ namespace SonTinhThuyTinh.Player
     {
         static readonly int LocomotionBlendParam = Animator.StringToHash("LocomotionBlend");
         static readonly int AnimSpeedParam = Animator.StringToHash("AnimSpeed");
+        const string UpperBodyCombatLayerName = "UpperBodyCombat";
 
         [SerializeField] PlayerInputReader input;
         [SerializeField] Animator animator;
@@ -40,7 +41,7 @@ namespace SonTinhThuyTinh.Player
         [Header("Jump (Space; Space while sprinting = running jump)")]
         [SerializeField] JumpSettings jump = new();
 
-        [Header("Slide (C while sprinting)")]
+        [Header("Slide (F)")]
         [SerializeField] SlideSettings slide = new();
 
         [Header("Climb (Space next to a ledge; off = cannot climb)")]
@@ -59,6 +60,7 @@ namespace SonTinhThuyTinh.Player
         float hitStopUntil;
         float[] spellReadyAt = new float[3];
         CinemachineImpulseSource shakeSource;
+        int upperBodyCombatLayer = -1;
         AfterImageTrail afterImages;
 
         public PlayerInputReader InputReader => input;
@@ -76,9 +78,9 @@ namespace SonTinhThuyTinh.Player
         public float RunSpeed => runSpeed;
         public float SprintSpeed => sprintSpeed;
         public bool IsGrounded => body.isGrounded;
-        // Shift held and really running (not just starting to walk): what the running jump and the slide need.
+        // Shift held and really running (not just starting to walk): what the running jump needs.
         public bool IsSprinting => input.SprintHeld && input.Move.sqrMagnitude > 0.25f && CurrentSpeed >= runSpeed * 0.8f;
-        public bool CanSlide => Time.time >= slideReadyAt && IsSprinting && body.isGrounded;
+        public bool CanSlide => Time.time >= slideReadyAt && body.isGrounded;
         public bool IsInvulnerable
         {
             get => health.IsInvulnerable;
@@ -95,6 +97,7 @@ namespace SonTinhThuyTinh.Player
         public PlayerAttackState AttackState { get; private set; }
         public PlayerHitState HitState { get; private set; }
         public PlayerClimbState ClimbState { get; private set; }
+        public PlayerChannelSpellState ChannelSpellState { get; private set; }
 
         public MoveSet MoveSet => moveSet;
         public bool HasCombat => moveSet != null;
@@ -104,6 +107,7 @@ namespace SonTinhThuyTinh.Player
         {
             body = GetComponent<CharacterController>();
             if (cameraTransform == null) cameraTransform = Camera.main.transform;
+            upperBodyCombatLayer = animator.GetLayerIndex(UpperBodyCombatLayerName);
 
             LocomotionState = new PlayerLocomotionState(this);
             DodgeState = new PlayerDodgeState(this);
@@ -114,6 +118,7 @@ namespace SonTinhThuyTinh.Player
             AttackState = new PlayerAttackState(this);
             HitState = new PlayerHitState(this);
             ClimbState = new PlayerClimbState(this);
+            ChannelSpellState = new PlayerChannelSpellState(this);
         }
 
         void Start()
@@ -132,6 +137,7 @@ namespace SonTinhThuyTinh.Player
 
         void OnDestroy()
         {
+            ChannelSpellState?.ForceCleanup();
             if (health == null) return;
             health.Died -= OnDied;
             health.Damaged -= OnDamaged;
@@ -151,7 +157,11 @@ namespace SonTinhThuyTinh.Player
         public void ChangeState(IState next) => stateMachine.ChangeState(next);
 
         // Health reached zero: knocked down.
-        void OnDied(DamageInfo _) => ChangeState(DeathState);
+        void OnDied(DamageInfo _)
+        {
+            if (stateMachine.Current == ChannelSpellState) ChannelSpellState.RequestCancel();
+            ChangeState(DeathState);
+        }
 
         // Took a hit: flinch (or stagger from a big hit) unless busy with something that cannot be interrupted. Only characters with a move set
         // have the reaction clips for now.
@@ -160,6 +170,7 @@ namespace SonTinhThuyTinh.Player
             if (health.IsDead || moveSet == null) return;
             IState current = stateMachine.Current;
             if (current == DeathState || current == HitState || current == ClimbState) return;
+            if (current == ChannelSpellState) ChannelSpellState.RequestCancel();
             if (current == AttackState && !AttackState.CanBeInterrupted) return;
             bool heavy = info.IsHeavy || info.Amount >= moveSet.staggerDamage;
             Vector3 from = info.Source != null ? info.Source.transform.position : transform.position - transform.forward;
@@ -202,6 +213,23 @@ namespace SonTinhThuyTinh.Player
 
         public void SetAnimSpeed(float speed) => animator.SetFloat(AnimSpeedParam, speed);
 
+        // Water-orb attacks play only above the hips so locomotion keeps driving both legs.
+        public bool PlayUpperBodyAttack(string stateName, float transitionDuration = 0.06f)
+        {
+            if (upperBodyCombatLayer < 0) return false;
+            animator.SetLayerWeight(upperBodyCombatLayer, 1f);
+            animator.CrossFadeInFixedTime(
+                Animator.StringToHash($"{stateName}_Upper"),
+                transitionDuration,
+                upperBodyCombatLayer);
+            return true;
+        }
+
+        public void StopUpperBodyAttack()
+        {
+            if (upperBodyCombatLayer >= 0) animator.SetLayerWeight(upperBodyCombatLayer, 0f);
+        }
+
         // Freezes the character for a moment (real time), the "weight" of a landed hit.
         public void HitStop(float seconds)
         {
@@ -229,14 +257,27 @@ namespace SonTinhThuyTinh.Player
             return true;
         }
 
-        // Spell 0..2 (U / I / O): when it is off cooldown.
+        // Spell 0..2 (Z / X / C): when it is off cooldown.
         public bool TryCast(int index)
         {
             if (moveSet == null || moveSet.spells == null || index < 0 || index >= moveSet.spells.Length) return false;
             SpellData spell = moveSet.spells[index];
-            if (spell == null || !SpellReady(index) || !TryAttack(spell, -1)) return false;
-            spellReadyAt[index] = Time.time + spell.cooldown;
+            if (spell == null || !SpellReady(index)) return false;
+            if (spell.kind == SpellKind.WaterTower)
+            {
+                if (spell.staminaCost > 0f && !stamina.TryConsume(spell.staminaCost)) return false;
+                ChannelSpellState.Begin(spell, index);
+                ChangeState(ChannelSpellState);
+            }
+            else if (!TryAttack(spell, -1)) return false;
+            if (spell.kind != SpellKind.WaterTower) spellReadyAt[index] = Time.time + spell.cooldown;
             return true;
+        }
+
+        public void StartSpellCooldown(int index, float seconds)
+        {
+            if (index < 0 || index >= spellReadyAt.Length) return;
+            spellReadyAt[index] = Mathf.Max(spellReadyAt[index], Time.time + Mathf.Max(0f, seconds));
         }
 
         public bool SpellReady(int index) => index >= 0 && index < spellReadyAt.Length && Time.time >= spellReadyAt[index];

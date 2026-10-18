@@ -211,6 +211,7 @@ namespace SonTinhThuyTinh.EditorTools
                 Lit("Mat_Log", new Color(0.26f, 0.19f, 0.12f), 0f, 0.3f));
             var box = root.gameObject.AddComponent<BoxCollider>();
             box.size = new Vector3(length, diameter * 0.9f, diameter);
+            NewProps.DressLog(root, length, diameter);   // the Meshy bark log instead of the cylinder, when it is in the project
             return root.gameObject;
         }
 

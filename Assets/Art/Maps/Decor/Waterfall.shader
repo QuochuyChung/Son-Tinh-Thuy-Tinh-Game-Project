@@ -6,6 +6,7 @@ Shader "SonTinhThuyTinh/Waterfall"
     {
         _Color ("Water Color", Color) = (0.55, 0.80, 0.92, 0.55)
         _FoamColor ("Foam Color", Color) = (1, 1, 1, 1)
+        _Opacity ("Opacity", Range(0, 1)) = 1
         _Speed ("Flow Speed", Float) = 1.8
         _Streaks ("Streak Density", Float) = 9
     }
@@ -31,6 +32,7 @@ Shader "SonTinhThuyTinh/Waterfall"
             CBUFFER_START(UnityPerMaterial)
                 float4 _Color;
                 float4 _FoamColor;
+                float _Opacity;
                 float _Speed;
                 float _Streaks;
             CBUFFER_END
@@ -91,7 +93,7 @@ Shader "SonTinhThuyTinh/Waterfall"
                 float foot = smoothstep(0.80, 1.0, input.uv.y);                                       // foam at the bottom
 
                 half3 color = lerp(_Color.rgb, _FoamColor.rgb, saturate(n * 1.3 - 0.15 + foot * 0.9));
-                half alpha = saturate((_Color.a + n * 0.55 + foot * 0.4) * edge * lip);
+                half alpha = saturate((_Color.a + n * 0.55 + foot * 0.4) * edge * lip) * _Opacity;
 
                 half4 result = half4(color, alpha);
                 result.rgb = MixFog(result.rgb, input.fogCoord);

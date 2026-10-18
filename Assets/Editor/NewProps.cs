@@ -19,7 +19,7 @@ namespace SonTinhThuyTinh.EditorTools
         const string Dir = "Assets/Art/Props/";
         const string PrefabDir = "Assets/Prefabs/Props";
 
-        public enum Kind { Brazier, Throne, Hat, Longboat, Drum, Banner, Bridge, GemRed, CrystalBlue, RockSlate, RockKaya, RockMonolith, RockFormation, RockFragment, RockBig, RockTundra, RockCave, Watchtower, TikiGate, Fence, GrassTuft }
+        public enum Kind { Brazier, Throne, Hat, Longboat, Drum, Banner, Bridge, GemRed, CrystalBlue, RockSlate, RockKaya, RockMonolith, RockFormation, RockFragment, RockBig, RockTundra, RockCave, Watchtower, TikiGate, Fence, GrassTuft, Lotus, Log }
 
         struct Spec
         {
@@ -51,6 +51,8 @@ namespace SonTinhThuyTinh.EditorTools
             [Kind.TikiGate] = new Spec { file = "tiki_gate", prefab = "TikiGate", size = 12f },
             [Kind.Fence] = new Spec { file = "fence", prefab = "WoodFence", size = 4f },
             [Kind.GrassTuft] = new Spec { file = "grass_tuft", prefab = "GrassTuft", size = 1.75f },
+            [Kind.Lotus] = new Spec { file = "lotus", prefab = "Lotus", size = 1.0f },
+            [Kind.Log] = new Spec { file = "log", prefab = "BarkLog", size = 5.6f },
         };
 
         public static GameObject Prefab(Kind kind) => Prefab(kind, false);
@@ -234,7 +236,7 @@ namespace SonTinhThuyTinh.EditorTools
             {
                 m.SetTexture("_MetallicGlossMap", AssetDatabase.LoadAssetAtPath<Texture2D>(metalMap));
                 m.EnableKeyword("_METALLICSPECGLOSSMAP");
-                m.SetFloat("_WorkflowMode", 1f); m.SetFloat("_Smoothness", 1f); m.SetFloat("_SmoothnessTextureChannel", 0f);
+                m.SetFloat("_WorkflowMode", 1f); m.SetFloat("_Smoothness", (file == "throne" || file == "banner") ? 0.3f : 1f);   // (the throne's bronze panels mirrored the sky as white patches at full smoothness) m.SetFloat("_SmoothnessTextureChannel", 0f);
             }
             else { m.SetFloat("_Metallic", 0f); m.SetFloat("_Smoothness", 0.22f); }       // no maps for this model: matte
             if (hasEmit)
@@ -243,7 +245,8 @@ namespace SonTinhThuyTinh.EditorTools
                 m.SetColor("_EmissionColor", Color.white * 1.6f); m.EnableKeyword("_EMISSION");
                 m.globalIlluminationFlags = MaterialGlobalIlluminationFlags.None;
             }
-            m.SetFloat("_Cull", (float)CullMode.Off); m.doubleSidedGI = true;   // banners, the hat's thin straw, the boat's rails
+            bool singleSided = false;
+            m.SetFloat("_Cull", (float)(singleSided ? CullMode.Back : CullMode.Off)); m.doubleSidedGI = !singleSided;   // banners, the hat's thin straw, the boat's rails
             EditorUtility.SetDirty(m);
             return m;
         }
@@ -312,6 +315,23 @@ namespace SonTinhThuyTinh.EditorTools
                 }
             }
             return best;
+        }
+
+        // MapDecor.Log (the raft of floating logs): the trunk cylinder goes, the Meshy bark log takes its place at the same length, a little thicker
+        // than the model's own proportions so it fills the old diameter. The box collider of the log stays.
+        public static bool DressLog(Transform log, float length, float diameter)
+        {
+            var old = log.Find("Trunk"); var model0 = log.Find("LogModel");
+            if (old == null && model0 == null) return false;
+            if (Prefab(Kind.Log) == null) return false;
+            if (old != null) Object.DestroyImmediate(old.gameObject);
+            if (model0 != null) Object.DestroyImmediate(model0.gameObject);
+            var model = Instance(Kind.Log, log, "LogModel");
+            // the prefab is 5.6 long and about 1.4 thick: scaled to this log's length and its diameter, its bottom half a diameter under the centre
+            float k = length / 5.6f, t = diameter / 1.4f;
+            model.transform.localPosition = new Vector3(0f, -diameter * 0.5f, 0f); model.transform.localRotation = Quaternion.identity;
+            model.transform.localScale = new Vector3(k, t, t);
+            return true;
         }
 
         // MapDecor.BronzeDrum: the model takes the old drum's height (it is built from MapDecor's scale).

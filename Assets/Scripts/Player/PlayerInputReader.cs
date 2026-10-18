@@ -35,6 +35,7 @@ namespace SonTinhThuyTinh.Player
         // AI override (BossAI): while active the stick and sprint come from the AI, and the device map is
         // switched off so a second set of hands on the same keyboard cannot fight it for control.
         bool aiActive;
+        bool applicationFocused = true;
         Vector2 aiMove;
         bool aiSprint;
 
@@ -70,6 +71,7 @@ namespace SonTinhThuyTinh.Player
         void OnEnable()
         {
             Init();
+            applicationFocused = Application.isFocused;
             dodge.performed += OnDodge;
             jump.performed += OnJump;
             slide.performed += OnSlide;
@@ -83,6 +85,7 @@ namespace SonTinhThuyTinh.Player
 
         void OnDisable()
         {
+            applicationFocused = false;
             if (runtimeActions == null || spells[0] == null) return;   // never set up (or wiped by a recompile): nothing to unhook
             dodge.performed -= OnDodge;
             jump.performed -= OnJump;
@@ -101,7 +104,7 @@ namespace SonTinhThuyTinh.Player
         // Space / gamepad South. Becomes a running jump when the character is sprinting (decided by the locomotion state).
         public bool ConsumeJump() => Consume(ref jumpPressedAt);
 
-        // C / gamepad right shoulder. Only slides while sprinting (decided by the locomotion state).
+        // F / gamepad right shoulder. Keyboard C remains reserved for the third spell.
         public bool ConsumeSlide() => Consume(ref slidePressedAt);
 
         // A tap of J, or the left mouse button.
@@ -110,8 +113,16 @@ namespace SonTinhThuyTinh.Player
         // Holding J, or the right mouse button.
         public bool ConsumeHeavy() => Consume(ref heavyPressedAt);
 
-        // U / I / O (index 0..2), gamepad D-pad left / up / right.
+        // Z / X / C (index 0..2), gamepad D-pad left / up / right.
         public bool ConsumeSpell(int index) => Consume(ref spellPressedAt[index]);
+        public bool SpellHeld(int index) => applicationFocused && !aiActive && index >= 0 && index < SpellCount && spells[index].enabled && spells[index].IsPressed();
+        public bool HasGameplayFocus => applicationFocused && isActiveAndEnabled && map != null && map.enabled;
+
+        void OnApplicationFocus(bool hasFocus)
+        {
+            applicationFocused = hasFocus;
+            if (!hasFocus) ClearBuffered();
+        }
 
         // Forgets presses that were made while the character could not act (so they do not fire the moment it lands).
         public void ClearBuffered()

@@ -175,7 +175,8 @@ namespace SonTinhThuyTinh.EditorTools
         static void DressWater(Transform wet)
         {
             GameObject[] reeds = IdyllicPrefabs("Reeds_01", "Reeds_02", "Reeds_03"), cattails = IdyllicPrefabs("Cattail_01", "Cattail_02", "Cattail_03");
-            GameObject[] lilies = IdyllicPrefabs("Waterlily_01", "Waterlily_02"), pads = IdyllicPrefabs("LilyPads_01", "LilyPads_02", "LilyPads_03");
+            GameObject lotus = NewProps.Prefab(NewProps.Kind.Lotus);   // the Meshy lotus flower instead of the pack's water lilies, when it is in the project
+            GameObject[] lilies = lotus != null ? new[] { lotus } : IdyllicPrefabs("Waterlily_01", "Waterlily_02"), pads = IdyllicPrefabs("LilyPads_01", "LilyPads_02", "LilyPads_03");
             // reeds and cattails where the ground meets the water (a band from knee-deep to just above the waterline), in clumps
             // (the marsh along the causeway, then the shores of the sea's islands and sandbars)
             int placed = 0;
@@ -215,7 +216,7 @@ namespace SonTinhThuyTinh.EditorTools
                 if (z > ChannelStart - 3f && z < ChannelEnd + 3f && Mathf.Abs(x - PathX(z)) < 7f) continue;   // the floating logs
                 var set = dressRng.Next(3) == 0 ? pads : lilies;
                 if (set.Length == 0) continue;
-                Plant(DPick(set), new Vector3(x, WaterY + 0.015f, z), DR(0.8f, 1.4f), wet);
+                Plant(DPick(set), new Vector3(x, WaterY + (lotus != null && set == lilies ? -0.1f : 0.015f), z), DR(0.8f, 1.4f), wet);
                 floating++;
             }
         }

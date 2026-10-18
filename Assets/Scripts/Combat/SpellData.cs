@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace SonTinhThuyTinh.Combat
 {
-    public enum SpellKind { Wind, Rain, Wave }
+    public enum SpellKind { Wind, Rain, Wave, WaterPillar, AquaShield, WaterTower }
 
     // A spell (U / I / O): an attack with a cooldown that spawns an effect prefab. The effect script on the prefab (WindBlast, RainZone,
     // WaveProjectile) reads the numbers below.

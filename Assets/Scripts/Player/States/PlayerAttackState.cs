@@ -17,6 +17,8 @@ namespace SonTinhThuyTinh.Player.States
         float elapsed;
         bool swingSpawned;
         bool effectSpawned;
+        bool upperBodyAttack;
+        bool queuedLight;
 
         public PlayerAttackState(PlayerController player) => this.player = player;
 
@@ -34,12 +36,17 @@ namespace SonTinhThuyTinh.Player.States
             elapsed = 0f;
             swingSpawned = false;
             effectSpawned = false;
+            queuedLight = false;
             alreadyHit.Clear();
 
             player.FaceInput(360f);   // swing the way the stick points
-            player.SetSpeed(0f);
             player.SetAnimSpeed(data.animSpeed);
-            player.Animator.CrossFadeInFixedTime(Animator.StringToHash(data.stateName), 0.06f);
+            upperBodyAttack = data is ProjectileAttackData && player.PlayUpperBodyAttack(data.stateName);
+            if (!upperBodyAttack)
+            {
+                player.SetSpeed(0f);
+                player.Animator.CrossFadeInFixedTime(Animator.StringToHash(data.stateName), 0.06f);
+            }
             if (data.stateName == "JumpAttack") player.CancelVertical(1.5f);
         }
 
@@ -47,10 +54,18 @@ namespace SonTinhThuyTinh.Player.States
         {
             elapsed += deltaTime;
 
-            Vector3 travel = Vector3.zero;
-            if (data.lungeDistance > 0f && elapsed >= data.lungeStart && elapsed < data.lungeEnd)
-                travel = player.transform.forward * (data.lungeDistance * deltaTime / Mathf.Max(data.lungeEnd - data.lungeStart, 0.01f));
-            player.Move(travel, deltaTime);
+            if (upperBodyAttack)
+            {
+                player.Locomote(player.InputReader.Move, deltaTime);
+                if (player.InputReader.ConsumeLight()) queuedLight = true;
+            }
+            else
+            {
+                Vector3 travel = Vector3.zero;
+                if (data.lungeDistance > 0f && elapsed >= data.lungeStart && elapsed < data.lungeEnd)
+                    travel = player.transform.forward * (data.lungeDistance * deltaTime / Mathf.Max(data.lungeEnd - data.lungeStart, 0.01f));
+                player.Move(travel, deltaTime);
+            }
 
             player.SetTrail(elapsed >= data.hitStart - 0.12f && elapsed <= data.hitEnd + 0.1f);
 
@@ -69,7 +84,17 @@ namespace SonTinhThuyTinh.Player.States
                 SpellEffects.Cast(player, spell);
             }
 
-            if (data.damage > 0f && elapsed >= data.hitStart && elapsed <= data.hitEnd) Sweep();
+            if (!effectSpawned && data is ProjectileAttackData projectile && elapsed >= projectile.projectileTime)
+            {
+                effectSpawned = true;
+                if (projectile.projectilePrefab != null)
+                {
+                    GameObject orb = Object.Instantiate(projectile.projectilePrefab);
+                    orb.GetComponent<WaterOrbProjectile>()?.Init(player, projectile);
+                }
+            }
+
+            if (data is not ProjectileAttackData && data.damage > 0f && elapsed >= data.hitStart && elapsed <= data.hitEnd) Sweep();
 
             if (elapsed >= data.comboStart && TryCancel()) return;
             if (elapsed >= data.duration) player.ChangeState(player.LocomotionState);
@@ -79,6 +104,7 @@ namespace SonTinhThuyTinh.Player.States
         {
             player.SetTrail(false);
             player.SetAnimSpeed(1f);
+            if (upperBodyAttack) player.StopUpperBodyAttack();
         }
 
         // The combo window: next light attack in the chain, the heavy attack as a finisher, a spell, or a dodge.
@@ -87,8 +113,17 @@ namespace SonTinhThuyTinh.Player.States
             PlayerInputReader input = player.InputReader;
             MoveSet set = player.MoveSet;
 
-            if (comboIndex >= 0 && set.lightCombo != null && comboIndex + 1 < set.lightCombo.Length && input.ConsumeLight())
-                if (player.TryAttack(set.lightCombo[comboIndex + 1], comboIndex + 1)) return true;
+            bool lightRequested = queuedLight || input.ConsumeLight();
+            queuedLight = false;
+            if (comboIndex >= 0 && set.lightCombo != null && set.lightCombo.Length > 0 && lightRequested)
+            {
+                int nextIndex = comboIndex + 1;
+                if (nextIndex < set.lightCombo.Length || upperBodyAttack)
+                {
+                    if (nextIndex >= set.lightCombo.Length) nextIndex = 0;
+                    if (player.TryAttack(set.lightCombo[nextIndex], nextIndex)) return true;
+                }
+            }
             if (input.ConsumeHeavy() && player.TryAttack(set.heavy, -1)) return true;
             for (int i = 0; i < 3; i++)
                 if (input.ConsumeSpell(i) && player.TryCast(i)) return true;

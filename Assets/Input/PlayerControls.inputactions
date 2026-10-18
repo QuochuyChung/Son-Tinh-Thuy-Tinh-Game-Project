@@ -259,7 +259,7 @@
                 {
                     "name": "",
                     "id": "b2c3d4e5-2222-4b1c-9d1e-00000000000d",
-                    "path": "<Keyboard>/leftCtrl",
+                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -282,17 +282,6 @@
                     "name": "",
                     "id": "b2c3d4e5-2222-4b1c-9d1e-00000000000f",
                     "path": "<Mouse>/middleButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "LockOn",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "b2c3d4e5-2222-4b1c-9d1e-000000000010",
-                    "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -358,7 +347,7 @@
                 {
                     "name": "",
                     "id": "b2c3d4e5-2222-4b1c-9d1e-000000000016",
-                    "path": "<Keyboard>/c",
+                    "path": "<Keyboard>/f",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -391,7 +380,7 @@
                 {
                     "name": "",
                     "id": "b2c3d4e5-2222-4b1c-9d1e-000000000019",
-                    "path": "<Keyboard>/u",
+                    "path": "<Keyboard>/z",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -402,7 +391,7 @@
                 {
                     "name": "",
                     "id": "b2c3d4e5-2222-4b1c-9d1e-00000000001a",
-                    "path": "<Keyboard>/i",
+                    "path": "<Keyboard>/x",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -413,7 +402,7 @@
                 {
                     "name": "",
                     "id": "b2c3d4e5-2222-4b1c-9d1e-00000000001b",
-                    "path": "<Keyboard>/o",
+                    "path": "<Keyboard>/c",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",

@@ -201,7 +201,7 @@ namespace SonTinhThuyTinh.EditorTools
             var rockSpell = Asset<SpellData>("Spell_RockLine");
             Timing(rockSpell, "SpellWind", 1.3f, 46f / 30f, 0f, 0f, 0.85f, 46f / 30f);
             rockSpell.displayName = "Núi mọc"; rockSpell.color = new Color(0.95f, 0.75f, 0.4f); rockSpell.kind = SpellKind.Wave;
-            rockSpell.cooldown = 10f; rockSpell.staminaCost = 0f; rockSpell.damage = 16f; rockSpell.heavy = true; rockSpell.superArmor = true;
+            rockSpell.cooldown = 10f; rockSpell.staminaCost = 0f; rockSpell.damage = 40f; rockSpell.heavy = true; rockSpell.superArmor = true;
             rockSpell.effectPrefab = rockWave; rockSpell.effectTime = 0.67f / 1.3f;
             rockSpell.radius = 2.5f; rockSpell.range = 10f; rockSpell.speed = 14f; rockSpell.knockback = 10f; rockSpell.knockUp = 3f;
             rockSpell.lungeDistance = 0f; rockSpell.swingEffect = null; rockSpell.hitStop = 0f; rockSpell.shake = 0.45f;
@@ -211,13 +211,13 @@ namespace SonTinhThuyTinh.EditorTools
             zoneSpell.displayName = "Núi dâng"; zoneSpell.color = new Color(0.85f, 0.65f, 0.38f); zoneSpell.kind = SpellKind.Rain;
             zoneSpell.cooldown = 18f; zoneSpell.staminaCost = 0f; zoneSpell.damage = 0f; zoneSpell.heavy = false; zoneSpell.superArmor = true;
             zoneSpell.effectPrefab = zone; zoneSpell.effectTime = 0.83f / 1.3f;
-            zoneSpell.radius = 6f; zoneSpell.range = 8f; zoneSpell.effectDuration = 6f; zoneSpell.tickDamage = 2f; zoneSpell.tickInterval = 0.5f; zoneSpell.slowFactor = 0.5f;
+            zoneSpell.radius = 6f; zoneSpell.range = 8f; zoneSpell.effectDuration = 6f; zoneSpell.tickDamage = 10f; zoneSpell.tickInterval = 0.5f; zoneSpell.slowFactor = 0.5f;
             zoneSpell.lungeDistance = 0f; zoneSpell.swingEffect = null; zoneSpell.hitStop = 0f; zoneSpell.shake = 0.45f;
 
             var quakeSpell = Asset<SpellData>("Spell_Earthquake");
             Timing(quakeSpell, "SpellWave", 1.3f, 38f / 30f, 0f, 0f, 0.9f, 38f / 30f);
             quakeSpell.displayName = "Núi non"; quakeSpell.color = new Color(0.85f, 0.45f, 0.25f); quakeSpell.kind = SpellKind.Wind;
-            quakeSpell.cooldown = 8f; quakeSpell.staminaCost = 0f; quakeSpell.damage = 10f; quakeSpell.heavy = true; quakeSpell.superArmor = true;
+            quakeSpell.cooldown = 8f; quakeSpell.staminaCost = 0f; quakeSpell.damage = 80f; quakeSpell.heavy = true; quakeSpell.superArmor = true;
             quakeSpell.effectPrefab = quake; quakeSpell.effectTime = 0.57f / 1.3f;
             quakeSpell.radius = 8f; quakeSpell.speed = 0f; quakeSpell.knockUpSpeed = 7f; quakeSpell.effectDuration = 1.6f;   // no pull: the ground throws them up where they stand
             quakeSpell.lungeDistance = 0f; quakeSpell.swingEffect = null; quakeSpell.hitStop = 0f; quakeSpell.shake = 0.7f;

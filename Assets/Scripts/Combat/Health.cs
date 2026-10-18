@@ -12,6 +12,8 @@ namespace SonTinhThuyTinh.Combat
         public float Normalized => Current / max;
         public bool IsDead => Current <= 0f;
         public bool IsInvulnerable { get; set; }
+        float invulnerableUntil;
+        public void GrantInvulnerability(float seconds) => invulnerableUntil = Mathf.Max(invulnerableUntil, Time.time + seconds);
 
         public event Action<float, float> Changed;
         public event Action<DamageInfo> Damaged;
@@ -24,7 +26,7 @@ namespace SonTinhThuyTinh.Combat
         // Returns false when the hit is ignored (already dead, or i-frames) so the attacker can skip hit effects.
         public bool TakeDamage(DamageInfo damage)
         {
-            if (IsDead || IsInvulnerable || damage.Amount <= 0f) return false;
+            if (IsDead || IsInvulnerable || Time.time < invulnerableUntil || damage.Amount <= 0f) return false;
             if (Guard != null && Guard(damage)) return false;
 
             Current = Mathf.Max(0f, Current - damage.Amount);
@@ -60,9 +62,7 @@ namespace SonTinhThuyTinh.Combat
         // SerializedObject APIs. Existing scene/prefab health values are unaffected.
         public void SetMaximum(float maximum, bool refill = true)
         {
-            max = Mathf.Max(1f, maximum);
-            Current = refill ? max : Mathf.Min(Current, max);
-            Changed?.Invoke(Current, max);
+            SetMax(maximum, refill);
         }
     }
 }

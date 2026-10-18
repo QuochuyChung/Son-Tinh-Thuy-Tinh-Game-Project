@@ -149,7 +149,7 @@ namespace SonTinhThuyTinh.EditorTools
             var spots = new[]
             {
                 new Vector3(h.x + 2.5f, y, h.y - 3.2f), new Vector3(h.x + 3.6f, y, h.y + 0.4f),
-                new Vector3(h.x + 2.5f, y, h.y + 3.8f), new Vector3(h.x + 5.2f, y, h.y - 0.9f),
+                new Vector3(h.x + 2.5f, y, h.y + 3.8f), new Vector3(h.x + 1.6f, y, h.y - 5.0f)   /* (was on the bridge start beside the chain) */,
             };
             var ambush = SaveDialogue("Pirates_Ambush",
                 ("Ngư tặc", "Dừng lại! Bến này là của bọn ta. Tên áo xanh kia, muốn qua thì để lại hết đồ quý."),
