@@ -1,9 +1,10 @@
 r"""Prepare the Meshy bridge, rocks and gems of D:\...ssets (Cau-go, Da-assets, Da-quy-do, Da-quy-xanh) for Unity: decimated FBX without material,
 base colour + normal copied, metallic + roughness packed. Output: Assets/Art/Props/<name>.fbx + <name>_basecolor / _normal / _metallic_smoothness.png.
 
-    python tools/prep_new_assets.py [source_root]
+    python tools/prep_new_assets.py [source_root] [only_name ...]
 """
 import os, subprocess, shutil, sys, glob
+ONLY = set(sys.argv[2:])
 ROOT = sys.argv[1] if len(sys.argv) > 1 else r"D:\ForStudies\FPTU_Season\Season07\PRU213\assets"
 BLENDER = r"D:\Tools\Blender\blender.exe"
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -16,10 +17,13 @@ JOBS = [("bridge", "Cau-go", "Meshy_AI_Wooden_plank_bridge", 0), ("rock_slate", 
         ("rock_cave", "Da-assets", "Meshy_AI_\u98ce\u683c\u5316\u5927\u578b\u5c71\u6d1e", 14000), ("gem_red", "Da-quy-do", "Meshy_AI__", 0),
         ("crystal_blue", "Da-quy-xanh", "Meshy_AI_Azure_Crystal_Spire", 0),
         ("watchtower", "Ngon-hai-dang", "Meshy_AI_Sunspire_Watchtower", 0),
-        ("tiki_gate", "Cong-cau-thuy-tinh", "Meshy_AI_Seashell_Tiki_Gateway", 0), ("fence", "Cong-cau-thuy-tinh", "Meshy_AI_Wooden_Fence", 5000)] # grass_tuft: tools/make_grass_tuft.py (procedural, the scanned tuft is 1.6M faces)
+        ("tiki_gate", "Cong-cau-thuy-tinh", "Meshy_AI_Seashell_Tiki_Gateway", 0), ("fence", "Cong-cau-thuy-tinh", "Meshy_AI_Wooden_Fence", 5000),
+        ("throne", "hung-vuong-seat", "Meshy_AI_Imperial_Sun_Throne", 0),
+        ("log", "wood", "Meshy_AI_Rough_Bark_Log", 6000)] # lotus: tools/bake_lotus.py (1.7M faces: remeshed and baked); grass_tuft: tools/make_grass_tuft.py (procedural, the scanned tuft is 1.6M faces)
 NO_EMISSION = {"fence", "grass_tuft"}
 os.makedirs(OUT, exist_ok=True)
 for name, folder, prefix, faces in JOBS:
+    if ONLY and name not in ONLY: continue
     dirs = [d for d in glob.glob(os.path.join(ROOT, folder, prefix + "*_texture_fbx"))]
     assert dirs, (name, prefix)
     d = dirs[0]; fbx = glob.glob(os.path.join(d, "*_texture.fbx"))[0]; stem = fbx[:-4]

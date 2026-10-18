@@ -181,6 +181,8 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
+    cancelFrom: 0.867
+    afterImageSpacing: 2.2
   jump:
     standingHeight: 1.3
     runningHeight: 0.9
@@ -804,7 +806,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 203e42b842714e03957d4a0444aa4461, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.BossAI
   target: {fileID: 0}
   stopDistance: 1.9
@@ -840,36 +842,6 @@ MonoBehaviour:
   sprayMaterial: {fileID: 2100000, guid: 18a1bd090a2dfa54e8a10e16e88e7882, type: 2}
   rippleColor: {r: 0.85, g: 0.97, b: 1, a: 0.75}
   sprayColor: {r: 0.9, g: 0.98, b: 1, a: 0.9}
---- !u!1001 &417308743123289749
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4653189492081580265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 203e42b842714e03957d4a0444aa4461, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.BossAI
-  target: {fileID: 0}
-  stopDistance: 1.9
-  sprintDistance: 8
-  attackRange: 2.6
-  attackInterval: 0.15
-  spellMinRange: 4
-  spellMaxRange: 12
-  spellGate: 3
-  burstHits: 3
-  burstRest: {x: 0.6, y: 1}
-  bigHitThreshold: 0.15
-  backOffDuration: 1.2
-  attackIntervalPhase2: 0.1
-  spellGatePhase2: 1.5
-  sprintDistancePhase2: 5
-  burstRestPhase2: 0.3
-  phase2Telegraph: 0.7
-  rushAfterProjectile: 1.5
 --- !u!1001 &7791323792563616600
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -878,6 +850,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4786078225203894541}
     m_Modifications:
+    - target: {fileID: 520227918373627901, guid: 98932d403fdd33c429d6b520818e4d6c, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 4300000, guid: e6ee2e4a7ca6d034eb79acee2adeeabd, type: 2}
+    - target: {fileID: 520227918373627901, guid: 98932d403fdd33c429d6b520818e4d6c, type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 520227918373627901, guid: 98932d403fdd33c429d6b520818e4d6c, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: ccb4adad3c47faf4f9be962a0cf1d542, type: 2}
+    - target: {fileID: 520227918373627901, guid: 98932d403fdd33c429d6b520818e4d6c, type: 3}
+      propertyPath: 'm_Materials.Array.data[2]'
+      value: 
+      objectReference: {fileID: 2100000, guid: a9caf704bbb82ae4fabf0670eb3809d2, type: 2}
     - target: {fileID: 3680336336529415453, guid: 98932d403fdd33c429d6b520818e4d6c, type: 3}
       propertyPath: m_LocalScale.x
       value: 2.0299146
@@ -955,10 +943,5 @@ Animator:
 --- !u!4 &6859960606993278533 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3680336336529415453, guid: 98932d403fdd33c429d6b520818e4d6c, type: 3}
-  m_PrefabInstance: {fileID: 7791323792563616600}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &8773143282152066438 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1576296019405764318, guid: 98932d403fdd33c429d6b520818e4d6c, type: 3}
   m_PrefabInstance: {fileID: 7791323792563616600}
   m_PrefabAsset: {fileID: 0}

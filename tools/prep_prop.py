@@ -38,6 +38,43 @@ if opt.get('nostrap') == '1':
     print("PREP strap islands removed: verts", len(kill), "of", len(bm.verts))
     bmesh.ops.delete(bm, geom=kill, context='VERTS')
     bm.to_mesh(obj.data); bm.free()
+if opt.get('dedupe') == '1':
+    # Meshy models often carry faces twice (same place, same way round): they z-fight (flicker) in the game. Keep one of each. Faces back to back are left (the material culls the back).
+    bm = bmesh.new(); bm.from_mesh(obj.data); bm.faces.ensure_lookup_table()
+    cell = 0.0015
+    grid = {}; kill = []
+    for f in bm.faces:
+        c = f.calc_center_median(); key = (round(c.x / cell), round(c.y / cell), round(c.z / cell))
+        dup = False
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                for dz in (-1, 0, 1):
+                    for g in grid.get((key[0] + dx, key[1] + dy, key[2] + dz), ()):
+                        if g.normal.dot(f.normal) > 0.95 and (g.calc_center_median() - c).length < cell * 1.2:
+                            dup = True
+        if dup: kill.append(f)
+        else: grid.setdefault(key, []).append(f)
+    bmesh.ops.delete(bm, geom=kill, context='FACES')
+    # faces back to back (two shells of one sheet): pushed 0.8 mm apart along their own normals, so the double-sided material does not z-fight
+    bm.faces.ensure_lookup_table(); grid = {}; pushed = set()
+    for f in bm.faces:
+        c = f.calc_center_median(); key = (round(c.x / cell), round(c.y / cell), round(c.z / cell))
+        for dx in (-1, 0, 1):
+            for dy in (-1, 0, 1):
+                for dz in (-1, 0, 1):
+                    for g in grid.get((key[0] + dx, key[1] + dy, key[2] + dz), ()):
+                        if g.normal.dot(f.normal) < -0.95 and (g.calc_center_median() - c).length < cell * 1.2:
+                            pushed.add(g.index); pushed.add(f.index)
+        grid.setdefault(key, []).append(f)
+    moves = {}
+    for i in pushed:
+        f = bm.faces[i]
+        for v in f.verts: moves.setdefault(v.index, []).append(f.normal.copy() * 0.0008)
+    bm.verts.ensure_lookup_table()
+    for vi, ns in moves.items():
+        bm.verts[vi].co += sum(ns, type(ns[0])((0, 0, 0))) / len(ns)
+    bm.to_mesh(obj.data); bm.free()
+    print("PREP dedupe removed faces", len(kill), "back-to-back faces pushed apart", len(pushed))
 if opt.get('faces'):
     target = int(opt['faces']); n0 = len(obj.data.polygons)
     bpy.context.view_layer.objects.active = obj

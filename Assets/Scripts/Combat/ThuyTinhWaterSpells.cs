@@ -225,7 +225,10 @@ namespace SonTinhThuyTinh.Combat
             shape.scale = new Vector3(data.radius * 2f, 0.12f, 0.35f);
             var velocity = foam.velocityOverLifetime;
             velocity.enabled = true;
+            // a velocity curve of one axis in another mode than the others is an error in the editor (and Error Pause freezes the game)
+            velocity.x = new ParticleSystem.MinMaxCurve(0f, 0f);
             velocity.y = new ParticleSystem.MinMaxCurve(1.2f, 3.4f);
+            velocity.z = new ParticleSystem.MinMaxCurve(0f, 0f);
             foamObject.GetComponent<ParticleSystemRenderer>().sharedMaterial = ThuyTinhWaterSpells.EnvironmentWaterMaterial;
 
             var sprayObject = new GameObject("Crescent Spray");
@@ -246,6 +249,7 @@ namespace SonTinhThuyTinh.Combat
             sprayShape.scale = new Vector3(data.radius * 1.9f, 1.6f, 0.18f);
             var sprayVelocity = spray.velocityOverLifetime;
             sprayVelocity.enabled = true;
+            sprayVelocity.x = new ParticleSystem.MinMaxCurve(0f, 0f);
             sprayVelocity.y = new ParticleSystem.MinMaxCurve(1.5f, 4f);
             sprayVelocity.z = new ParticleSystem.MinMaxCurve(-1.2f, 0.4f);
             sprayObject.GetComponent<ParticleSystemRenderer>().sharedMaterial = ThuyTinhWaterSpells.EnvironmentWaterMaterial;
@@ -502,7 +506,9 @@ namespace SonTinhThuyTinh.Combat
             shape.donutRadius = 0.7f;
             var velocity = droplets.velocityOverLifetime;
             velocity.enabled = true;
+            velocity.x = new ParticleSystem.MinMaxCurve(0f, 0f);
             velocity.y = new ParticleSystem.MinMaxCurve(0.45f, 1.5f);
+            velocity.z = new ParticleSystem.MinMaxCurve(0f, 0f);
             particleObject.GetComponent<ParticleSystemRenderer>().sharedMaterial = ThuyTinhWaterSpells.ShieldWaterMaterial;
         }
 

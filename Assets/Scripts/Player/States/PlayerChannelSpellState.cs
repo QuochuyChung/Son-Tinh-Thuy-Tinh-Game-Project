@@ -114,8 +114,10 @@ namespace SonTinhThuyTinh.Player.States
 
         bool ShouldCancel()
         {
+            // releasing the key ends the channel, but not before the left and the right slash have both left (a tap on C used to cancel it before anything came out)
+            bool released = !player.InputReader.SpellHeld(slot) && elapsed >= SlashCycleDuration + SlashImpactTime + 0.05f;
             return cancelRequested || player == null || player.Health == null || player.Health.IsDead ||
-                   !player.InputReader.HasGameplayFocus || !player.InputReader.SpellHeld(slot);
+                   !player.InputReader.HasGameplayFocus || released;
         }
 
         void OnCasterDamaged(DamageInfo _) => RequestCancel();
