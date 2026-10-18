@@ -7,7 +7,6 @@ namespace SonTinhThuyTinh.Player.States
     public sealed class PlayerChannelSpellState : IState
     {
         public const float MaximumDuration = 3.75f;
-        const int MaximumSlashes = 5;
         const float SlashCycleDuration = 0.69f;
         const float SlashImpactTime = 0.38f;
         const float FinalFollowThrough = 0.25f;
@@ -78,7 +77,7 @@ namespace SonTinhThuyTinh.Player.States
                 impactFired = true;
             }
 
-            if (impactFired && swingsStarted < MaximumSlashes && elapsed >= swingStartedAt + SlashCycleDuration)
+            if (impactFired && swingsStarted < ThuyTinhWaterSpells.MaximumWaterSlashes && elapsed >= swingStartedAt + SlashCycleDuration)
             {
                 swingStartedAt += SlashCycleDuration;
                 swingsStarted++;

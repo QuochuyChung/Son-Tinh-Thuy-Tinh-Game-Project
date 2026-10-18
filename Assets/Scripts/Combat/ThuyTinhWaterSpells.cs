@@ -18,9 +18,12 @@ namespace SonTinhThuyTinh.Combat
 
     public static class ThuyTinhWaterSpells
     {
+        public const int MaximumWaterSlashes = 5;
+
         static Material waterMaterial;
         static Material environmentWaterMaterial;
         static Material shieldWaterMaterial;
+        static Mesh shieldDomeMesh;
         public static Material WaterMaterial
         {
             get
@@ -60,7 +63,17 @@ namespace SonTinhThuyTinh.Combat
             }
         }
 
-        public static Mesh DomeMesh(float radius, float height, int segments = 40, int rings = 14)
+        public static Mesh ShieldDomeMesh
+        {
+            get
+            {
+                if (shieldDomeMesh == null)
+                    shieldDomeMesh = CreateDomeMesh(1.72f, 2.45f);
+                return shieldDomeMesh;
+            }
+        }
+
+        static Mesh CreateDomeMesh(float radius, float height, int segments = 40, int rings = 14)
         {
             var vertices = new Vector3[(rings + 1) * (segments + 1)];
             var uv = new Vector2[vertices.Length];
@@ -154,7 +167,8 @@ namespace SonTinhThuyTinh.Combat
             caster.Shake(0.24f);
         }
 
-        public static LineRenderer Ring(Transform parent, string name, float radius, float width)
+        public static LineRenderer Ring(Transform parent, string name, float radius, float width,
+            Material material = null)
         {
             var go = new GameObject(name);
             go.transform.SetParent(parent, false);
@@ -163,7 +177,7 @@ namespace SonTinhThuyTinh.Combat
             line.useWorldSpace = false;
             line.positionCount = 49;
             line.widthMultiplier = width;
-            line.sharedMaterial = WaterMaterial;
+            line.sharedMaterial = material != null ? material : WaterMaterial;
             line.startColor = new Color(0.15f, 0.85f, 1f, 0.9f);
             line.endColor = line.startColor;
             for (int i = 0; i < line.positionCount; i++)
@@ -294,22 +308,94 @@ namespace SonTinhThuyTinh.Combat
         void SpawnImpact(Vector3 position)
         {
             var impact = new GameObject("Water Wave Impact");
-            impact.transform.position = position + Vector3.up * 0.35f;
-            LineRenderer ring = ThuyTinhWaterSpells.Ring(impact.transform, "Splash Ring", 0.75f, 0.16f);
-            ring.transform.localRotation = Quaternion.Euler(90f, 0f, 0f);
-            impact.AddComponent<WaterVfxLifetime>().Init(0.35f, 1.8f);
+            impact.transform.SetPositionAndRotation(position + Vector3.up * 0.08f, transform.rotation);
+            impact.AddComponent<WaterWaveImpact>().Init();
         }
     }
 
-    public sealed class WaterVfxLifetime : MonoBehaviour
+    // A short, layered contact burst using the exact same material and colour family as
+    // the travelling ground wave. Keeping it procedural also avoids a mismatched prefab.
+    public sealed class WaterWaveImpact : MonoBehaviour
     {
-        float duration, grow, elapsed;
-        public void Init(float life, float scaleGrowth) { duration = life; grow = scaleGrowth; transform.localScale = Vector3.one * 0.1f; }
+        const float Lifetime = 0.42f;
+        readonly List<LineRenderer> rings = new();
+        readonly List<Color> ringColors = new();
+        ParticleSystem splash;
+        Light flash;
+        float elapsed;
+
+        public void Init()
+        {
+            Material water = ThuyTinhWaterSpells.EnvironmentWaterMaterial;
+            CreateRing("Impact Ground Ripple", 0.65f, 0.16f,
+                new Color(0.1f, 0.72f, 1f, 0.82f), Quaternion.identity, water);
+            CreateRing("Impact Rising Crown", 0.52f, 0.11f,
+                new Color(0.72f, 0.98f, 1f, 0.92f), Quaternion.Euler(68f, 0f, 0f), water);
+
+            var splashObject = new GameObject("Matched Water Spray");
+            splashObject.transform.SetParent(transform, false);
+            splashObject.transform.localPosition = Vector3.up * 0.12f;
+            splashObject.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);
+            splash = splashObject.AddComponent<ParticleSystem>();
+            var main = splash.main;
+            main.loop = false;
+            main.duration = 0.18f;
+            main.startLifetime = new ParticleSystem.MinMaxCurve(0.18f, 0.38f);
+            main.startSpeed = new ParticleSystem.MinMaxCurve(2.2f, 4.8f);
+            main.startSize = new ParticleSystem.MinMaxCurve(0.045f, 0.15f);
+            main.startColor = new ParticleSystem.MinMaxGradient(
+                new Color(0.78f, 0.98f, 1f, 0.95f),
+                new Color(0.04f, 0.48f, 1f, 0.62f));
+            main.simulationSpace = ParticleSystemSimulationSpace.World;
+            main.maxParticles = 42;
+            var emission = splash.emission;
+            emission.rateOverTime = 0f;
+            emission.SetBursts(new[] { new ParticleSystem.Burst(0f, 34) });
+            var shape = splash.shape;
+            shape.shapeType = ParticleSystemShapeType.Cone;
+            shape.angle = 38f;
+            shape.radius = 0.22f;
+            ParticleSystemRenderer splashRenderer = splashObject.GetComponent<ParticleSystemRenderer>();
+            splashRenderer.sharedMaterial = water;
+            splashRenderer.renderMode = ParticleSystemRenderMode.Billboard;
+
+            flash = gameObject.AddComponent<Light>();
+            flash.type = LightType.Point;
+            flash.color = new Color(0.15f, 0.72f, 1f);
+            flash.range = 4.2f;
+            flash.intensity = 2.8f;
+            splash.Play();
+        }
+
+        void CreateRing(string objectName, float radius, float width, Color color,
+            Quaternion rotation, Material material)
+        {
+            LineRenderer ring = ThuyTinhWaterSpells.Ring(transform, objectName, radius, width, material);
+            ring.transform.localRotation = rotation;
+            ring.startColor = color;
+            ring.endColor = color;
+            rings.Add(ring);
+            ringColors.Add(color);
+        }
+
         void Update()
         {
             elapsed += Time.deltaTime;
-            transform.localScale = Vector3.one * Mathf.Lerp(0.1f, grow, Mathf.Clamp01(elapsed / 0.2f));
-            if (elapsed >= duration) Destroy(gameObject);
+            float t = Mathf.Clamp01(elapsed / Lifetime);
+            float eased = 1f - Mathf.Pow(1f - t, 3f);
+            float alpha = 1f - t;
+            for (int i = 0; i < rings.Count; i++)
+            {
+                if (rings[i] == null) continue;
+                float scale = Mathf.Lerp(0.25f, i == 0 ? 2.5f : 1.75f, eased);
+                rings[i].transform.localScale = Vector3.one * scale;
+                Color faded = ringColors[i];
+                faded.a *= alpha * alpha;
+                rings[i].startColor = faded;
+                rings[i].endColor = faded;
+            }
+            if (flash != null) flash.intensity = 2.8f * alpha * alpha;
+            if (elapsed >= Lifetime) Destroy(gameObject);
         }
     }
 
@@ -354,7 +440,7 @@ namespace SonTinhThuyTinh.Combat
             dome = domeObject.transform;
             dome.SetParent(transform, false);
             dome.localPosition = Vector3.up * 0.03f;
-            domeObject.AddComponent<MeshFilter>().sharedMesh = ThuyTinhWaterSpells.DomeMesh(1.72f, 2.45f);
+            domeObject.AddComponent<MeshFilter>().sharedMesh = ThuyTinhWaterSpells.ShieldDomeMesh;
             MeshRenderer domeRenderer = domeObject.AddComponent<MeshRenderer>();
             domeRenderer.sharedMaterial = ThuyTinhWaterSpells.ShieldWaterMaterial;
             domeRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
@@ -508,14 +594,13 @@ namespace SonTinhThuyTinh.Combat
 
     public sealed class WaterTowerEffect : MonoBehaviour
     {
-        const int MaximumSlashes = 5;
         const float SlashRootHeight = -0.1f;
         PlayerController caster;
         SpellData spell;
         bool stopped;
 
         public int SlashesFired { get; private set; }
-        public bool Finished => SlashesFired >= MaximumSlashes;
+        public bool Finished => SlashesFired >= ThuyTinhWaterSpells.MaximumWaterSlashes;
 
         public void Init(PlayerController owner, SpellData data)
         {
@@ -688,118 +773,4 @@ namespace SonTinhThuyTinh.Combat
         }
     }
 
-    public sealed class WaterDragonProjectile : MonoBehaviour
-    {
-        PlayerController caster;
-        SpellData spell;
-        GameObject visual;
-        Vector3 visualBaseScale;
-        Vector3 previousPosition;
-        float travelled;
-        float elapsed;
-        readonly HashSet<Health> hitTargets = new();
-
-        public void Init(PlayerController owner, SpellData data, float charge = 1f)
-        {
-            caster = owner;
-            spell = data;
-            previousPosition = transform.position;
-
-            GameObject prefab = Resources.Load<GameObject>("VFX/ThuyTinh/WaterDragon_Prototype");
-            if (prefab == null)
-            {
-                Debug.LogWarning("Water dragon FBX was not found in Resources/VFX/ThuyTinh.");
-                Destroy(gameObject);
-                return;
-            }
-
-            visual = Instantiate(prefab, transform);
-            visual.name = "Water Dragon Visual";
-            visual.transform.localPosition = Vector3.zero;
-            visual.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);
-            visual.transform.localScale *= 0.55f * Mathf.Lerp(0.8f, 1.25f, Mathf.Clamp01(charge));
-            visualBaseScale = visual.transform.localScale;
-
-            foreach (Renderer renderer in visual.GetComponentsInChildren<Renderer>(true))
-            {
-                renderer.sharedMaterial = ThuyTinhWaterSpells.EnvironmentWaterMaterial;
-                renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-                renderer.receiveShadows = false;
-            }
-        }
-
-        void Update()
-        {
-            if (caster == null || spell == null) { Destroy(gameObject); return; }
-
-            elapsed += Time.deltaTime;
-            float step = spell.speed * Time.deltaTime;
-            previousPosition = transform.position;
-            transform.position += transform.forward * step;
-            travelled += step;
-
-            if (visual != null)
-            {
-                visual.transform.localPosition = Vector3.up * (Mathf.Sin(elapsed * 9f) * 0.12f);
-                float pulse = 1f + Mathf.Sin(elapsed * 12f) * 0.035f;
-                visual.transform.localScale = visualBaseScale * pulse;
-                visual.transform.Rotate(Vector3.forward, Mathf.Sin(elapsed * 5f) * 12f * Time.deltaTime, Space.Self);
-            }
-
-            HitAlongPath(previousPosition, transform.position);
-            if (travelled >= spell.range) Destroy(gameObject);
-        }
-
-        void HitAlongPath(Vector3 from, Vector3 to)
-        {
-            Collider[] overlaps = Physics.OverlapCapsule(from, to, 1.25f, ~0, QueryTriggerInteraction.Ignore);
-            foreach (Health target in SpellEffects.Targets(overlaps, caster.Health))
-            {
-                if (!hitTargets.Add(target)) continue;
-
-                var info = new DamageInfo(spell.damage, caster.gameObject, target.transform.position, true);
-                if (!target.TakeDamage(info)) continue;
-
-                target.GetComponentInParent<IHitReceiver>()?.OnHit(info, transform.forward * 8f + Vector3.up * 1.5f);
-                WaterDragonBurn burn = target.GetComponent<WaterDragonBurn>();
-                if (burn == null) burn = target.gameObject.AddComponent<WaterDragonBurn>();
-                burn.Apply(caster.gameObject, spell.tickDamage, spell.tickInterval, spell.effectDuration);
-                caster.HitStop(0.07f);
-                caster.Shake(0.6f);
-            }
-        }
-    }
-
-    public sealed class WaterDragonBurn : MonoBehaviour
-    {
-        Health target;
-        GameObject source;
-        float damage;
-        float interval;
-        float endAt;
-        float nextTick;
-
-        public void Apply(GameObject damageSource, float tickDamage, float tickInterval, float duration)
-        {
-            if (target == null) target = GetComponent<Health>();
-            source = damageSource;
-            damage = tickDamage;
-            interval = Mathf.Max(0.05f, tickInterval);
-            endAt = Time.time + Mathf.Max(0f, duration);
-            nextTick = Time.time + interval;
-        }
-
-        void Update()
-        {
-            if (target == null || target.IsDead) { Destroy(this); return; }
-
-            if (Time.time >= nextTick && nextTick <= endAt)
-            {
-                nextTick += interval;
-                target.TakeDamage(new DamageInfo(damage, source, target.transform.position, false));
-            }
-
-            if (Time.time >= endAt && nextTick > endAt) Destroy(this);
-        }
-    }
 }

@@ -62,9 +62,7 @@ namespace SonTinhThuyTinh.Combat
         // SerializedObject APIs. Existing scene/prefab health values are unaffected.
         public void SetMaximum(float maximum, bool refill = true)
         {
-            max = Mathf.Max(1f, maximum);
-            Current = refill ? max : Mathf.Min(Current, max);
-            Changed?.Invoke(Current, max);
+            SetMax(maximum, refill);
         }
     }
 }

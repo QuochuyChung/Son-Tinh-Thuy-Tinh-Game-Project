@@ -26,8 +26,10 @@ namespace SonTinhThuyTinh.EditorTools
         static readonly Move[] Moves =
         {
             new() { Name = "Slide", SonFile = "SonTinh_v2/son_tinh_v2_slide.fbx", ThuyFile = "ThuyTinh_v2/thuy_tinh_v2_slide.fbx", BakeHeight = true },
-            new() { Name = "JumpUp", SonFile = "SonTinh_v2/son_tinh_v2_jump_up.fbx", ThuyFile = "ThuyTinh_v2/thuy_tinh_v2_jump_up.fbx", BakeHeight = false },
-            new() { Name = "RunJump", SonFile = "SonTinh_v2/son_tinh_v2_run_jump.fbx", ThuyFile = "ThuyTinh_v2/thuy_tinh_v2_run_jump.fbx", BakeHeight = false },
+            // Thuy Tinh intentionally shares Son Tinh's unarmed jump poses. His former
+            // Great Sword jump clips make the weapon-holding stance reappear in the air.
+            new() { Name = "JumpUp", SonFile = "SonTinh_v2/son_tinh_v2_jump_up.fbx", ThuyFile = "SonTinh_v2/son_tinh_v2_jump_up.fbx", BakeHeight = false },
+            new() { Name = "RunJump", SonFile = "SonTinh_v2/son_tinh_v2_run_jump.fbx", ThuyFile = "SonTinh_v2/son_tinh_v2_run_jump.fbx", BakeHeight = false },
             new() { Name = "Death", SonFile = "SonTinh_v2/son_tinh_v2_death.fbx", ThuyFile = "ThuyTinh_v2/thuy_tinh_v2_death.fbx", BakeHeight = true },
         };
 
@@ -39,7 +41,8 @@ namespace SonTinhThuyTinh.EditorTools
             foreach (Move m in Moves)
             {
                 ConfigureClip("Assets/Animations/" + m.SonFile, m);
-                ConfigureClip("Assets/Animations/" + m.ThuyFile, m);
+                if (m.ThuyFile != m.SonFile)
+                    ConfigureClip("Assets/Animations/" + m.ThuyFile, m);
             }
             AssetDatabase.Refresh();
 
