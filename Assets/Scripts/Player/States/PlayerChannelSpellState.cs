@@ -68,7 +68,7 @@ namespace SonTinhThuyTinh.Player.States
 
             elapsed += deltaTime;
             KeepCastingAnimationAlive();
-            player.FaceInput(720f * deltaTime);
+            player.FaceAim(720f * deltaTime);
             player.Move(Vector3.zero, deltaTime);
 
             if (!impactFired && elapsed >= swingStartedAt + SlashImpactTime)

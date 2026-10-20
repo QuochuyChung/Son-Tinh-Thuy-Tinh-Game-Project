@@ -35,6 +35,24 @@ namespace SonTinhThuyTinh.Combat
             if (spell.slowAfterHit > 0f) receiver.ApplySlow(spell.slowFactor, spell.slowAfterHit + spell.stunSeconds);
         }
 
+        // A real stun, also on a character (the rival in the final duel): it staggers on the spot for spell.stunSeconds (bosses for
+        // bossStunScale of it) with stars over its head; `push` (m/s) shoves a character back while it starts.
+        public static void Stun(Health target, SpellData spell, Vector3 push)
+        {
+            if (spell == null || target == null || target.IsDead || spell.stunSeconds <= 0f) return;
+            float seconds = target.GetComponentInParent<IArenaBoss>() != null ? spell.stunSeconds * spell.bossStunScale : spell.stunSeconds;
+            if (seconds <= 0.05f) return;
+            var character = target.GetComponentInParent<PlayerController>();
+            if (character != null) character.Stun(seconds, push);
+            else
+            {
+                var receiver = target.GetComponentInParent<IHitReceiver>();
+                if (receiver == null) return;
+                receiver.ApplyStun(seconds);
+            }
+            FloatingText.Spawn(target.transform.position + Vector3.up * 2.6f, "Choáng!", new Color(1f, 0.92f, 0.3f));
+        }
+
         // Everything with Health among the colliders (not `exclude`), each once.
         public static List<Health> Targets(Collider[] found, Health exclude)
         {

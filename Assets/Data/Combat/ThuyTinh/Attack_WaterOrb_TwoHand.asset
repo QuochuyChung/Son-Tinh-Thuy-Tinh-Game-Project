@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Attack_WaterOrb_TwoHand
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.ProjectileAttackData
   stateName: Attack3
-  animSpeed: 1.45
-  duration: 1.1034484
+  animSpeed: 1.25
+  duration: 1.2800001
   hitStart: 0
   hitEnd: 0
-  comboStart: 0.75034493
-  staminaCost: 5
-  damage: 30
+  comboStart: 0.8704001
+  staminaCost: 10
+  damage: 39
   heavy: 1
   superArmor: 0
   hitCenter: {x: 0, y: 1, z: 1.4}
@@ -36,7 +36,7 @@ MonoBehaviour:
   swingEffectTime: 0
   swingEffectScale: 1
   projectilePrefab: {fileID: 4988644356801275080, guid: d8b3309e03b9b4249a6871631921d14c, type: 3}
-  projectileTime: 0.5848276
+  projectileTime: 0.67840004
   projectileSpeed: 19
   projectileRange: 17
   projectileRadius: 0.9

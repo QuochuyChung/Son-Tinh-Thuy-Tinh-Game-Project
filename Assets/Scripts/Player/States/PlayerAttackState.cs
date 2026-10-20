@@ -39,7 +39,7 @@ namespace SonTinhThuyTinh.Player.States
             queuedLight = false;
             alreadyHit.Clear();
 
-            player.FaceInput(360f);   // swing the way the stick points
+            player.FaceAim(360f);   // swing at the locked enemy, else the way the stick points
             player.SetAnimSpeed(data.animSpeed);
             upperBodyAttack = data is ProjectileAttackData && player.PlayUpperBodyAttack(data.stateName);
             if (!upperBodyAttack)
@@ -118,11 +118,7 @@ namespace SonTinhThuyTinh.Player.States
             if (comboIndex >= 0 && set.lightCombo != null && set.lightCombo.Length > 0 && lightRequested)
             {
                 int nextIndex = comboIndex + 1;
-                if (nextIndex < set.lightCombo.Length || upperBodyAttack)
-                {
-                    if (nextIndex >= set.lightCombo.Length) nextIndex = 0;
-                    if (player.TryAttack(set.lightCombo[nextIndex], nextIndex)) return true;
-                }
+                if (nextIndex < set.lightCombo.Length && player.TryAttack(set.lightCombo[nextIndex], nextIndex)) return true;
             }
             if (input.ConsumeHeavy() && player.TryAttack(set.heavy, -1)) return true;
             for (int i = 0; i < 3; i++)
@@ -147,7 +143,10 @@ namespace SonTinhThuyTinh.Player.States
             {
                 if (c.transform.IsChildOf(t)) continue;
                 Health target = c.GetComponentInParent<Health>();
-                if (target == null || target == player.Health || !alreadyHit.Add(target)) continue;
+                if (target == null || target == player.Health || alreadyHit.Contains(target)) continue;
+                // Sơn Tinh's rock wall between the two: the blow does not reach
+                if (RockWallBarrier.Between(t.position + Vector3.up * 1.1f, target.transform.position + Vector3.up * 1.1f, player)) continue;
+                alreadyHit.Add(target);
 
                 Vector3 point = c.ClosestPoint(t.position + Vector3.up);
                 Vector3 away = target.transform.position - t.position;

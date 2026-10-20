@@ -17,9 +17,11 @@ namespace SonTinhThuyTinh.Combat
             data = attack;
 
             Transform ownerTransform = owner.transform;
+            // at the locked enemy when there is one (the character itself may be running another way)
+            Quaternion aim = owner.TryGetAimDirection(out Vector3 toTarget) ? Quaternion.LookRotation(toTarget) : ownerTransform.rotation;
             transform.SetPositionAndRotation(
-                ownerTransform.TransformPoint(attack.projectileSpawnOffset),
-                ownerTransform.rotation);
+                ownerTransform.position + aim * Vector3.Scale(attack.projectileSpawnOffset, ownerTransform.lossyScale),
+                aim);
             transform.localScale *= attack.projectileRadius;
             startPosition = transform.position;
 
@@ -32,7 +34,16 @@ namespace SonTinhThuyTinh.Combat
             if (data == null || caster == null) return;
 
             float distance = data.projectileSpeed * Time.deltaTime;
+            Vector3 previous = transform.position;
             transform.position += transform.forward * distance;
+
+            // Sơn Tinh's rock wall in the way: the orb bursts on it
+            if (RockWallBarrier.Blocks(previous, transform.position, data.projectileRadius, caster, out RockWallBarrier wall, out Vector3 point))
+            {
+                wall.Absorb(point);
+                Destroy(gameObject);
+                return;
+            }
 
             Collider[] contacts = Physics.OverlapSphere(
                 transform.position,
