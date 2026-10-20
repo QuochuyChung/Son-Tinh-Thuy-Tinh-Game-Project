@@ -19,7 +19,7 @@ namespace SonTinhThuyTinh.EditorTools
         const string Dir = "Assets/Art/Props/";
         const string PrefabDir = "Assets/Prefabs/Props";
 
-        public enum Kind { Brazier, Throne, Hat, Longboat, Drum, Banner, Bridge, GemRed, CrystalBlue, RockSlate, RockKaya, RockMonolith, RockFormation, RockFragment, RockBig, RockTundra, RockCave, Watchtower, TikiGate, Fence, GrassTuft, Lotus, Log }
+        public enum Kind { Brazier, Throne, Hat, Longboat, Drum, Banner, Bridge, GemRed, CrystalBlue, RockSlate, RockKaya, RockMonolith, RockFormation, RockFragment, RockBig, RockTundra, RockCave, Watchtower, TikiGate, Fence, GrassTuft, Lotus, Log, RockGolem, RockWall, RockSpire }
 
         struct Spec
         {
@@ -27,7 +27,7 @@ namespace SonTinhThuyTinh.EditorTools
         }
 
         // size: metres (height for byHeight, else the longest horizontal side). orient: "bow" = the highest point goes to +Z, "front" = the
-        // upper part of the model goes to -Z (so the front is +Z), "" = as it is.
+        // upper part of the model goes to -Z (so the front is +Z), "wide" = the longest horizontal side along X, "" = as it is.
         static readonly Dictionary<Kind, Spec> Specs = new()
         {
             [Kind.Brazier] = new Spec { file = "brazier", prefab = "Brazier", size = 2.3f, byHeight = true },
@@ -53,6 +53,10 @@ namespace SonTinhThuyTinh.EditorTools
             [Kind.GrassTuft] = new Spec { file = "grass_tuft", prefab = "GrassTuft", size = 1.75f },
             [Kind.Lotus] = new Spec { file = "lotus", prefab = "Lotus", size = 1.0f },
             [Kind.Log] = new Spec { file = "log", prefab = "BarkLog", size = 5.6f },
+            // Sơn Tinh's rock skills (no colliders: RockGolemCharge / RockWallBarrier / RockSpikeLine do their own hits)
+            [Kind.RockGolem] = new Spec { file = "rock_golem", prefab = "RockGolem", size = 2.5f, byHeight = true },
+            [Kind.RockWall] = new Spec { file = "rock_wall", prefab = "RockWall", size = 4f, orient = "wide" },
+            [Kind.RockSpire] = new Spec { file = "rock_spire", prefab = "RockSpire", size = 2.8f, byHeight = true },
         };
 
         public static GameObject Prefab(Kind kind) => Prefab(kind, false);
@@ -83,6 +87,12 @@ namespace SonTinhThuyTinh.EditorTools
             model.transform.localScale = Vector3.one;
             // orientation
             float yaw = 0f;
+            if (spec.orient == "wide")
+            {
+                Bounds b0 = VillageModelSetup.LocalBounds(model, root.transform);
+                if (b0.size.z > b0.size.x) yaw = 90f;
+                model.transform.localRotation = Quaternion.Euler(0f, yaw, 0f) * model.transform.localRotation;
+            }
             if (spec.orient == "bow" || spec.orient == "front")
             {
                 Bounds b0 = VillageModelSetup.LocalBounds(model, root.transform);
@@ -165,7 +175,9 @@ namespace SonTinhThuyTinh.EditorTools
                     break;
                 }
             }
-            foreach (var t in root.GetComponentsInChildren<Transform>(true)) GameObjectUtility.SetStaticEditorFlags(t.gameObject, StaticEditorFlags.BatchingStatic);
+            bool moves = kind == Kind.RockGolem || kind == Kind.RockWall || kind == Kind.RockSpire;   // spell pieces fly and rise: never static
+            if (!moves)
+                foreach (var t in root.GetComponentsInChildren<Transform>(true)) GameObjectUtility.SetStaticEditorFlags(t.gameObject, StaticEditorFlags.BatchingStatic);
             GameObject prefab = PrefabUtility.SaveAsPrefabAsset(root, path);
             Object.DestroyImmediate(root);
             b = VillageModelSetup.LocalBounds(prefab, prefab.transform);

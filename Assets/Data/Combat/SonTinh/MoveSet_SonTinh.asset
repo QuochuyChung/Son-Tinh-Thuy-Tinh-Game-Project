@@ -15,13 +15,13 @@ MonoBehaviour:
   lightCombo:
   - {fileID: 11400000, guid: 5a9c71d783d61cd4894a4786e074d32b, type: 2}
   - {fileID: 11400000, guid: 26ed9397ea1c24d40b4f84f1fe9fdf94, type: 2}
-  - {fileID: 11400000, guid: 5c2c5c37606e48a4ab485fbe978e0fc3, type: 2}
+  - {fileID: 11400000, guid: e6448548e27848845aaa1c9a6e90a8bd, type: 2}
   heavy: {fileID: 11400000, guid: 6afcc227ee50d234f89417c0469d3a98, type: 2}
   jumpAttack: {fileID: 11400000, guid: 44fa6e24fe4b12c44a64d0b2b2199801, type: 2}
   spells:
-  - {fileID: 11400000, guid: a1baebdd05366434a882f39d9ace11cd, type: 2}
-  - {fileID: 11400000, guid: 17cefde3d65faba4bbe255b753b4a4d7, type: 2}
-  - {fileID: 11400000, guid: 5245fd0a32eafbc48a8db125524d7668, type: 2}
+  - {fileID: 11400000, guid: 1e20bbbb8ffe37b41968d559304c6564, type: 2}
+  - {fileID: 11400000, guid: 4d8ee2d658bcbe940b3dbba2488e65f5, type: 2}
+  - {fileID: 11400000, guid: 481a66b443eda9441afb143af5f7677c, type: 2}
   hitLightSpeed: 1.5
   hitLightDuration: 0.7
   hitHeavySpeed: 0.9

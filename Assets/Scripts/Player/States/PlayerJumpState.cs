@@ -132,7 +132,7 @@ namespace SonTinhThuyTinh.Player.States
             aerialSlashActive = true;
             aerialSlashFired = false;
             aerialSlashElapsed = 0f;
-            player.FaceInput(540f);
+            player.FaceAim(540f);
             player.SetAnimSpeed(0.98f);
             player.Animator.CrossFadeInFixedTime(RightWaterSlashHash, 0.06f, 0, 0f);
         }

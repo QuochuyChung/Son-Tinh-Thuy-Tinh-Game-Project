@@ -19,7 +19,9 @@ JOBS = [("bridge", "Cau-go", "Meshy_AI_Wooden_plank_bridge", 0), ("rock_slate", 
         ("watchtower", "Ngon-hai-dang", "Meshy_AI_Sunspire_Watchtower", 0),
         ("tiki_gate", "Cong-cau-thuy-tinh", "Meshy_AI_Seashell_Tiki_Gateway", 0), ("fence", "Cong-cau-thuy-tinh", "Meshy_AI_Wooden_Fence", 5000),
         ("throne", "hung-vuong-seat", "Meshy_AI_Imperial_Sun_Throne", 0),
-        ("log", "wood", "Meshy_AI_Rough_Bark_Log", 6000)] # lotus: tools/bake_lotus.py (1.7M faces: remeshed and baked); grass_tuft: tools/make_grass_tuft.py (procedural, the scanned tuft is 1.6M faces)
+        ("log", "wood", "Meshy_AI_Rough_Bark_Log", 6000),
+        ("rock_golem", "rock-man", "Meshy_AI_Rock_Golem", 16000), ("rock_wall", "rock-wall", "Meshy_AI_wall_of_rocks", 10000),
+        ("rock_spire", "rock-sharp", "Meshy_AI_Verdant_Spire", 6000)] # lotus: tools/bake_lotus.py (1.7M faces: remeshed and baked); grass_tuft: tools/make_grass_tuft.py (procedural, the scanned tuft is 1.6M faces)
 NO_EMISSION = {"fence", "grass_tuft"}
 os.makedirs(OUT, exist_ok=True)
 for name, folder, prefix, faces in JOBS:

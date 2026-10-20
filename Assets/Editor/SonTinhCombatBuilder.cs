@@ -37,12 +37,25 @@ namespace SonTinhThuyTinh.EditorTools
             ("son_tinh_v2_reaction.fbx", "Reaction", 0, 34, true),
         };
 
-        // base clip of the shared controller (Thuy Tinh's) -> Son Tinh's clip that replaces it
+        // clips taken as they are from the Kevin Iglesias spellcasting pack (humanoid, retargeted onto him)
+        const string KevinDir = "Assets/Kevin Iglesias/Human Animations/Animations/Male/Combat/Spellcasting/MagicAttacks/";
+        static readonly Dictionary<string, string> Kevin = new()
+        {
+            ["PalmStrike"] = KevinDir + "Directional/HumanM@MagicAttackDirect2H01.fbx",     // both palms thrust forward: the third hit of the combo
+            ["RaiseRight"] = KevinDir + "Directional/HumanM@MagicAttackDirect1H01_R.fbx",   // the right arm thrust up to chest height: Đá nhọn
+        };
+
+        // base clip of the shared controller (Thuy Tinh's) -> Son Tinh's clip that replaces it. The spell states keep their names but now
+        // play: SpellWind = Người đá (Z, MagicBolt), SpellWave = Tường đá (X, Slam: both hands down on the ground), SpellRain = Đá nhọn (C).
         static readonly (string baseClip, string mine)[] Mapping =
         {
-            ("GS_Slash", "Punch"), ("GS_Kick", "Kick"), ("GS_Spin", "HurricaneKick"), ("GS_CastHeavy", "Uppercut"), ("GS_JumpAttack", "JumpAttack"),
-            ("GS_CastWind", "MagicBolt"), ("GS_PowerUp", "MagicArea"), ("GS_SlideAttack", "Slam"), ("GS_Impact", "Reaction"), ("GS_Roll", "Roll"),
+            ("GS_Slash", "Punch"), ("GS_Kick", "Kick"), ("GS_Spin", "PalmStrike"), ("GS_CastHeavy", "Uppercut"), ("GS_JumpAttack", "JumpAttack"),
+            ("GS_CastWind", "MagicBolt"), ("GS_PowerUp", "RaiseRight"), ("GS_SlideAttack", "Slam"), ("GS_Impact", "Reaction"), ("GS_Roll", "Roll"),
         };
+
+        // timings of the Kevin clips (seconds into the clip at normal speed; measured from the hands' speed)
+        const float PalmSpeed = 1.45f, PalmClip = 48f / 30f, PalmHitFrom = 0.74f, PalmHitTo = 0.95f, PalmComboAt = 1.05f;
+        const float RaiseSpeed = 1.2f, RaiseClip = 36f / 30f, RaiseAt = 0.4f, RaiseComboAt = 0.8f;
 
         [MenuItem("Tools/Son Tinh Thuy Tinh/Build Son Tinh Combat")]
         public static void Build()
@@ -55,7 +68,8 @@ namespace SonTinhThuyTinh.EditorTools
             FillOverride();
 
             var vfx = EarthVfxBuilder.Build();
-            MoveSet set = BuildData(vfx.hit, vfx.shock, vfx.quake, vfx.zone, vfx.rockWave, vfx.slash, vfx.heavySlash);
+            var rocks = RockSkillPrefabs(vfx.shock);
+            MoveSet set = BuildData(vfx.hit, vfx.shock, rocks.golem, rocks.wall, rocks.spikes, vfx.slash, vfx.heavySlash);
             TunePlayer(set);
             AssetDatabase.SaveAssets();
             Debug.Log("Son Tinh combat built.");
@@ -98,6 +112,8 @@ namespace SonTinhThuyTinh.EditorTools
 
         static AnimationClip Clip(string name)
         {
+            if (Kevin.TryGetValue(name, out string kevinPath))
+                return AssetDatabase.LoadAllAssetsAtPath(kevinPath).OfType<AnimationClip>().FirstOrDefault(c => !c.name.StartsWith("__preview__"));
             foreach (var cut in Cuts)
                 if (cut.clip == name)
                     return AssetDatabase.LoadAllAssetsAtPath(AnimDir + cut.file).OfType<AnimationClip>().FirstOrDefault(c => c.name == name);
@@ -149,12 +165,12 @@ namespace SonTinhThuyTinh.EditorTools
             a.comboStart = comboAt / speed;
         }
 
-        static MoveSet BuildData(GameObject hitSplash, GameObject shock, GameObject quake, GameObject zone, GameObject rockWave, GameObject slashVfx = null, GameObject heavySlashVfx = null)
+        static MoveSet BuildData(GameObject hitSplash, GameObject shock, GameObject golemFx, GameObject wallFx, GameObject spikesFx, GameObject slashVfx = null, GameObject heavySlashVfx = null)
         {
-            // light combo: cross punch, kick, hurricane kick (the finisher: spinning kicks all round)
+            // light combo: cross punch, kick, palm strike (the finisher: both palms thrust forward with a burst of stone ahead)
             var punch = Asset<AttackData>("Attack_Punch");
             Timing(punch, "Attack1", 1.25f, 34f / 30f, 0.37f, 0.62f, 0.68f, 34f / 30f);
-            punch.damage = 10f; punch.staminaCost = 8f; punch.heavy = false; punch.superArmor = false;
+            punch.damage = 20f; punch.staminaCost = 8f; punch.heavy = false; punch.superArmor = false;
             punch.hitCenter = new Vector3(0f, 1.1f, 1.3f); punch.hitSize = new Vector3(2.2f, 1.9f, 2.2f); punch.hitAround = false;
             punch.knockback = 3.5f; punch.knockUp = 0f;
             punch.lungeDistance = 0.7f; punch.lungeStart = 0.12f; punch.lungeEnd = 0.4f;
@@ -162,25 +178,25 @@ namespace SonTinhThuyTinh.EditorTools
 
             var kick = Asset<AttackData>("Attack_Kick");
             Timing(kick, "Attack2", 1.2f, 36f / 30f, 0.22f, 0.5f, 0.58f, 36f / 30f);
-            kick.damage = 9f; kick.staminaCost = 8f; kick.heavy = false; kick.superArmor = false;
+            kick.damage = 18f; kick.staminaCost = 8f; kick.heavy = false; kick.superArmor = false;
             kick.hitCenter = new Vector3(0f, 0.9f, 1.4f); kick.hitSize = new Vector3(2f, 1.8f, 2f); kick.hitAround = false;
             kick.knockback = 6.5f; kick.knockUp = 0f;
             kick.lungeDistance = 0.5f; kick.lungeStart = 0.05f; kick.lungeEnd = 0.3f;
             kick.hitStop = 0.05f; kick.shake = 0.25f; kick.swingEffect = null;
 
-            var hurricane = Asset<AttackData>("Attack_HurricaneKick");
-            Timing(hurricane, "Attack3", 1.3f, 50f / 30f, 0.3f, 1.3f, 1.55f, 50f / 30f);
-            hurricane.damage = 20f; hurricane.staminaCost = 10f; hurricane.heavy = true; hurricane.superArmor = false;
-            hurricane.hitCenter = new Vector3(0f, 1f, 0f); hurricane.hitSize = new Vector3(3.2f, 2f, 3.2f); hurricane.hitAround = true;
-            hurricane.knockback = 7f; hurricane.knockUp = 2f;
-            hurricane.lungeDistance = 1.5f; hurricane.lungeStart = 0.1f; hurricane.lungeEnd = 0.9f;
-            hurricane.hitStop = 0.08f; hurricane.shake = 0.5f;
-            hurricane.swingEffect = shock; hurricane.swingEffectTime = 0.45f; hurricane.swingEffectScale = 0.9f;
+            var palm = Asset<AttackData>("Attack_PalmStrike");
+            Timing(palm, "Attack3", PalmSpeed, PalmClip, PalmHitFrom, PalmHitTo, PalmComboAt, PalmClip);
+            palm.damage = 39f; palm.staminaCost = 10f; palm.heavy = true; palm.superArmor = false;
+            palm.hitCenter = new Vector3(0f, 1.1f, 1.7f); palm.hitSize = new Vector3(2.6f, 2.1f, 3.2f); palm.hitAround = false;
+            palm.knockback = 9f; palm.knockUp = 2.5f;
+            palm.lungeDistance = 1.2f; palm.lungeStart = 0.05f; palm.lungeEnd = PalmHitFrom / PalmSpeed;
+            palm.hitStop = 0.1f; palm.shake = 0.55f;
+            palm.swingEffect = shock; palm.swingEffectTime = PalmHitFrom / PalmSpeed; palm.swingEffectScale = 1.1f;
 
             // heavy attack (hold J): the uppercut that throws the target up, super-armoured
             var heavy = Asset<AttackData>("Attack_Uppercut");
             Timing(heavy, "HeavyAttack", 1f, 35f / 30f, 0.28f, 0.55f, 0.9f, 35f / 30f);
-            heavy.damage = 30f; heavy.staminaCost = 25f; heavy.heavy = true; heavy.superArmor = true;
+            heavy.damage = 34f; heavy.staminaCost = 25f; heavy.heavy = true; heavy.superArmor = true;
             heavy.hitCenter = new Vector3(0f, 1.2f, 1.4f); heavy.hitSize = new Vector3(2.4f, 2.6f, 2.2f); heavy.hitAround = false;
             heavy.knockback = 5f; heavy.knockUp = 7f;
             heavy.lungeDistance = 0.6f; heavy.lungeStart = 0.12f; heavy.lungeEnd = 0.4f;
@@ -190,50 +206,81 @@ namespace SonTinhThuyTinh.EditorTools
             // jump attack (J in the air): the clip's strike lands with the character
             var jumpAttack = Asset<AttackData>("Attack_JumpAttack");
             Timing(jumpAttack, "JumpAttack", 1.1f, 36f / 30f, 0.6f, 0.85f, 0.95f, 36f / 30f);
-            jumpAttack.damage = 22f; jumpAttack.staminaCost = 15f; jumpAttack.heavy = true; jumpAttack.superArmor = false;
+            jumpAttack.damage = 44f; jumpAttack.staminaCost = 15f; jumpAttack.heavy = true; jumpAttack.superArmor = false;
             jumpAttack.hitCenter = new Vector3(0f, 0.8f, 1.5f); jumpAttack.hitSize = new Vector3(3.2f, 2.2f, 3f); jumpAttack.hitAround = false;
             jumpAttack.knockback = 7f; jumpAttack.knockUp = 2f;
             jumpAttack.lungeDistance = 2.5f; jumpAttack.lungeStart = 0.1f; jumpAttack.lungeEnd = 0.5f;
             jumpAttack.hitStop = 0.09f; jumpAttack.shake = 0.5f;
             jumpAttack.swingEffect = shock; jumpAttack.swingEffectTime = 0.6f; jumpAttack.swingEffectScale = 0.8f;
 
-            // spells (U, I, O); the animator states keep their Thuy Tinh names: SpellWind = first slot, SpellRain = second, SpellWave = third
-            var rockSpell = Asset<SpellData>("Spell_RockLine");
-            Timing(rockSpell, "SpellWind", 1.3f, 46f / 30f, 0f, 0f, 0.85f, 46f / 30f);
-            rockSpell.displayName = "Núi mọc"; rockSpell.color = new Color(0.95f, 0.75f, 0.4f); rockSpell.kind = SpellKind.Wave;
-            rockSpell.cooldown = 10f; rockSpell.staminaCost = 0f; rockSpell.damage = 40f; rockSpell.heavy = true; rockSpell.superArmor = true;
-            rockSpell.effectPrefab = rockWave; rockSpell.effectTime = 0.67f / 1.3f;
-            rockSpell.radius = 2.5f; rockSpell.range = 10f; rockSpell.speed = 14f; rockSpell.knockback = 10f; rockSpell.knockUp = 3f;
-            rockSpell.lungeDistance = 0f; rockSpell.swingEffect = null; rockSpell.hitStop = 0f; rockSpell.shake = 0.45f;
+            // spells (Z, X, C); the animator states keep their Thuy Tinh names (see Mapping for the clips they play)
+            // Z, Người đá: two rock golems charge ahead as far as Thủy Tinh's Sóng đẩy reaches, throw and stun (1 s) whoever they hit
+            var golemSpell = Asset<SpellData>("Spell_RockGolem");
+            Timing(golemSpell, "SpellWind", 1.3f, 46f / 30f, 0f, 0f, 0.85f, 46f / 30f);
+            golemSpell.displayName = "Người đá"; golemSpell.color = new Color(0.95f, 0.72f, 0.38f); golemSpell.kind = SpellKind.Wave;
+            golemSpell.cooldown = 10f; golemSpell.staminaCost = 0f; golemSpell.damage = 35f; golemSpell.heavy = true; golemSpell.superArmor = true;
+            golemSpell.effectPrefab = golemFx; golemSpell.effectTime = 0.67f / 1.3f;
+            golemSpell.range = 12f; golemSpell.speed = 13f; golemSpell.knockback = 14f; golemSpell.knockUp = 4f;   // Sóng đẩy: 12 m at 13 m/s
+            golemSpell.stunSeconds = 1f; golemSpell.bossStunScale = 1f; golemSpell.slowAfterHit = 0f;
+            golemSpell.lungeDistance = 0f; golemSpell.swingEffect = null; golemSpell.hitStop = 0.06f; golemSpell.shake = 0.5f;
 
-            var zoneSpell = Asset<SpellData>("Spell_EarthZone");
-            Timing(zoneSpell, "SpellRain", 1.3f, 50f / 30f, 0f, 0f, 1.05f, 1.4f);
-            zoneSpell.displayName = "Núi dâng"; zoneSpell.color = new Color(0.85f, 0.65f, 0.38f); zoneSpell.kind = SpellKind.Rain;
-            zoneSpell.cooldown = 18f; zoneSpell.staminaCost = 0f; zoneSpell.damage = 0f; zoneSpell.heavy = false; zoneSpell.superArmor = true;
-            zoneSpell.effectPrefab = zone; zoneSpell.effectTime = 0.83f / 1.3f;
-            zoneSpell.radius = 6f; zoneSpell.range = 8f; zoneSpell.effectDuration = 6f; zoneSpell.tickDamage = 10f; zoneSpell.tickInterval = 0.5f; zoneSpell.slowFactor = 0.5f;
-            zoneSpell.lungeDistance = 0f; zoneSpell.swingEffect = null; zoneSpell.hitStop = 0f; zoneSpell.shake = 0.45f;
+            // X, Tường đá: both hands slam the ground and a 4 x 3 m wall of rock stands 2 s right in front of him; water attacks burst on it
+            var wallSpell = Asset<SpellData>("Spell_RockWall");
+            Timing(wallSpell, "SpellWave", 1.3f, 38f / 30f, 0f, 0f, 0.9f, 38f / 30f);
+            wallSpell.displayName = "Tường đá"; wallSpell.color = new Color(0.78f, 0.66f, 0.5f); wallSpell.kind = SpellKind.Rain;
+            wallSpell.cooldown = 9f; wallSpell.staminaCost = 0f; wallSpell.damage = 0f; wallSpell.heavy = false; wallSpell.superArmor = true;
+            wallSpell.effectPrefab = wallFx; wallSpell.effectTime = 0.57f / 1.3f;
+            wallSpell.radius = 2f; wallSpell.range = 2.2f; wallSpell.effectDuration = 2f; wallSpell.stunSeconds = 0f;
+            wallSpell.lungeDistance = 0f; wallSpell.swingEffect = null; wallSpell.hitStop = 0f; wallSpell.shake = 0.5f;
 
-            var quakeSpell = Asset<SpellData>("Spell_Earthquake");
-            Timing(quakeSpell, "SpellWave", 1.3f, 38f / 30f, 0f, 0f, 0.9f, 38f / 30f);
-            quakeSpell.displayName = "Núi non"; quakeSpell.color = new Color(0.85f, 0.45f, 0.25f); quakeSpell.kind = SpellKind.Wind;
-            quakeSpell.cooldown = 8f; quakeSpell.staminaCost = 0f; quakeSpell.damage = 80f; quakeSpell.heavy = true; quakeSpell.superArmor = true;
-            quakeSpell.effectPrefab = quake; quakeSpell.effectTime = 0.57f / 1.3f;
-            quakeSpell.radius = 8f; quakeSpell.speed = 0f; quakeSpell.knockUpSpeed = 7f; quakeSpell.effectDuration = 1.6f;   // no pull: the ground throws them up where they stand
-            quakeSpell.lungeDistance = 0f; quakeSpell.swingEffect = null; quakeSpell.hitStop = 0f; quakeSpell.shake = 0.7f;
+            // C, Đá nhọn: the right arm comes up and four sharp spires stab up out of the ground one after another along a line ahead
+            var spikeSpell = Asset<SpellData>("Spell_RockSpikes");
+            Timing(spikeSpell, "SpellRain", RaiseSpeed, RaiseClip, 0f, 0f, RaiseComboAt, RaiseClip);
+            spikeSpell.displayName = "Đá nhọn"; spikeSpell.color = new Color(0.62f, 0.82f, 0.45f); spikeSpell.kind = SpellKind.Wind;
+            spikeSpell.cooldown = 9f; spikeSpell.staminaCost = 0f; spikeSpell.damage = 30f; spikeSpell.heavy = true; spikeSpell.superArmor = true;
+            spikeSpell.effectPrefab = spikesFx; spikeSpell.effectTime = RaiseAt / RaiseSpeed;
+            spikeSpell.range = 11f; spikeSpell.knockback = 3f; spikeSpell.knockUpSpeed = 8f; spikeSpell.stunSeconds = 0f;
+            spikeSpell.lungeDistance = 0f; spikeSpell.swingEffect = null; spikeSpell.hitStop = 0.05f; spikeSpell.shake = 0.5f;
+
 
             var set = Asset<MoveSet>("MoveSet_SonTinh");
-            set.lightCombo = new[] { punch, kick, hurricane };
+            set.lightCombo = new[] { punch, kick, palm };
             set.heavy = heavy;
             set.jumpAttack = jumpAttack;
-            set.spells = new[] { rockSpell, zoneSpell, quakeSpell };
+            set.spells = new[] { golemSpell, wallSpell, spikeSpell };
             set.hitLightSpeed = 1.5f; set.hitLightDuration = 0.7f; set.hitHeavySpeed = 0.9f; set.hitHeavyDuration = 1.15f; set.staggerDamage = 25f;
             set.hitSplash = hitSplash;
             set.hudFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
 
-            foreach (Object o in new Object[] { punch, kick, hurricane, heavy, jumpAttack, rockSpell, zoneSpell, quakeSpell, set }) EditorUtility.SetDirty(o);
+            foreach (Object o in new Object[] { punch, kick, palm, heavy, jumpAttack, golemSpell, wallSpell, spikeSpell, set }) EditorUtility.SetDirty(o);
             AssetDatabase.SaveAssets();
             return set;
+        }
+
+        // ---------------------------------------------------------------- rock skills
+
+        // The effect prefabs of Người đá, Tường đá and Đá nhọn: the Meshy models (NewProps) and the dust burst, on the skill scripts.
+        static (GameObject golem, GameObject wall, GameObject spikes) RockSkillPrefabs(GameObject dust)
+        {
+            GameObject golem = RockSkillPrefab<RockGolemCharge>("VFX_RockGolem", "golemModel", NewProps.Prefab(NewProps.Kind.RockGolem), dust);
+            GameObject wall = RockSkillPrefab<RockWallBarrier>("VFX_RockWall", "wallModel", NewProps.Prefab(NewProps.Kind.RockWall), dust);
+            GameObject spikes = RockSkillPrefab<RockSpikeLine>("VFX_RockSpikes", "spireModel", NewProps.Prefab(NewProps.Kind.RockSpire), dust);
+            return (golem, wall, spikes);
+        }
+
+        static GameObject RockSkillPrefab<T>(string name, string modelField, GameObject model, GameObject dust) where T : MonoBehaviour
+        {
+            if (model == null) Debug.LogWarning($"{name}: the rock model is missing (Assets/Art/Props, tools/prep_new_assets.py).");
+            var root = new GameObject(name);
+            try
+            {
+                var so = new SerializedObject(root.AddComponent<T>());
+                so.FindProperty(modelField).objectReferenceValue = model;
+                so.FindProperty("dustPrefab").objectReferenceValue = dust;
+                so.ApplyModifiedPropertiesWithoutUndo();
+                return PrefabUtility.SaveAsPrefabAsset(root, "Assets/Prefabs/Combat/" + name + ".prefab");
+            }
+            finally { Object.DestroyImmediate(root); }
         }
 
         // ---------------------------------------------------------------- the player prefab

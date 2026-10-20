@@ -24,12 +24,14 @@ namespace SonTinhThuyTinh.Player
         InputAction lightAttack;   // left mouse button
         InputAction heavyAttack;   // right mouse button / gamepad North
         readonly InputAction[] spells = new InputAction[SpellCount];
+        InputAction lockOn;        // ` / middle mouse / right stick click: target lock on and off
 
         float dodgePressedAt = float.NegativeInfinity;
         float jumpPressedAt = float.NegativeInfinity;
         float slidePressedAt = float.NegativeInfinity;
         float lightPressedAt = float.NegativeInfinity;
         float heavyPressedAt = float.NegativeInfinity;
+        float lockOnPressedAt = float.NegativeInfinity;
         readonly float[] spellPressedAt = { float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity };
 
         // AI override (BossAI): while active the stick and sprint come from the AI, and the device map is
@@ -66,6 +68,7 @@ namespace SonTinhThuyTinh.Player
             lightAttack = map.FindAction("LightAttack", throwIfNotFound: true);
             heavyAttack = map.FindAction("HeavyAttack", throwIfNotFound: true);
             for (int i = 0; i < SpellCount; i++) spells[i] = map.FindAction("Spell" + (i + 1), throwIfNotFound: true);
+            lockOn = map.FindAction("LockOn", throwIfNotFound: true);
         }
 
         void OnEnable()
@@ -79,6 +82,7 @@ namespace SonTinhThuyTinh.Player
             lightAttack.performed += OnLight;
             heavyAttack.performed += OnHeavy;
             for (int i = 0; i < SpellCount; i++) spells[i].performed += OnSpell;
+            lockOn.performed += OnLockOn;
             map.Enable();
             if (aiActive) map.Disable();   // a re-enabled reader must not let the keyboard fight the AI
         }
@@ -94,6 +98,7 @@ namespace SonTinhThuyTinh.Player
             lightAttack.performed -= OnLight;
             heavyAttack.performed -= OnHeavy;
             for (int i = 0; i < SpellCount; i++) spells[i].performed -= OnSpell;
+            lockOn.performed -= OnLockOn;
             map.Disable();
         }
 
@@ -115,6 +120,8 @@ namespace SonTinhThuyTinh.Player
 
         // Z / X / C (index 0..2), gamepad D-pad left / up / right.
         public bool ConsumeSpell(int index) => Consume(ref spellPressedAt[index]);
+        // ` (also middle mouse / right stick click): lock on to an enemy, or let go.
+        public bool ConsumeLockOn() => Consume(ref lockOnPressedAt);
         public bool SpellHeld(int index) => applicationFocused && !aiActive && index >= 0 && index < SpellCount && spells[index].enabled && spells[index].IsPressed();
         public bool HasGameplayFocus => applicationFocused && isActiveAndEnabled && map != null && map.enabled;
 
@@ -181,6 +188,8 @@ namespace SonTinhThuyTinh.Player
         void OnLight(InputAction.CallbackContext _) => lightPressedAt = Time.time;
 
         void OnHeavy(InputAction.CallbackContext _) => heavyPressedAt = Time.time;
+
+        void OnLockOn(InputAction.CallbackContext _) => lockOnPressedAt = Time.time;
 
         // The Attack action has a Tap and a Hold interaction: whichever one completed tells the kind of attack.
         void OnAttack(InputAction.CallbackContext context)

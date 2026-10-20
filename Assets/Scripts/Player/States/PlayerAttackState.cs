@@ -39,7 +39,7 @@ namespace SonTinhThuyTinh.Player.States
             queuedLight = false;
             alreadyHit.Clear();
 
-            player.FaceInput(360f);   // swing the way the stick points
+            player.FaceAim(360f);   // swing at the locked enemy, else the way the stick points
             player.SetAnimSpeed(data.animSpeed);
             upperBodyAttack = data is ProjectileAttackData && player.PlayUpperBodyAttack(data.stateName);
             if (!upperBodyAttack)
