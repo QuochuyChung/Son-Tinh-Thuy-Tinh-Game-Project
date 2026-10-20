@@ -19,7 +19,7 @@ namespace SonTinhThuyTinh.EditorTools
         static readonly Entry[] Entries =
         {
             new() { Definition = "Assets/Data/Characters/Character_SonTinh.asset", Model = "Assets/Prefabs/Characters/SonTinh_v2.prefab", Idle = "Assets/Animations/SonTinh_v2/son_tinh_v2_idle.fbx", Output = "Assets/Art/UI/Portraits/Portrait_SonTinh.png" },
-            new() { Definition = "Assets/Data/Characters/Character_ThuyTinh.asset", Model = "Assets/Prefabs/Characters/ThuyTinh_v2.prefab", Idle = "Assets/Animations/ThuyTinh_v2/thuy_tinh_v2_idle_3.fbx", Output = "Assets/Art/UI/Portraits/Portrait_ThuyTinh.png" },
+            new() { Definition = "Assets/Data/Characters/Character_ThuyTinh.asset", Model = "Assets/Prefabs/Characters/ThuyTinh_AzureSovereign.prefab", Idle = "Assets/Animations/ThuyTinh_v2/thuy_tinh_v2_idle_3.fbx", Output = "Assets/Art/UI/Portraits/Portrait_ThuyTinh.png" },
         };
 
         const int Size = 512;

@@ -83,6 +83,63 @@ namespace SonTinhThuyTinh.EditorTools
             Debug.Log("OpeningCutsceneBuilder: built " + ScenePath);
         }
 
+        // Refresh only Thuy Tinh's embedded cutscene actor from the current character prefab.
+        // The opening scene stores a detached copy of the visual rig, so changing the gameplay
+        // prefab alone does not update the character shown in the story introduction.
+        [MenuItem("Tools/Son Tinh Thuy Tinh/Thuy Tinh: Update Opening Story Model")]
+        public static void UpdateThuyTinhActor()
+        {
+            if (EditorApplication.isPlaying) { Debug.LogError("Stop Play mode first."); return; }
+
+            Scene scene = SceneManager.GetSceneByPath(ScenePath);
+            bool openedForUpdate = !scene.IsValid() || !scene.isLoaded;
+            if (openedForUpdate) scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Additive);
+
+            try
+            {
+                var director = scene.GetRootGameObjects()
+                    .SelectMany(root => root.GetComponentsInChildren<OpeningCutsceneDirector>(true))
+                    .FirstOrDefault();
+                if (director == null) throw new System.InvalidOperationException("OpeningCutsceneDirector is missing from " + ScenePath);
+
+                var directorSo = new SerializedObject(director);
+                var actorProperty = directorSo.FindProperty("thuyTinh");
+                var oldActor = actorProperty.objectReferenceValue as ActorRig;
+                if (oldActor == null) throw new System.InvalidOperationException("The opening cutscene has no Thuy Tinh actor assigned.");
+
+                Transform parent = oldActor.transform.parent;
+                Vector3 position = oldActor.transform.position;
+                Quaternion rotation = oldActor.transform.rotation;
+                int siblingIndex = oldActor.transform.GetSiblingIndex();
+                bool active = oldActor.gameObject.activeSelf;
+
+                var newActor = CineSetBuilder.PlaceSuitor(parent, CharacterId.ThuyTinh, ThuyWalk, position, rotation, "ThuyTinh");
+                newActor.transform.SetSiblingIndex(siblingIndex);
+                newActor.gameObject.SetActive(active);
+
+                actorProperty.objectReferenceValue = newActor;
+                directorSo.ApplyModifiedPropertiesWithoutUndo();
+                Object.DestroyImmediate(oldActor.gameObject);
+
+                const string expectedModel = "Assets/Art/Characters/ThuyTinh_AzureSovereign/thuy_tinh_azure_sovereign.fbx";
+                bool usesAzureSovereign = newActor.GetComponentsInChildren<SkinnedMeshRenderer>(true)
+                    .Any(renderer => renderer.sharedMesh != null && AssetDatabase.GetAssetPath(renderer.sharedMesh) == expectedModel);
+                if (!usesAzureSovereign)
+                    throw new System.InvalidOperationException("The refreshed opening actor does not use the Azure Sovereign model.");
+
+                EditorSceneManager.MarkSceneDirty(scene);
+                if (!EditorSceneManager.SaveScene(scene))
+                    throw new System.InvalidOperationException("Unity could not save " + ScenePath);
+
+                Debug.Log("OpeningCutsceneBuilder: Thuy Tinh opening actor updated to Azure Sovereign; dialogue, camera and scene timing were preserved.");
+            }
+            finally
+            {
+                if (openedForUpdate && scene.IsValid() && scene.isLoaded)
+                    EditorSceneManager.CloseScene(scene, true);
+            }
+        }
+
         // Dialogue_Opening = the lines of Dialogue_Prologue, without their illustrations.
         static void WriteOpeningText()
         {

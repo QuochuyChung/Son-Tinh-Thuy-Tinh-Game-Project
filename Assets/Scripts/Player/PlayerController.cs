@@ -51,6 +51,10 @@ namespace SonTinhThuyTinh.Player
         [SerializeField] MoveSet moveSet;
         [Tooltip("Optional: the glowing trail of the sword. Found on the sword at runtime when empty.")]
         [SerializeField] SwordTrail swordTrail;
+        [Tooltip("How far an attack may acquire a living opponent and turn toward it.")]
+        [SerializeField] float combatAimRadius = 30f;
+        [Tooltip("Degrees per second used to keep an attack square to its opponent.")]
+        [SerializeField] float combatAimTurnSpeed = 1080f;
 
         CharacterController body;
         readonly StateMachine stateMachine = new();
@@ -62,6 +66,8 @@ namespace SonTinhThuyTinh.Player
         CinemachineImpulseSource shakeSource;
         int upperBodyCombatLayer = -1;
         AfterImageTrail afterImages;
+        Transform combatAimTarget;
+        bool combatAimActive;
 
         public PlayerInputReader InputReader => input;
         public Animator Animator => animator;
@@ -101,6 +107,7 @@ namespace SonTinhThuyTinh.Player
 
         public MoveSet MoveSet => moveSet;
         public bool HasCombat => moveSet != null;
+        public bool UsesFrontalWaterCombat => moveSet != null && moveSet.name == "MoveSet_ThuyTinh";
         public bool IsInAir => !body.isGrounded;
 
         void Awake()
@@ -152,6 +159,20 @@ namespace SonTinhThuyTinh.Player
 #if UNITY_EDITOR
             EditorTestKeys();
 #endif
+        }
+
+        // Animator IK runs after the authored pose. During an attack it removes inherited
+        // head/chest wandering while preserving the custom arm animation.
+        void OnAnimatorIK(int layerIndex)
+        {
+            if (!combatAimActive)
+            {
+                animator.SetLookAtWeight(0f);
+                return;
+            }
+
+            animator.SetLookAtWeight(0.92f, 0.28f, 0.9f, 0.65f, 0.45f);
+            animator.SetLookAtPosition(CombatAimPoint());
         }
 
         public void ChangeState(IState next) => stateMachine.ChangeState(next);
@@ -284,11 +305,79 @@ namespace SonTinhThuyTinh.Player
 
         public float SpellCooldownLeft(int index) => Mathf.Max(0f, spellReadyAt[index] - Time.time);
 
-        // Turns to the way the stick points (camera relative) at once, so an attack goes where the player aims.
-        public void FaceInput(float maxDegrees)
+        // Turns to the stick direction. With a neutral stick, use camera-forward so a standing
+        // cast never fires in a stale direction left over from earlier movement.
+        public void FaceAttackInput(float maxDegrees)
         {
             Vector3 direction = CameraRelative(input.Move);
-            if (direction.sqrMagnitude > 0.04f) FaceTowards(direction, maxDegrees);
+            if (direction.sqrMagnitude <= 0.04f)
+            {
+                Transform view = cameraTransform != null ? cameraTransform : Camera.main != null ? Camera.main.transform : null;
+                direction = view != null ? Vector3.ProjectOnPlane(view.forward, Vector3.up) : transform.forward;
+            }
+            if (direction.sqrMagnitude > 0.001f) FaceTowards(direction.normalized, maxDegrees);
+        }
+
+        // Kept for jump/channel states; they now receive the same camera-forward fallback.
+        public void FaceInput(float maxDegrees) => FaceAttackInput(maxDegrees);
+
+        // Acquired once at attack start so the body, gaze, hands and spawned projectile all
+        // agree on one opponent instead of snapping between nearby colliders.
+        public Transform AcquireCombatTarget(float requestedRange = -1f)
+        {
+            float radius = requestedRange > 0f ? Mathf.Min(combatAimRadius, requestedRange) : combatAimRadius;
+            Transform best = null;
+            float bestScore = float.PositiveInfinity;
+            foreach (Health candidate in FindObjectsByType<Health>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+            {
+                if (candidate == null || candidate == health || candidate.IsDead) continue;
+                Vector3 offset = candidate.transform.position - transform.position;
+                offset.y = 0f;
+                float distance = offset.magnitude;
+                if (distance < 0.05f || distance > radius) continue;
+
+                // Distance dominates; the facing penalty only breaks ties toward what the
+                // player can currently see, while still allowing a lone opponent behind them.
+                float angle = Vector3.Angle(transform.forward, offset / distance);
+                float score = distance + angle * 0.025f;
+                if (score >= bestScore) continue;
+                bestScore = score;
+                best = candidate.transform;
+            }
+            return best;
+        }
+
+        public void BeginCombatAim(Transform target)
+        {
+            combatAimTarget = target;
+            combatAimActive = true;
+        }
+
+        public void EndCombatAim()
+        {
+            combatAimActive = false;
+            combatAimTarget = null;
+        }
+
+        public bool FaceCombatTarget(float deltaTime, bool instant = false)
+        {
+            if (!combatAimActive || combatAimTarget == null) return false;
+            Vector3 direction = combatAimTarget.position - transform.position;
+            direction.y = 0f;
+            if (direction.sqrMagnitude <= 0.0025f) return false;
+            FaceTowards(direction.normalized, instant ? 360f : combatAimTurnSpeed * deltaTime);
+            return true;
+        }
+
+        Vector3 CombatAimPoint()
+        {
+            if (combatAimTarget != null)
+            {
+                Collider targetCollider = combatAimTarget.GetComponentInChildren<Collider>();
+                if (targetCollider != null) return targetCollider.bounds.center;
+                return combatAimTarget.position + Vector3.up * 1.25f;
+            }
+            return transform.position + transform.forward * 12f + Vector3.up * 1.35f;
         }
 
         // Stops any rise or fall (starting an attack in the air).
