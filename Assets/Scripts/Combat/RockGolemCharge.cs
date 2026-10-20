@@ -6,8 +6,9 @@ namespace SonTinhThuyTinh.Combat
 {
     // Sơn Tinh's Z, Người đá: two rock golems burst out of the ground beside him and charge straight ahead as far as Thủy Tinh's Sóng đẩy
     // goes (spell.range at spell.speed). Whoever they run into is hurt, thrown away from Sơn Tinh and stunned (spell.stunSeconds); each
-    // enemy is hit once even when both golems catch it. At the end of the run they sink back into the ground. The golem model has no
-    // skeleton, so its run is a lean forward with a heavy side-to-side stomp.
+    // enemy is hit once even when both golems catch it. At the end of the run they sink back into the ground. The golem is rigged
+    // (tools/rig_golem.py): it plays Emerge while it comes up and Run (Legacy clips) while it charges, out of step with the other one.
+    // A golem model without the clips falls back to a lean and a side-to-side stomp.
     public class RockGolemCharge : MonoBehaviour, ISpellEffect
     {
         [SerializeField] GameObject golemModel;
@@ -20,6 +21,8 @@ namespace SonTinhThuyTinh.Combat
         [SerializeField] float sinkTime = 0.4f;
         [Tooltip("Half size of the box each golem hits with (x across, y up, z ahead).")]
         [SerializeField] Vector3 hitHalfSize = new(1.05f, 1.2f, 0.85f);
+        [Tooltip("Metres of ground covered by one Run cycle (both feet): sets the clip speed from the charge speed.")]
+        [SerializeField] float strideLength = 4.2f;
 
         class Golem
         {
@@ -27,6 +30,7 @@ namespace SonTinhThuyTinh.Combat
             public Vector3 position;    // on the ground
             public float height;
             public float phase;
+            public Animation clips;     // null: the model is not rigged
         }
 
         PlayerController caster;
@@ -55,6 +59,14 @@ namespace SonTinhThuyTinh.Combat
                 Transform model = Instantiate(golemModel, at, Quaternion.LookRotation(forward), transform).transform;
                 float height = Mathf.Max(0.5f, RockSkillUtil.LocalBounds(model).size.y);
                 var golem = new Golem { transform = model, position = at, height = height, phase = side > 0 ? 0f : Mathf.PI };
+                golem.clips = model.GetComponentInChildren<Animation>();
+                if (golem.clips != null && (golem.clips["Run"] == null || golem.clips["Emerge"] == null)) golem.clips = null;
+                if (golem.clips != null)
+                {
+                    golem.clips.playAutomatically = false;
+                    golem.clips["Emerge"].speed = golem.clips["Emerge"].length / Mathf.Max(riseTime * 1.4f, 0.05f);
+                    golem.clips.Play("Emerge");
+                }
                 golems.Add(golem);
                 Place(golem, -height, 0f, 0f);
                 RockSkillUtil.Dust(dustPrefab, at, 0.8f);
@@ -77,6 +89,14 @@ namespace SonTinhThuyTinh.Combat
 
             if (sinkStartedAt < 0f)
             {
+                foreach (Golem g in golems)
+                {
+                    if (g.clips == null || g.clips.IsPlaying("Run")) continue;
+                    AnimationState run = g.clips["Run"];
+                    run.speed = spell.speed / Mathf.Max(strideLength, 0.1f) * run.length;
+                    run.normalizedTime = g.phase > 0f ? 0.5f : 0f;
+                    g.clips.CrossFade("Run", 0.08f);
+                }
                 float step = spell.speed * Time.deltaTime;
                 travelled += step;
                 foreach (Golem g in golems)
@@ -84,7 +104,8 @@ namespace SonTinhThuyTinh.Combat
                     g.position += forward * step;
                     g.position.y = Mathf.Lerp(g.position.y, RockSkillUtil.GroundY(g.position, g.position.y), 0.5f);
                     float stride = travelled * 1.6f + g.phase;
-                    Place(g, Mathf.Abs(Mathf.Sin(stride)) * 0.18f, 12f, Mathf.Sin(stride) * 6f);
+                    if (g.clips != null) Place(g, 0f, 4f, 0f);   // the clip does the stomping
+                    else Place(g, Mathf.Abs(Mathf.Sin(stride)) * 0.18f, 12f, Mathf.Sin(stride) * 6f);
                 }
                 HitTargets(step);
                 if (travelled >= spell.range)

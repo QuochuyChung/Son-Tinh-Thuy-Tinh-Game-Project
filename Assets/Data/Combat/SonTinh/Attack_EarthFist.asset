@@ -10,28 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 857f5c0f9bcdf7d4db16a9b921cf3da2, type: 3}
-  m_Name: Attack_PalmStrike
+  m_Name: Attack_EarthFist
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.AttackData
   stateName: Attack3
-  animSpeed: 1.45
-  duration: 1.1034483
-  hitStart: 0.4275862
-  hitEnd: 0.59310347
-  comboStart: 0.6896551
+  animSpeed: 1.15
+  duration: 1.2173913
+  hitStart: 0.45217392
+  hitEnd: 0.6086956
+  comboStart: 0.86956525
   staminaCost: 10
   damage: 39
   heavy: 1
   superArmor: 0
-  hitCenter: {x: 0, y: 1.1, z: 1.7}
-  hitSize: {x: 2.6, y: 2.1, z: 3.2}
+  hitCenter: {x: 0, y: 0.8, z: 2.2}
+  hitSize: {x: 3.4, y: 2, z: 4.4}
   hitAround: 0
-  knockback: 9
-  knockUp: 2.5
-  lungeDistance: 1.2
-  lungeStart: 0.05
-  lungeEnd: 0.4275862
-  hitStop: 0.1
-  shake: 0.55
-  swingEffect: {fileID: 3338702312129493281, guid: 7c2d42e0f55c57047bd2caf1ed2006e7, type: 3}
-  swingEffectTime: 0.4275862
-  swingEffectScale: 1.1
+  knockback: 6
+  knockUp: 6
+  lungeDistance: 1.6
+  lungeStart: 0.2608696
+  lungeEnd: 0.45217392
+  hitStop: 0.12
+  shake: 0.7
+  swingEffect: {fileID: 2172310176233692565, guid: 779666382d903794ab2ed3f435bff431, type: 3}
+  swingEffectTime: 0.45217392
+  swingEffectScale: 1

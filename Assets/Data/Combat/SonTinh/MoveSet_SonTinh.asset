@@ -15,7 +15,7 @@ MonoBehaviour:
   lightCombo:
   - {fileID: 11400000, guid: 5a9c71d783d61cd4894a4786e074d32b, type: 2}
   - {fileID: 11400000, guid: 26ed9397ea1c24d40b4f84f1fe9fdf94, type: 2}
-  - {fileID: 11400000, guid: e6448548e27848845aaa1c9a6e90a8bd, type: 2}
+  - {fileID: 11400000, guid: de31d7a9e51655c4ab57951ade7e728c, type: 2}
   heavy: {fileID: 11400000, guid: 6afcc227ee50d234f89417c0469d3a98, type: 2}
   jumpAttack: {fileID: 11400000, guid: 44fa6e24fe4b12c44a64d0b2b2199801, type: 2}
   spells:

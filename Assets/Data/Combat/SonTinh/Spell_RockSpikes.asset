@@ -17,7 +17,7 @@ MonoBehaviour:
   duration: 1
   hitStart: 0
   hitEnd: 0
-  comboStart: 0.7083333
+  comboStart: 0.6666666
   staminaCost: 0
   damage: 30
   heavy: 1
@@ -40,7 +40,7 @@ MonoBehaviour:
   kind: 0
   cooldown: 9
   effectPrefab: {fileID: 2290115804034940469, guid: c5adafbf4c210024eafae7467cd1ffab, type: 3}
-  effectTime: 0.41666666
+  effectTime: 0.3333333
   radius: 8
   range: 11
   speed: 14

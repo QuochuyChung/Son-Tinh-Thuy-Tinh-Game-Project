@@ -76,7 +76,8 @@ namespace SonTinhThuyTinh.EditorTools
             string modelPath = Dir + spec.file + ".fbx";
             if (AssetDatabase.LoadAssetAtPath<GameObject>(modelPath) == null) return null;
 
-            ConfigureModel(modelPath);
+            if (kind == Kind.RockGolem) ConfigureAnimatedModel(modelPath);
+            else ConfigureModel(modelPath);
             Material material = EnsureMaterial(spec.file);
             if (!AssetDatabase.IsValidFolder("Assets/Prefabs")) AssetDatabase.CreateFolder("Assets", "Prefabs");
             if (!AssetDatabase.IsValidFolder(PrefabDir)) AssetDatabase.CreateFolder("Assets/Prefabs", "Props");
@@ -204,6 +205,28 @@ namespace SonTinhThuyTinh.EditorTools
             float ang = Mathf.Atan2(key.x, key.z) * Mathf.Rad2Deg;     // angle of key from +Z, clockwise seen from above
             model.transform.localRotation = Quaternion.Euler(0f, -ang, 0f) * model.transform.localRotation;
             return yaw - ang;
+        }
+
+        // The golem is rigged (tools/rig_golem.py): Legacy clips Run (loop) and Emerge, played by RockGolemCharge.
+        static void ConfigureAnimatedModel(string path)
+        {
+            var importer = (ModelImporter)AssetImporter.GetAtPath(path);
+            importer.materialImportMode = ModelImporterMaterialImportMode.None;
+            importer.importCameras = false;
+            importer.importLights = false;
+            importer.animationType = ModelImporterAnimationType.Legacy;
+            importer.importAnimation = true;
+            importer.SaveAndReimport();
+            var clips = importer.defaultClipAnimations;
+            foreach (var clip in clips)
+            {
+                bool run = clip.takeName.EndsWith("Run");
+                clip.name = run ? "Run" : clip.takeName.EndsWith("Emerge") ? "Emerge" : clip.takeName;
+                clip.loopTime = run;
+                clip.wrapMode = run ? WrapMode.Loop : WrapMode.ClampForever;
+            }
+            importer.clipAnimations = clips;
+            importer.SaveAndReimport();
         }
 
         static void ConfigureModel(string path)

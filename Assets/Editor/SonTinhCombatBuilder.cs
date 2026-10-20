@@ -35,13 +35,13 @@ namespace SonTinhThuyTinh.EditorTools
             ("son_tinh_v2_slam.fbx", "Slam", 8, 46, true),
             ("son_tinh_v2_roll.fbx", "Roll", 20, 52, true),
             ("son_tinh_v2_reaction.fbx", "Reaction", 0, 34, true),
+            ("son_tinh_v2_earth_fist.fbx", "EarthFist", 0, 42, true),      // hand-keyed: tools/son_tinh_finisher.py
         };
 
         // clips taken as they are from the Kevin Iglesias spellcasting pack (humanoid, retargeted onto him)
         const string KevinDir = "Assets/Kevin Iglesias/Human Animations/Animations/Male/Combat/Spellcasting/MagicAttacks/";
         static readonly Dictionary<string, string> Kevin = new()
         {
-            ["PalmStrike"] = KevinDir + "Directional/HumanM@MagicAttackDirect2H01.fbx",     // both palms thrust forward: the third hit of the combo
             ["RaiseRight"] = KevinDir + "Directional/HumanM@MagicAttackDirect1H01_R.fbx",   // the right arm thrust up to chest height: Đá nhọn
         };
 
@@ -49,12 +49,12 @@ namespace SonTinhThuyTinh.EditorTools
         // play: SpellWind = Người đá (Z, MagicBolt), SpellWave = Tường đá (X, Slam: both hands down on the ground), SpellRain = Đá nhọn (C).
         static readonly (string baseClip, string mine)[] Mapping =
         {
-            ("GS_Slash", "Punch"), ("GS_Kick", "Kick"), ("GS_Spin", "PalmStrike"), ("GS_CastHeavy", "Uppercut"), ("GS_JumpAttack", "JumpAttack"),
+            ("GS_Slash", "Punch"), ("GS_Kick", "Kick"), ("GS_Spin", "EarthFist"), ("GS_CastHeavy", "Uppercut"), ("GS_JumpAttack", "JumpAttack"),
             ("GS_CastWind", "MagicBolt"), ("GS_PowerUp", "RaiseRight"), ("GS_SlideAttack", "Slam"), ("GS_Impact", "Reaction"), ("GS_Roll", "Roll"),
         };
 
         // timings of the Kevin clips (seconds into the clip at normal speed; measured from the hands' speed)
-        const float PalmSpeed = 1.45f, PalmClip = 48f / 30f, PalmHitFrom = 0.74f, PalmHitTo = 0.95f, PalmComboAt = 1.05f;
+        const float FistSpeed = 1.15f, FistClip = 42f / 30f, FistHitFrom = 0.52f, FistHitTo = 0.7f, FistComboAt = 1.0f;   // impact at 0.55 s
         const float RaiseSpeed = 1.2f, RaiseClip = 36f / 30f, RaiseAt = 0.4f, RaiseComboAt = 0.8f;
 
         [MenuItem("Tools/Son Tinh Thuy Tinh/Build Son Tinh Combat")]
@@ -69,7 +69,7 @@ namespace SonTinhThuyTinh.EditorTools
 
             var vfx = EarthVfxBuilder.Build();
             var rocks = RockSkillPrefabs(vfx.shock);
-            MoveSet set = BuildData(vfx.hit, vfx.shock, rocks.golem, rocks.wall, rocks.spikes, vfx.slash, vfx.heavySlash);
+            MoveSet set = BuildData(vfx.hit, vfx.shock, rocks.golem, rocks.wall, rocks.spikes, rocks.fist, vfx.slash, vfx.heavySlash);
             TunePlayer(set);
             AssetDatabase.SaveAssets();
             Debug.Log("Son Tinh combat built.");
@@ -165,9 +165,9 @@ namespace SonTinhThuyTinh.EditorTools
             a.comboStart = comboAt / speed;
         }
 
-        static MoveSet BuildData(GameObject hitSplash, GameObject shock, GameObject golemFx, GameObject wallFx, GameObject spikesFx, GameObject slashVfx = null, GameObject heavySlashVfx = null)
+        static MoveSet BuildData(GameObject hitSplash, GameObject shock, GameObject golemFx, GameObject wallFx, GameObject spikesFx, GameObject fistFx, GameObject slashVfx = null, GameObject heavySlashVfx = null)
         {
-            // light combo: cross punch, kick, palm strike (the finisher: both palms thrust forward with a burst of stone ahead)
+            // light combo: cross punch, kick, Địa Chấn Quyền (the finisher: he leaps and drives his fist into the ground, stone spikes fan out ahead)
             var punch = Asset<AttackData>("Attack_Punch");
             Timing(punch, "Attack1", 1.25f, 34f / 30f, 0.37f, 0.62f, 0.68f, 34f / 30f);
             punch.damage = 20f; punch.staminaCost = 8f; punch.heavy = false; punch.superArmor = false;
@@ -184,14 +184,14 @@ namespace SonTinhThuyTinh.EditorTools
             kick.lungeDistance = 0.5f; kick.lungeStart = 0.05f; kick.lungeEnd = 0.3f;
             kick.hitStop = 0.05f; kick.shake = 0.25f; kick.swingEffect = null;
 
-            var palm = Asset<AttackData>("Attack_PalmStrike");
-            Timing(palm, "Attack3", PalmSpeed, PalmClip, PalmHitFrom, PalmHitTo, PalmComboAt, PalmClip);
-            palm.damage = 39f; palm.staminaCost = 10f; palm.heavy = true; palm.superArmor = false;
-            palm.hitCenter = new Vector3(0f, 1.1f, 1.7f); palm.hitSize = new Vector3(2.6f, 2.1f, 3.2f); palm.hitAround = false;
-            palm.knockback = 9f; palm.knockUp = 2.5f;
-            palm.lungeDistance = 1.2f; palm.lungeStart = 0.05f; palm.lungeEnd = PalmHitFrom / PalmSpeed;
-            palm.hitStop = 0.1f; palm.shake = 0.55f;
-            palm.swingEffect = shock; palm.swingEffectTime = PalmHitFrom / PalmSpeed; palm.swingEffectScale = 1.1f;
+            var fist = Asset<AttackData>("Attack_EarthFist");
+            Timing(fist, "Attack3", FistSpeed, FistClip, FistHitFrom, FistHitTo, FistComboAt, FistClip);
+            fist.damage = 39f; fist.staminaCost = 10f; fist.heavy = true; fist.superArmor = false;
+            fist.hitCenter = new Vector3(0f, 0.8f, 2.2f); fist.hitSize = new Vector3(3.4f, 2f, 4.4f); fist.hitAround = false;   // the fan of spikes
+            fist.knockback = 6f; fist.knockUp = 6f;
+            fist.lungeDistance = 1.6f; fist.lungeStart = 0.3f / FistSpeed; fist.lungeEnd = FistHitFrom / FistSpeed;   // the leap
+            fist.hitStop = 0.12f; fist.shake = 0.7f;
+            fist.swingEffect = fistFx; fist.swingEffectTime = FistHitFrom / FistSpeed; fist.swingEffectScale = 1f;   // with the first frame of the hit (before its hit stop)
 
             // heavy attack (hold J): the uppercut that throws the target up, super-armoured
             var heavy = Asset<AttackData>("Attack_Uppercut");
@@ -244,7 +244,7 @@ namespace SonTinhThuyTinh.EditorTools
 
 
             var set = Asset<MoveSet>("MoveSet_SonTinh");
-            set.lightCombo = new[] { punch, kick, palm };
+            set.lightCombo = new[] { punch, kick, fist };
             set.heavy = heavy;
             set.jumpAttack = jumpAttack;
             set.spells = new[] { golemSpell, wallSpell, spikeSpell };
@@ -252,20 +252,22 @@ namespace SonTinhThuyTinh.EditorTools
             set.hitSplash = hitSplash;
             set.hudFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FontPath);
 
-            foreach (Object o in new Object[] { punch, kick, palm, heavy, jumpAttack, golemSpell, wallSpell, spikeSpell, set }) EditorUtility.SetDirty(o);
+            foreach (Object o in new Object[] { punch, kick, fist, heavy, jumpAttack, golemSpell, wallSpell, spikeSpell, set }) EditorUtility.SetDirty(o);
             AssetDatabase.SaveAssets();
             return set;
         }
 
         // ---------------------------------------------------------------- rock skills
 
-        // The effect prefabs of Người đá, Tường đá and Đá nhọn: the Meshy models (NewProps) and the dust burst, on the skill scripts.
-        static (GameObject golem, GameObject wall, GameObject spikes) RockSkillPrefabs(GameObject dust)
+        // The effect prefabs of Người đá, Tường đá, Đá nhọn and the finisher's spike fan: the Meshy models (NewProps) and the dust burst,
+        // on the skill scripts.
+        static (GameObject golem, GameObject wall, GameObject spikes, GameObject fist) RockSkillPrefabs(GameObject dust)
         {
             GameObject golem = RockSkillPrefab<RockGolemCharge>("VFX_RockGolem", "golemModel", NewProps.Prefab(NewProps.Kind.RockGolem), dust);
             GameObject wall = RockSkillPrefab<RockWallBarrier>("VFX_RockWall", "wallModel", NewProps.Prefab(NewProps.Kind.RockWall), dust);
             GameObject spikes = RockSkillPrefab<RockSpikeLine>("VFX_RockSpikes", "spireModel", NewProps.Prefab(NewProps.Kind.RockSpire), dust);
-            return (golem, wall, spikes);
+            GameObject fist = RockSkillPrefab<EarthFistBurst>("VFX_EarthFist", "spireModel", NewProps.Prefab(NewProps.Kind.RockSpire), dust);
+            return (golem, wall, spikes, fist);
         }
 
         static GameObject RockSkillPrefab<T>(string name, string modelField, GameObject model, GameObject dust) where T : MonoBehaviour

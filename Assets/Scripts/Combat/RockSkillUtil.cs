@@ -59,14 +59,17 @@ namespace SonTinhThuyTinh.Combat
             Transform frame = model.parent;
             bool any = false;
             Bounds b = default;
-            foreach (MeshFilter mf in model.GetComponentsInChildren<MeshFilter>(true))
+            var meshes = new System.Collections.Generic.List<(Mesh, Transform)>();
+            foreach (MeshFilter mf in model.GetComponentsInChildren<MeshFilter>(true)) meshes.Add((mf.sharedMesh, mf.transform));
+            foreach (SkinnedMeshRenderer sk in model.GetComponentsInChildren<SkinnedMeshRenderer>(true)) meshes.Add((sk.sharedMesh, sk.transform));   // the rigged golem
+            foreach (var (mesh, meshTransform) in meshes)
             {
-                if (mf.sharedMesh == null) continue;
-                Bounds m = mf.sharedMesh.bounds;
+                if (mesh == null) continue;
+                Bounds m = mesh.bounds;
                 for (int i = 0; i < 8; i++)
                 {
                     Vector3 corner = m.center + Vector3.Scale(m.extents, new Vector3((i & 1) == 0 ? -1 : 1, (i & 2) == 0 ? -1 : 1, (i & 4) == 0 ? -1 : 1));
-                    Vector3 world = mf.transform.TransformPoint(corner);
+                    Vector3 world = meshTransform.TransformPoint(corner);
                     Vector3 local = frame != null ? frame.InverseTransformPoint(world) : world;
                     if (!any) { b = new Bounds(local, Vector3.zero); any = true; }
                     else b.Encapsulate(local);
