@@ -19,6 +19,8 @@ namespace SonTinhThuyTinh.Player.States
         bool effectSpawned;
         bool upperBodyAttack;
         bool queuedLight;
+        Transform aimTarget;
+        bool frontalWaterCombat;
 
         public PlayerAttackState(PlayerController player) => this.player = player;
 
@@ -39,7 +41,23 @@ namespace SonTinhThuyTinh.Player.States
             queuedLight = false;
             alreadyHit.Clear();
 
-            player.FaceAim(360f);   // swing at the locked enemy, else the way the stick points
+            frontalWaterCombat = player.UsesFrontalWaterCombat;
+            if (frontalWaterCombat)
+            {
+                float targetRange = data is ProjectileAttackData projectile
+                    ? projectile.projectileRange + 4f
+                    : data is SpellData spell ? spell.range + 4f : 8f;
+                aimTarget = player.AcquireCombatTarget(targetRange);
+                player.BeginCombatAim(aimTarget);
+                if (!player.FaceCombatTarget(0f, instant: true))
+                    player.FaceAttackInput(360f);
+            }
+            else
+            {
+                aimTarget = null;
+                player.EndCombatAim();
+                player.FaceAim(360f);   // locked enemy first, otherwise the stick/camera direction
+            }
             player.SetAnimSpeed(data.animSpeed);
             upperBodyAttack = data is ProjectileAttackData && player.PlayUpperBodyAttack(data.stateName);
             if (!upperBodyAttack)
@@ -54,9 +72,22 @@ namespace SonTinhThuyTinh.Player.States
         {
             elapsed += deltaTime;
 
+            bool trackingOpponent = frontalWaterCombat && player.FaceCombatTarget(deltaTime);
+
             if (upperBodyAttack)
             {
-                player.Locomote(player.InputReader.Move, deltaTime);
+                // A locked cast is a planted, frontal stance. With no opponent, retain the
+                // old mobile-casting behaviour and use input/camera-forward as the aim.
+                if (trackingOpponent)
+                {
+                    player.SetSpeed(0f);
+                    player.Move(Vector3.zero, deltaTime);
+                }
+                else
+                {
+                    player.Locomote(player.InputReader.Move, deltaTime);
+                    player.FaceAttackInput(720f * deltaTime);
+                }
                 if (player.InputReader.ConsumeLight()) queuedLight = true;
             }
             else
@@ -66,6 +97,10 @@ namespace SonTinhThuyTinh.Player.States
                     travel = player.transform.forward * (data.lungeDistance * deltaTime / Mathf.Max(data.lungeEnd - data.lungeStart, 0.01f));
                 player.Move(travel, deltaTime);
             }
+
+            // Locomotion/root movement above may have changed the transform. Re-apply the
+            // target-facing rotation last so the release frame always points at the opponent.
+            player.FaceCombatTarget(deltaTime);
 
             player.SetTrail(elapsed >= data.hitStart - 0.12f && elapsed <= data.hitEnd + 0.1f);
 
@@ -105,6 +140,8 @@ namespace SonTinhThuyTinh.Player.States
             player.SetTrail(false);
             player.SetAnimSpeed(1f);
             if (upperBodyAttack) player.StopUpperBodyAttack();
+            player.EndCombatAim();
+            aimTarget = null;
         }
 
         // The combo window: next light attack in the chain, the heavy attack as a finisher, a spell, or a dodge.
