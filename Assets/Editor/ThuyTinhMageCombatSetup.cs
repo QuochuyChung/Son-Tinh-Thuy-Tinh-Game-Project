@@ -29,7 +29,8 @@ internal static class ThuyTinhMageCombatSetup
     const string LeftClipPath = "Assets/Kevin Iglesias/Human Animations/Animations/Male/Combat/Spellcasting/MagicAttacks/Directional/HumanM@MagicAttackDirect1H01_L.fbx";
     const string RightClipPath = "Assets/Kevin Iglesias/Human Animations/Animations/Male/Combat/Spellcasting/MagicAttacks/Directional/HumanM@MagicAttackDirect1H01_R.fbx";
     const string TwoHandClipPath = "Assets/Kevin Iglesias/Human Animations/Animations/Male/Combat/Spellcasting/MagicAttacks/Directional/HumanM@MagicAttackDirect2H01.fbx";
-    const string WalkClipPath = "Assets/Animations/ThuyTinh_v2/thuy_tinh_v2_walk.fbx";
+    const string SonTinhReactionPath = "Assets/Animations/SonTinh_v2/son_tinh_v2_reaction.fbx";   // cut by SonTinhCombatBuilder
+    const string WalkClipPath ="Assets/Animations/ThuyTinh_v2/thuy_tinh_v2_walk.fbx";
     const string RunClipPath = "Assets/Animations/ThuyTinh_v2/thuy_tinh_v2_run.fbx";
 
     [MenuItem("Tools/Son Tinh Thuy Tinh/Apply Thuy Tinh Mage Combat")]
@@ -57,16 +58,17 @@ internal static class ThuyTinhMageCombatSetup
         EnsureFolder(AttackFolder);
         ProjectileAttackData attack1 = ConfigureAttack(
             $"{AttackFolder}/Attack_WaterOrb_Left.asset", "Attack1", left, projectilePrefab,
-            1.35f, 0.48f, 0.65f, 16f, 25f, 2.5f, false);
+            1.15f, 0.48f, 0.65f, 16f, 20f, 2.5f, false);
         ProjectileAttackData attack2 = ConfigureAttack(
             $"{AttackFolder}/Attack_WaterOrb_Right.asset", "Attack2", right, projectilePrefab,
-            1.35f, 0.48f, 0.7f, 17f, 25f, 3.2f, false);
+            1.15f, 0.48f, 0.7f, 17f, 18f, 3.2f, false);
         ProjectileAttackData attack3 = ConfigureAttack(
             $"{AttackFolder}/Attack_WaterOrb_TwoHand.asset", "Attack3", twoHand, projectilePrefab,
-            1.45f, 0.53f, 0.9f, 19f, 30f, 5.5f, true);
+            1.25f, 0.53f, 0.9f, 19f, 39f, 5.5f, true);
+        attack3.staminaCost = 10f;
         ProjectileAttackData heavy = ConfigureAttack(
             $"{AttackFolder}/Attack_WaterOrb_Heavy.asset", "HeavyAttack", twoHand, projectilePrefab,
-            0.95f, 0.58f, 1.35f, 15f, 30f, 8f, true);
+            0.95f, 0.58f, 1.35f, 15f, 34f, 8f, true);
         heavy.staminaCost = 25f;
         heavy.superArmor = true;
         heavy.shake = 0.55f;
@@ -103,6 +105,13 @@ internal static class ThuyTinhMageCombatSetup
         SetOverride(controller, overrides, Attack2OriginalGuid, right);
         SetOverride(controller, overrides, Attack3OriginalGuid, twoHand);
         SetOverride(controller, overrides, HeavyOriginalGuid, twoHand);
+
+        // Getting hit: the same recoil as Sơn Tinh (his Mixamo reaction, retargeted). Her own greatsword impact barely moved her, so his
+        // blows looked as if they did not land while hers threw him back.
+        AnimationClip reaction = AssetDatabase.LoadAllAssetsAtPath(SonTinhReactionPath).OfType<AnimationClip>().FirstOrDefault(c => c.name == "Reaction");
+        AnimationClip impact = overrides.Select(pair => pair.Key).FirstOrDefault(clip => clip != null && clip.name == "GS_Impact");
+        if (reaction != null && impact != null) controller[impact] = reaction;
+        else Debug.LogError("Cannot give Thuy Tinh Son Tinh's hit reaction (Reaction clip or GS_Impact slot missing).");
         EditorUtility.SetDirty(controller);
     }
 
@@ -190,7 +199,7 @@ internal static class ThuyTinhMageCombatSetup
         attack.hitStart = 0f;
         attack.hitEnd = 0f;
         attack.comboStart = duration * 0.68f;
-        attack.staminaCost = 5f;
+        attack.staminaCost = 8f;   // as Sơn Tinh's punch and kick
         attack.damage = damage;
         attack.heavy = heavy;
         attack.superArmor = false;

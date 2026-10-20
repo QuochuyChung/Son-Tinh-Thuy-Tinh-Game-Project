@@ -178,14 +178,16 @@ namespace SonTinhThuyTinh.EditorTools
         public static Bounds LocalBounds(GameObject go, Transform frame)
         {
             bool any = false; var b = new Bounds();
-            foreach (var mf in go.GetComponentsInChildren<MeshFilter>(true))
+            var meshes = go.GetComponentsInChildren<MeshFilter>(true).Select(mf => (mf.sharedMesh, mf.transform))
+                .Concat(go.GetComponentsInChildren<SkinnedMeshRenderer>(true).Select(sk => (sk.sharedMesh, sk.transform)));   // rigged models too
+            foreach (var (mesh, t) in meshes)
             {
-                if (mf.sharedMesh == null) continue;
-                Bounds mb = mf.sharedMesh.bounds;
+                if (mesh == null) continue;
+                Bounds mb = mesh.bounds;
                 for (int i = 0; i < 8; i++)
                 {
                     var c = new Vector3((i & 1) == 0 ? mb.min.x : mb.max.x, (i & 2) == 0 ? mb.min.y : mb.max.y, (i & 4) == 0 ? mb.min.z : mb.max.z);
-                    Vector3 p = frame.InverseTransformPoint(mf.transform.TransformPoint(c));
+                    Vector3 p = frame.InverseTransformPoint(t.TransformPoint(c));
                     if (!any) { b = new Bounds(p, Vector3.zero); any = true; } else b.Encapsulate(p);
                 }
             }

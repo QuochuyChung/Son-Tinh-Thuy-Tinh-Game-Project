@@ -68,6 +68,7 @@ namespace SonTinhThuyTinh.Player
         AfterImageTrail afterImages;
         Transform combatAimTarget;
         bool combatAimActive;
+        TargetLock targetLock;
 
         public PlayerInputReader InputReader => input;
         public Animator Animator => animator;
@@ -104,6 +105,10 @@ namespace SonTinhThuyTinh.Player
         public PlayerHitState HitState { get; private set; }
         public PlayerClimbState ClimbState { get; private set; }
         public PlayerChannelSpellState ChannelSpellState { get; private set; }
+        public PlayerStunState StunState { get; private set; }
+
+        // The enemy locked on with the ` key (null when there is none).
+        public Health LockedTarget => targetLock != null && targetLock.isActiveAndEnabled ? targetLock.Target : null;
 
         public MoveSet MoveSet => moveSet;
         public bool HasCombat => moveSet != null;
@@ -126,6 +131,7 @@ namespace SonTinhThuyTinh.Player
             HitState = new PlayerHitState(this);
             ClimbState = new PlayerClimbState(this);
             ChannelSpellState = new PlayerChannelSpellState(this);
+            StunState = new PlayerStunState(this);
         }
 
         void Start()
@@ -140,6 +146,9 @@ namespace SonTinhThuyTinh.Player
             // The dodge's after-images. Added in code (not on the prefab) the same way as the impulse source, so a character whose dodge
             // has no spacing set simply never gets the component.
             if (dodge.afterImageSpacing > 0f) afterImages = gameObject.AddComponent<AfterImageTrail>();
+
+            // the ` target lock, for fighters (it switches itself off while an AI drives this character)
+            if (moveSet != null) targetLock = gameObject.AddComponent<TargetLock>();
         }
 
         void OnDestroy()
@@ -190,13 +199,24 @@ namespace SonTinhThuyTinh.Player
         {
             if (health.IsDead || moveSet == null) return;
             IState current = stateMachine.Current;
-            if (current == DeathState || current == HitState || current == ClimbState) return;
+            if (current == DeathState || current == HitState || current == ClimbState || current == StunState) return;
             if (current == ChannelSpellState) ChannelSpellState.RequestCancel();
             if (current == AttackState && !AttackState.CanBeInterrupted) return;
             bool heavy = info.IsHeavy || info.Amount >= moveSet.staggerDamage;
             Vector3 from = info.Source != null ? info.Source.transform.position : transform.position - transform.forward;
             HitState.Begin(heavy, from);
             ChangeState(HitState);
+        }
+
+        // Stunned for `seconds` (Sơn Tinh's rock golems): pushed with `push` (m/s, fading), cannot act, even through super armour.
+        public void Stun(float seconds, Vector3 push)
+        {
+            if (health.IsDead || moveSet == null || seconds <= 0f) return;
+            IState current = stateMachine.Current;
+            if (current == DeathState || current == ClimbState) return;
+            if (current == ChannelSpellState) ChannelSpellState.RequestCancel();
+            StunState.Begin(seconds, push);
+            ChangeState(StunState);
         }
 
         // ---------------------------------------------------------------- climbing
@@ -326,6 +346,15 @@ namespace SonTinhThuyTinh.Player
         public Transform AcquireCombatTarget(float requestedRange = -1f)
         {
             float radius = requestedRange > 0f ? Mathf.Min(combatAimRadius, requestedRange) : combatAimRadius;
+            Health locked = LockedTarget;
+            if (locked != null)
+            {
+                Vector3 lockedOffset = locked.transform.position - transform.position;
+                lockedOffset.y = 0f;
+                if (lockedOffset.sqrMagnitude >= 0.0025f && lockedOffset.sqrMagnitude <= radius * radius)
+                    return locked.transform;
+            }
+
             Transform best = null;
             float bestScore = float.PositiveInfinity;
             foreach (Health candidate in FindObjectsByType<Health>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
@@ -378,6 +407,26 @@ namespace SonTinhThuyTinh.Player
                 return combatAimTarget.position + Vector3.up * 1.25f;
             }
             return transform.position + transform.forward * 12f + Vector3.up * 1.35f;
+        }
+
+        // Like FaceInput, but towards the locked enemy when there is one: attacks and spells go at it.
+        public void FaceAim(float maxDegrees)
+        {
+            if (TryGetAimDirection(out Vector3 direction)) FaceTowards(direction, maxDegrees);
+            else FaceInput(maxDegrees);
+        }
+
+        // Flat direction to the locked enemy.
+        public bool TryGetAimDirection(out Vector3 direction)
+        {
+            direction = Vector3.zero;
+            Health target = LockedTarget;
+            if (target == null) return false;
+            direction = target.transform.position - transform.position;
+            direction.y = 0f;
+            if (direction.sqrMagnitude < 0.04f) return false;
+            direction.Normalize();
+            return true;
         }
 
         // Stops any rise or fall (starting an attack in the air).
