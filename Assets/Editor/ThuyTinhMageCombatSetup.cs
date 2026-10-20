@@ -29,7 +29,8 @@ internal static class ThuyTinhMageCombatSetup
     const string LeftClipPath = "Assets/Kevin Iglesias/Human Animations/Animations/Male/Combat/Spellcasting/MagicAttacks/Directional/HumanM@MagicAttackDirect1H01_L.fbx";
     const string RightClipPath = "Assets/Kevin Iglesias/Human Animations/Animations/Male/Combat/Spellcasting/MagicAttacks/Directional/HumanM@MagicAttackDirect1H01_R.fbx";
     const string TwoHandClipPath = "Assets/Kevin Iglesias/Human Animations/Animations/Male/Combat/Spellcasting/MagicAttacks/Directional/HumanM@MagicAttackDirect2H01.fbx";
-    const string WalkClipPath = "Assets/Animations/ThuyTinh_v2/thuy_tinh_v2_walk.fbx";
+    const string SonTinhReactionPath = "Assets/Animations/SonTinh_v2/son_tinh_v2_reaction.fbx";   // cut by SonTinhCombatBuilder
+    const string WalkClipPath ="Assets/Animations/ThuyTinh_v2/thuy_tinh_v2_walk.fbx";
     const string RunClipPath = "Assets/Animations/ThuyTinh_v2/thuy_tinh_v2_run.fbx";
 
     [MenuItem("Tools/Son Tinh Thuy Tinh/Apply Thuy Tinh Mage Combat")]
@@ -104,6 +105,13 @@ internal static class ThuyTinhMageCombatSetup
         SetOverride(controller, overrides, Attack2OriginalGuid, right);
         SetOverride(controller, overrides, Attack3OriginalGuid, twoHand);
         SetOverride(controller, overrides, HeavyOriginalGuid, twoHand);
+
+        // Getting hit: the same recoil as Sơn Tinh (his Mixamo reaction, retargeted). Her own greatsword impact barely moved her, so his
+        // blows looked as if they did not land while hers threw him back.
+        AnimationClip reaction = AssetDatabase.LoadAllAssetsAtPath(SonTinhReactionPath).OfType<AnimationClip>().FirstOrDefault(c => c.name == "Reaction");
+        AnimationClip impact = overrides.Select(pair => pair.Key).FirstOrDefault(clip => clip != null && clip.name == "GS_Impact");
+        if (reaction != null && impact != null) controller[impact] = reaction;
+        else Debug.LogError("Cannot give Thuy Tinh Son Tinh's hit reaction (Reaction clip or GS_Impact slot missing).");
         EditorUtility.SetDirty(controller);
     }
 
