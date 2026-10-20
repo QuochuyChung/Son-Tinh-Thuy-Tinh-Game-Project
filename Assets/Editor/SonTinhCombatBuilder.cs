@@ -218,7 +218,7 @@ namespace SonTinhThuyTinh.EditorTools
             var golemSpell = Asset<SpellData>("Spell_RockGolem");
             Timing(golemSpell, "SpellWind", 1.3f, 46f / 30f, 0f, 0f, 0.85f, 46f / 30f);
             golemSpell.displayName = "Người đá"; golemSpell.color = new Color(0.95f, 0.72f, 0.38f); golemSpell.kind = SpellKind.Wave;
-            golemSpell.cooldown = 10f; golemSpell.staminaCost = 0f; golemSpell.damage = 35f; golemSpell.heavy = true; golemSpell.superArmor = true;
+            golemSpell.cooldown = 9f; golemSpell.staminaCost = 0f; golemSpell.damage = 30f; golemSpell.heavy = true; golemSpell.superArmor = true;
             golemSpell.effectPrefab = golemFx; golemSpell.effectTime = 0.67f / 1.3f;
             golemSpell.range = 12f; golemSpell.speed = 13f; golemSpell.knockback = 14f; golemSpell.knockUp = 4f;   // Sóng đẩy: 12 m at 13 m/s
             golemSpell.stunSeconds = 1f; golemSpell.bossStunScale = 1f; golemSpell.slowAfterHit = 0f;
@@ -228,7 +228,7 @@ namespace SonTinhThuyTinh.EditorTools
             var wallSpell = Asset<SpellData>("Spell_RockWall");
             Timing(wallSpell, "SpellWave", 1.3f, 38f / 30f, 0f, 0f, 0.9f, 38f / 30f);
             wallSpell.displayName = "Tường đá"; wallSpell.color = new Color(0.78f, 0.66f, 0.5f); wallSpell.kind = SpellKind.Rain;
-            wallSpell.cooldown = 9f; wallSpell.staminaCost = 0f; wallSpell.damage = 20f; wallSpell.heavy = true; wallSpell.superArmor = true;
+            wallSpell.cooldown = 10f; wallSpell.staminaCost = 0f; wallSpell.damage = 20f; wallSpell.heavy = true; wallSpell.superArmor = true;
             wallSpell.knockback = 7f; wallSpell.knockUp = 5f;   // whoever stands where it comes up is thrown back
             wallSpell.effectPrefab = wallFx; wallSpell.effectTime = 0.57f / 1.3f;
             wallSpell.radius = 2f; wallSpell.range = 2.2f; wallSpell.effectDuration = 2f; wallSpell.stunSeconds = 0f;
@@ -238,7 +238,7 @@ namespace SonTinhThuyTinh.EditorTools
             var spikeSpell = Asset<SpellData>("Spell_RockSpikes");
             Timing(spikeSpell, "SpellRain", RaiseSpeed, RaiseClip, 0f, 0f, RaiseComboAt, RaiseClip);
             spikeSpell.displayName = "Đá nhọn"; spikeSpell.color = new Color(0.62f, 0.82f, 0.45f); spikeSpell.kind = SpellKind.Wind;
-            spikeSpell.cooldown = 9f; spikeSpell.staminaCost = 0f; spikeSpell.damage = 30f; spikeSpell.heavy = true; spikeSpell.superArmor = true;
+            spikeSpell.cooldown = 12f; spikeSpell.staminaCost = 0f; spikeSpell.damage = 25f; spikeSpell.heavy = true; spikeSpell.superArmor = true;
             spikeSpell.effectPrefab = spikesFx; spikeSpell.effectTime = RaiseAt / RaiseSpeed;
             spikeSpell.range = 11f; spikeSpell.knockback = 3f; spikeSpell.knockUpSpeed = 8f; spikeSpell.stunSeconds = 0f;
             spikeSpell.lungeDistance = 0f; spikeSpell.swingEffect = null; spikeSpell.hitStop = 0.05f; spikeSpell.shake = 0.5f;

@@ -38,7 +38,7 @@ MonoBehaviour:
   displayName: "T\u01B0\u1EDDng \u0111\xE1"
   color: {r: 0.78, g: 0.66, b: 0.5, a: 1}
   kind: 1
-  cooldown: 9
+  cooldown: 10
   effectPrefab: {fileID: 6006609853009913175, guid: 92610a97909b6a14983944c3a3ea9990, type: 3}
   effectTime: 0.43846154
   radius: 2

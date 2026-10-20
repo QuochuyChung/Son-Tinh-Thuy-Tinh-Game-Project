@@ -795,7 +795,7 @@ namespace SonTinhThuyTinh.Combat
             foreach (Health target in SpellEffects.Targets(Physics.OverlapCapsule(from, to, 1.45f, ~0, QueryTriggerInteraction.Ignore), caster.Health))
             {
                 if (!hitTargets.Add(target)) continue;
-                var info = new DamageInfo(20f, caster.gameObject, target.transform.position, true);
+                var info = new DamageInfo(12f, caster.gameObject, target.transform.position, true);
                 if (!target.TakeDamage(info)) continue;
                 target.GetComponentInParent<IHitReceiver>()?.OnHit(info, transform.forward * 4.5f + Vector3.up * 0.7f);
                 caster.HitStop(0.035f);

@@ -19,7 +19,7 @@ MonoBehaviour:
   hitEnd: 0
   comboStart: 0.6666666
   staminaCost: 0
-  damage: 30
+  damage: 25
   heavy: 1
   superArmor: 1
   hitCenter: {x: 0, y: 1, z: 1.4}
@@ -38,7 +38,7 @@ MonoBehaviour:
   displayName: "\u0110\xE1 nh\u1ECDn"
   color: {r: 0.62, g: 0.82, b: 0.45, a: 1}
   kind: 0
-  cooldown: 9
+  cooldown: 12
   effectPrefab: {fileID: 2290115804034940469, guid: c5adafbf4c210024eafae7467cd1ffab, type: 3}
   effectTime: 0.3333333
   radius: 8

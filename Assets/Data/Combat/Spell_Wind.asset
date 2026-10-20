@@ -19,7 +19,7 @@ MonoBehaviour:
   hitEnd: 0
   comboStart: 0.94000006
   staminaCost: 0
-  damage: 25
+  damage: 30
   heavy: 0
   superArmor: 1
   hitCenter: {x: 0, y: 1, z: 1.4}
@@ -38,7 +38,7 @@ MonoBehaviour:
   displayName: "S\xF3ng \u0111\u1EA9y"
   color: {r: 0.8, g: 0.95, b: 1, a: 1}
   kind: 3
-  cooldown: 8
+  cooldown: 9
   effectPrefab: {fileID: 4404422519363820822, guid: 484b4e25fd296d94cb694f7c1450185e, type: 3}
   effectTime: 0.5784616
   radius: 4.5
@@ -49,6 +49,6 @@ MonoBehaviour:
   tickDamage: 2
   tickInterval: 0.5
   slowFactor: 0.5
-  stunSeconds: 1.2
+  stunSeconds: 1
   bossStunScale: 0.5
   slowAfterHit: 2

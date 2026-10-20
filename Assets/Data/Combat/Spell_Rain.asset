@@ -19,7 +19,7 @@ MonoBehaviour:
   hitEnd: 0
   comboStart: 1.0660001
   staminaCost: 0
-  damage: 30
+  damage: 20
   heavy: 0
   superArmor: 1
   hitCenter: {x: 0, y: 1, z: 1.4}
@@ -38,15 +38,15 @@ MonoBehaviour:
   displayName: "Gi\xE1p n\u01B0\u1EDBc"
   color: {r: 0.4, g: 0.65, b: 1, a: 1}
   kind: 4
-  cooldown: 12
+  cooldown: 10
   effectPrefab: {fileID: 5544525270713056564, guid: 58628f5f9899356489f8ab164593bb80, type: 3}
   effectTime: 0.21866669
   radius: 5.5
   range: 8
   speed: 14
   knockUpSpeed: 7
-  effectDuration: 6
-  tickDamage: 10
+  effectDuration: 3
+  tickDamage: 2
   tickInterval: 0.7
   slowFactor: 0.5
   stunSeconds: 0

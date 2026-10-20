@@ -118,11 +118,7 @@ namespace SonTinhThuyTinh.Player.States
             if (comboIndex >= 0 && set.lightCombo != null && set.lightCombo.Length > 0 && lightRequested)
             {
                 int nextIndex = comboIndex + 1;
-                if (nextIndex < set.lightCombo.Length || upperBodyAttack)
-                {
-                    if (nextIndex >= set.lightCombo.Length) nextIndex = 0;
-                    if (player.TryAttack(set.lightCombo[nextIndex], nextIndex)) return true;
-                }
+                if (nextIndex < set.lightCombo.Length && player.TryAttack(set.lightCombo[nextIndex], nextIndex)) return true;
             }
             if (input.ConsumeHeavy() && player.TryAttack(set.heavy, -1)) return true;
             for (int i = 0; i < 3; i++)
