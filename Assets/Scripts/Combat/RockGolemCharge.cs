@@ -57,6 +57,8 @@ namespace SonTinhThuyTinh.Combat
                 Vector3 at = owner.transform.position + forward * startAhead + right * (side * sideOffset);
                 at.y = RockSkillUtil.GroundY(at, owner.transform.position.y);
                 Transform model = Instantiate(golemModel, at, Quaternion.LookRotation(forward), transform).transform;
+                // the Run clip rams with one shoulder: one golem is mirrored, so the pair lead with opposite shoulders
+                if (side < 0) model.localScale = Vector3.Scale(model.localScale, new Vector3(-1f, 1f, 1f));
                 float height = Mathf.Max(0.5f, RockSkillUtil.LocalBounds(model).size.y);
                 var golem = new Golem { transform = model, position = at, height = height, phase = side > 0 ? 0f : Mathf.PI };
                 golem.clips = model.GetComponentInChildren<Animation>();

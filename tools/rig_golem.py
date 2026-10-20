@@ -12,7 +12,7 @@ Hips > Thigh_<L|R> > Shin > Foot. Each vertex follows the two or three nearest b
 smoothed over the surface, so the rocks bend at the joints only.
 Poses are rotations about the armature axes applied top-down on the posed bones (pitch about X: +pitch tips the top of a bone
 forward and the bottom of it back; roll about Y; yaw about Z), so a sign means the same on every bone.
-Clips (30 fps): Run (loop 0.6 s: heavy gorilla run, knuckles swinging, body bobbing), Emerge (0.5 s: crouched, bursts up with
+Clips (30 fps): Run (loop 0.6 s: a low shoulder charge, left shoulder and forearm leading, the right arm pumping), Emerge (0.5 s: crouched, bursts up with
 the arms thrown out, ends in the run's first pose).
 """
 import bpy, bmesh, sys, math, os
@@ -175,29 +175,36 @@ def key(frame):
         pb.keyframe_insert("location", frame=frame)
 
 def run_pose(t):
-    """t in [0, 1): one full stride (two steps). Left leg forward at t = 0."""
-    a = math.sin(2 * math.pi * t)                 # +1: left leg forward, right arm forward
+    """t in [0, 1): one full stride (two steps), left leg forward at t = 0. A shoulder charge: bent low, the trunk turned and
+    dipped so the left shoulder leads, that arm braced across in front like a ram, the right arm pumping behind. (Unity mirrors
+    the second golem, so that one leads with its right shoulder.)"""
+    a = math.sin(2 * math.pi * t)                 # +1: left leg forward
     c = math.cos(2 * math.pi * t)
-    bob = abs(math.sin(2 * math.pi * t))          # 0 at the passing moment... 1 at full stride
+    bob = abs(math.sin(2 * math.pi * t))          # 0 at the passing moment, 1 at full stride
     pose = {
-        "Hips": (6, 4 * a, 8 * a),
-        "Spine": (10, -2 * a, -6 * a),
-        "Chest": (8 + 3 * bob, -3 * a, -10 * a),
-        "Neck": (-14, 0, 6 * a),
-        "Head": (-6, 0, 4 * a),
+        "Hips": (12, 5 + 3 * a, -12 + 5 * a),
+        "Spine": (12, 4, -10 - 3 * a),
+        "Chest": (10 + 4 * bob, 5, -14 - 4 * a),
+        "Neck": (-26, -4, 10),
+        "Head": (-14, 0, 6),
+        # the ram: left shoulder pushed forward and down, upper arm forward, forearm folded across the chest
+        "Shoulder_L": (-14, 6, -10),
+        "UpperArm_L": (-38 + 4 * a, -10, -25),
+        "LowerArm_L": (-62, 0, -20),
+        "Hand_L": (-10, 0, 0),
+        # the right arm pumps hard behind
+        "Shoulder_R": (8 * a, 0, 0),
+        "UpperArm_R": (-34 * a + 18, 8, 0),
+        "LowerArm_R": (-30 - 20 * max(0.0, a), 0, 0),
+        "Hand_R": (-10 * a, 0, 0),
     }
     for s, sg in (("L", 1), ("R", -1)):
         leg = a * sg                               # +1: this leg forward
-        knee = max(0.0, -c * sg) * 55 + 12         # the back leg folds as it comes through
-        pose["Thigh_" + s] = (-30 * leg - 6, 0, 0)
+        knee = max(0.0, -c * sg) * 65 + 18         # the back leg folds as it comes through
+        pose["Thigh_" + s] = (-38 * leg - 18, 0, 0)
         pose["Shin_" + s] = (knee, 0, 0)
-        pose["Foot_" + s] = (-knee * 0.4 + 14 * leg, 0, 0)
-        arm = -leg                                 # arms swing against the legs
-        pose["Shoulder_" + s] = (-6 * arm, 0, 0)
-        pose["UpperArm_" + s] = (-30 * arm + 4, -6 * sg, 0)
-        pose["LowerArm_" + s] = (-18 - 22 * max(0.0, arm), 0, 0)
-        pose["Hand_" + s] = (-10 * arm, 0, 0)
-    return pose, -0.07 * (1 - bob) + 0.0, 0.0
+        pose["Foot_" + s] = (-knee * 0.4 + 16 * leg, 0, 0)
+    return pose, -0.12 - 0.07 * (1 - bob), 0.0
 
 def emerge_pose(t):
     """t in [0, 1]: crouched with the fists on the ground, bursts up, arms thrown wide, into the run's first pose."""

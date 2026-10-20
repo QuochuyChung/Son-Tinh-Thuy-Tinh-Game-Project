@@ -34,21 +34,21 @@ def merge(*poses):
     out = {}
     for p in poses:
         for k, v in p.items():
-            out[k] = v if k == "drop" else out.get(k, []) + list(v)
+            out[k] = v if k in ("drop", "turn") else out.get(k, []) + list(v)
     return out
 
 
 NEUTRAL = []
 
-WIND_UP = {"drop": (0.07, 0.02),
+WIND_UP = {"drop": (0.07, 0.02), "turn": 0.75,
            "S": [("y", -10)], "S1": [("x", -6), ("y", -12)], "S2": [("x", -6), ("y", -12)], "Hd": [("y", 18)],
            "RA": [("x", -160), ("z", -15)], "RF": [("x", -40)], "LA": [("x", -55), ("y", -10)], "LF": [("x", -45)],
            "LU": [("x", -28)], "RU": [("x", -22)], "LL": [("x", 45)], "RL": [("x", 40)], "LFt": [("x", -12)], "RFt": [("x", -12)]}
-AIR = {"drop": (-0.10, 0.0),
+AIR = {"drop": (-0.10, 0.0), "turn": 0.95,
        "S1": [("x", -10), ("y", -6)], "S2": [("x", -12), ("y", -6)], "Hd": [("x", 8), ("y", 8)],
        "RA": [("x", -175), ("z", -5)], "RF": [("x", -15)], "LA": [("x", -45), ("z", 25)], "LF": [("x", -30)],
        "LU": [("x", -55)], "LL": [("x", 75)], "RU": [("x", -30)], "RL": [("x", 65)], "LFt": [("x", 20)], "RFt": [("x", 20)]}
-IMPACT = {"drop": (0.30, -0.02),
+IMPACT = {"drop": (0.30, -0.02), "turn": 1.0,
           "S": [("x", 18), ("y", 8)], "S1": [("x", 18), ("y", 6)], "S2": [("x", 14)], "N": [("x", -10)], "Hd": [("x", -20)],
           "RA": [("x", 10), ("y", 10)], "RF": [("x", 75)], "LA": [("x", 35), ("z", 30)], "LF": [("x", -25)],
           "LU": [("x", -75)], "LL": [("x", 80)], "RU": [("x", 10)], "RL": [("x", 55)], "LFt": [("x", -5)], "RFt": [("x", -35)]}
@@ -75,7 +75,8 @@ def pose_at(keys, t):
     return keys[-1][1], keys[-1][1], 0.0
 
 
-FACING = Quaternion()   # armature-space yaw of the stance's hips: the fighting stance stands turned, the keys are in its own frame
+FACING = Quaternion()   # armature-space yaw of the body this frame: the keys are given in its own frame
+STANCE_YAW = 0.0        # radians: how far the fighting stance's hips are turned from the front
 
 
 def rotation_of(entries, scale):
@@ -118,11 +119,18 @@ def main():
                     continue
                 pb = pbs[k]
                 entries0, entries1 = p0.get(k, []), p1.get(k, [])
-                if k == "H" and f == 0:
-                    global FACING
-                    fwd = pb.matrix.to_3x3().col[2]
-                    FACING = Quaternion(AXES["y"], math.atan2(fwd.x, fwd.z))
+                if k == "H":
+                    # the stance stands side-on (hips turned about -83°); "turn" squares the body up to the front (0..1) so the
+                    # strike goes straight ahead, and the keys follow the body round
+                    global FACING, STANCE_YAW
+                    if f == 0:
+                        fwd = pb.matrix.to_3x3().col[2]
+                        STANCE_YAW = math.atan2(fwd.x, fwd.z)
+                    turn = p0.get("turn", 0.0) * (1 - w) + p1.get("turn", 0.0) * w
+                    FACING = Quaternion(AXES["y"], STANCE_YAW * (1 - turn))
                 q = rotation_of(entries1, w) @ rotation_of(entries0, 1 - w)   # the two keys' rotations, each weighted
+                if k == "H":
+                    q = q @ Quaternion(AXES["y"], -STANCE_YAW * turn)
                 if k == "S1":
                     q = Quaternion(AXES["x"], math.radians(1.6 * breath)) @ q
                 drop0, drop1 = p0.get("drop", (0, 0)), p1.get("drop", (0, 0))
@@ -192,8 +200,7 @@ def render_previews(arm, made):
         # every key moment
         for m in moments:
             scene.frame_set(m)
-            hips = arm.pose.bones[B["H"]]
-            fwd = arm.matrix_world.to_3x3() @ hips.matrix.to_3x3().col[2]   # the hips' forward, so the views follow the stance
+            fwd = arm.matrix_world.to_3x3() @ Vector((0, 0, 1))   # the armature's front: the way the character faces in the game
             fwd.z = 0
             fwd.normalize()
             right = fwd.cross(Vector((0, 0, 1)))
