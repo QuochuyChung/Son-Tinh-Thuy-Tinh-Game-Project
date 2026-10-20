@@ -34,10 +34,11 @@ namespace SonTinhThuyTinh.Combat
             if (data == null || caster == null) return;
 
             float distance = data.projectileSpeed * Time.deltaTime;
+            Vector3 previous = transform.position;
             transform.position += transform.forward * distance;
 
             // Sơn Tinh's rock wall in the way: the orb bursts on it
-            if (RockWallBarrier.Blocks(transform.position, data.projectileRadius, caster, out RockWallBarrier wall, out Vector3 point))
+            if (RockWallBarrier.Blocks(previous, transform.position, data.projectileRadius, caster, out RockWallBarrier wall, out Vector3 point))
             {
                 wall.Absorb(point);
                 Destroy(gameObject);

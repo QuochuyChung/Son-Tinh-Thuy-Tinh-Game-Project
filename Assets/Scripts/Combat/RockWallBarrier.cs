@@ -5,9 +5,10 @@ using UnityEngine;
 namespace SonTinhThuyTinh.Combat
 {
     // Sơn Tinh's X, Tường đá: a wall of rock (width x height metres) slams up a short way in front of him, stands `lifetime` seconds and
-    // sinks again. It is solid, and every water attack of the other side that touches it (Sóng đẩy, the water slashes, the water orbs)
-    // bursts on it and is gone at once: nothing goes through and nothing behind it is hurt. A wave that misses the wall still hits as usual.
-    // Water attacks call RockWallBarrier.Blocks with their own hit box before they hurt anything.
+    // sinks again. Whoever stands where it comes up is hurt and thrown back (spell.damage, knockback, knockUp). It is solid, and every
+    // attack of the other side that reaches it bursts on it and is gone at once: Sóng đẩy, the water slashes, the water orbs of the
+    // light and heavy attacks; a melee blow does not reach through it either. Nothing behind it is hurt; what misses the wall still hits.
+    // Attacks call RockWallBarrier.Blocks / Between with their own hit volume before they hurt anything.
     public class RockWallBarrier : MonoBehaviour, ISpellEffect
     {
         static readonly List<RockWallBarrier> active = new();
@@ -26,6 +27,9 @@ namespace SonTinhThuyTinh.Combat
         [SerializeField] float sinkTime = 0.35f;
 
         PlayerController owner;
+        SpellData spell;
+        bool struck;
+        readonly HashSet<Health> hit = new();
         Transform model;
         BoxCollider body;
         Vector3 groundPosition;
@@ -34,9 +38,10 @@ namespace SonTinhThuyTinh.Combat
 
         public PlayerController Owner => owner;
 
-        public void Init(PlayerController caster, SpellData spell)
+        public void Init(PlayerController caster, SpellData data)
         {
             owner = caster;
+            spell = data;
             Vector3 forward = Vector3.ProjectOnPlane(caster.transform.forward, Vector3.up).normalized;
             if (forward.sqrMagnitude < 0.01f) forward = Vector3.forward;
             groundPosition = caster.transform.position + forward * distance;
@@ -72,7 +77,7 @@ namespace SonTinhThuyTinh.Combat
             body.enabled = false;
             active.Add(this);
             RockSkillUtil.Dust(dustPrefab, groundPosition, 1.1f);
-            caster.Shake(spell != null ? spell.shake : 0.4f);
+            caster.Shake(data != null ? data.shake : 0.4f);
         }
 
         void OnDestroy() => active.Remove(this);
@@ -98,6 +103,26 @@ namespace SonTinhThuyTinh.Combat
             Vector3 jitter = Time.time < shakeUntil ? Random.insideUnitSphere * 0.06f : Vector3.zero;
             transform.position = groundPosition + Vector3.down * (height * (1f - rise)) + jitter;
             if (body != null) body.enabled = rise > 0.5f;
+            if (!struck && rise > 0.3f && elapsed < lifetime) StrikeWhereItRises();
+        }
+
+        // Coming up, the wall hits whoever stands on its line (each one once): hurt and thrown away from Sơn Tinh.
+        void StrikeWhereItRises()
+        {
+            if (owner == null || spell == null || spell.damage <= 0f) { struck = true; return; }
+            if (elapsed >= riseTime) struck = true;   // keeps checking while it rises, then stops
+            Vector3 centre = groundPosition + Vector3.up * (height * 0.5f);
+            Vector3 half = new Vector3(width * 0.5f + 0.3f, height * 0.5f, thickness * 0.5f + 0.6f);
+            int count = Physics.OverlapBoxNonAlloc(centre, half, overlap, transform.rotation, ~0, QueryTriggerInteraction.Ignore);
+            var found = new Collider[count];
+            System.Array.Copy(overlap, found, count);
+            foreach (Health target in SpellEffects.Targets(found, owner.Health))
+            {
+                if (!hit.Add(target)) continue;
+                Vector3 push = transform.forward * spell.knockback + Vector3.up * spell.knockUp;
+                if (RockSkillUtil.Strike(owner, spell, target, target.transform.position + Vector3.up, push, false))
+                    RockSkillUtil.Dust(dustPrefab, target.transform.position, 0.6f);
+            }
         }
 
         // A water attack hit the wall: a splash where it struck and a little shudder of the stone.
@@ -130,5 +155,33 @@ namespace SonTinhThuyTinh.Combat
 
         public static bool Blocks(Vector3 centre, float radius, PlayerController attacker, out RockWallBarrier wall, out Vector3 point)
             => Blocks(centre, Vector3.one * radius, Quaternion.identity, attacker, out wall, out point);
+
+        // The same for a ball of `radius` that moved from `from` to `to` this frame (a fast orb cannot jump through the stone).
+        public static bool Blocks(Vector3 from, Vector3 to, float radius, PlayerController attacker, out RockWallBarrier wall, out Vector3 point)
+        {
+            wall = null;
+            point = to;
+            if (active.Count == 0) return false;
+            int count = Physics.OverlapCapsuleNonAlloc(from, to, radius, overlap, ~0, QueryTriggerInteraction.Ignore);
+            for (int i = 0; i < count; i++)
+            {
+                var w = overlap[i].GetComponent<RockWallBarrier>();
+                if (w == null || !w.Standing || w.owner == attacker) continue;
+                wall = w;
+                point = overlap[i].ClosestPoint(from);
+                return true;
+            }
+            return false;
+        }
+
+        // A standing wall of the other side on the straight line between an attacker and its target (a blow cannot reach through it).
+        public static bool Between(Vector3 from, Vector3 to, PlayerController attacker)
+        {
+            if (active.Count == 0) return false;
+            foreach (RockWallBarrier w in active)
+                if (w != null && w.Standing && w.owner != attacker && w.body.Raycast(new Ray(from, to - from), out _, Vector3.Distance(from, to)))
+                    return true;
+            return false;
+        }
     }
 }

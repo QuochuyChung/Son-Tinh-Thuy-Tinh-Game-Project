@@ -228,7 +228,8 @@ namespace SonTinhThuyTinh.EditorTools
             var wallSpell = Asset<SpellData>("Spell_RockWall");
             Timing(wallSpell, "SpellWave", 1.3f, 38f / 30f, 0f, 0f, 0.9f, 38f / 30f);
             wallSpell.displayName = "Tường đá"; wallSpell.color = new Color(0.78f, 0.66f, 0.5f); wallSpell.kind = SpellKind.Rain;
-            wallSpell.cooldown = 9f; wallSpell.staminaCost = 0f; wallSpell.damage = 0f; wallSpell.heavy = false; wallSpell.superArmor = true;
+            wallSpell.cooldown = 9f; wallSpell.staminaCost = 0f; wallSpell.damage = 20f; wallSpell.heavy = true; wallSpell.superArmor = true;
+            wallSpell.knockback = 7f; wallSpell.knockUp = 5f;   // whoever stands where it comes up is thrown back
             wallSpell.effectPrefab = wallFx; wallSpell.effectTime = 0.57f / 1.3f;
             wallSpell.radius = 2f; wallSpell.range = 2.2f; wallSpell.effectDuration = 2f; wallSpell.stunSeconds = 0f;
             wallSpell.lungeDistance = 0f; wallSpell.swingEffect = null; wallSpell.hitStop = 0f; wallSpell.shake = 0.5f;

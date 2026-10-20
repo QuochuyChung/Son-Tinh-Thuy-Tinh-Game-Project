@@ -780,7 +780,7 @@ namespace SonTinhThuyTinh.Combat
                 layer.startColor = start;
                 layer.endColor = end;
             }
-            if (RockWallBarrier.Blocks((previousPosition + transform.position) * 0.5f, 1.2f, caster, out RockWallBarrier wall, out Vector3 point))
+            if (RockWallBarrier.Blocks(previousPosition, transform.position, 1.2f, caster, out RockWallBarrier wall, out Vector3 point))
             {
                 wall.Absorb(point);
                 Destroy(gameObject);

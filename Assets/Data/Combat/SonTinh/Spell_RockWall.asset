@@ -19,14 +19,14 @@ MonoBehaviour:
   hitEnd: 0
   comboStart: 0.6923077
   staminaCost: 0
-  damage: 0
-  heavy: 0
+  damage: 20
+  heavy: 1
   superArmor: 1
   hitCenter: {x: 0, y: 1, z: 1.4}
   hitSize: {x: 2.4, y: 2, z: 2.4}
   hitAround: 0
-  knockback: 3
-  knockUp: 0
+  knockback: 7
+  knockUp: 5
   lungeDistance: 0
   lungeStart: 0
   lungeEnd: 0
