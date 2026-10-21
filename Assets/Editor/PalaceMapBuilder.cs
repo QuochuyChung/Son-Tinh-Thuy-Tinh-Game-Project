@@ -25,7 +25,7 @@ namespace SonTinhThuyTinh.EditorTools
         const string DataDir = "Assets/Art/Maps/HungVuong";
         const string TerrainDataPath = DataDir + "/Terrain_HungVuong.asset";
         const string Pack = "Assets/Idyllic Fantasy Nature/";
-        const string FontPath = "Assets/Art/Fonts/Roboto-Bold SDF.asset";
+        const string FontPath = "Assets/Art/Fonts/CrimsonPro/CrimsonPro-Bold SDF.asset";
         const string GeneratedRoot = "Generated";
 
         // Terrain: Size x Size metres, its lowest point (sea floor) at BaseY. The plateau top is at Top, the sea surface at SeaY = 0.
