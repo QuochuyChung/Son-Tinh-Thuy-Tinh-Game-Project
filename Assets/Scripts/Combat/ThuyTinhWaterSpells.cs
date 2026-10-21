@@ -283,6 +283,7 @@ namespace SonTinhThuyTinh.Combat
             float easeOut = 1f - Mathf.Pow(1f - Mathf.Clamp01(elapsed / 0.18f), 3f);
             transform.position += transform.forward * (spell.speed * Time.deltaTime);
             transform.localScale = new Vector3(easeOut, Mathf.Lerp(0.45f, 1f, easeOut), 1f);
+            if (BlockedByRockWall()) return;
             HitTargets();
             if (Vector3.Distance(start, transform.position) >= spell.range)
             {
@@ -291,6 +292,23 @@ namespace SonTinhThuyTinh.Combat
                 Destroy(gameObject, 0.6f);
                 enabled = false;
             }
+        }
+
+        // Sơn Tinh's rock wall in the way: the wave bursts on it and is gone, it hurts nothing behind it.
+        bool BlockedByRockWall()
+        {
+            Vector3 centre = transform.position + transform.forward * 0.2f + Vector3.up * 1.05f;
+            Vector3 half = new Vector3(spell.radius * transform.localScale.x, 1.25f, 0.95f);
+            if (!RockWallBarrier.Blocks(centre, half, transform.rotation, caster, out RockWallBarrier wall, out Vector3 point)) return false;
+            wall.Absorb(point);
+            SpawnImpact(point + transform.right * 1.2f);
+            SpawnImpact(point - transform.right * 1.2f);
+            if (waveVisual != null) Destroy(waveVisual);
+            foam.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            spray.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            Destroy(gameObject, 0.6f);
+            enabled = false;
+            return true;
         }
 
         void HitTargets()
@@ -761,6 +779,12 @@ namespace SonTinhThuyTinh.Combat
                 end.a = layerEndColors[i].a * alpha;
                 layer.startColor = start;
                 layer.endColor = end;
+            }
+            if (RockWallBarrier.Blocks(previousPosition, transform.position, 1.2f, caster, out RockWallBarrier wall, out Vector3 point))
+            {
+                wall.Absorb(point);
+                Destroy(gameObject);
+                return;
             }
             HitAlongPath(previousPosition, transform.position);
             if (travelled >= spell.range || elapsed >= 0.8f) Destroy(gameObject);
