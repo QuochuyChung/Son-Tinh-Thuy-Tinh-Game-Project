@@ -19,7 +19,7 @@ namespace SonTinhThuyTinh.EditorTools
         const string Dir = "Assets/Art/UI/Map/";
         const string MapTexturePath = Dir + "world_map.jpg";
         const string DataPath = "Assets/Data/Map/WorldMap.asset";
-        const string FontPath = "Assets/Art/Fonts/Roboto-Bold SDF.asset";
+        const string FontPath = "Assets/Art/Fonts/CrimsonPro/CrimsonPro-Bold SDF.asset";
         const string OutlineMaterialPath = "Assets/Art/UI/HUD/HudName_Outline.mat";
         const string RoundPath = "Assets/Art/UI/Dialogue/ui_round_corner.png";
 

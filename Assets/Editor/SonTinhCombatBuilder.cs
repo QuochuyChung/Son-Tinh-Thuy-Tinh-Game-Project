@@ -20,7 +20,7 @@ namespace SonTinhThuyTinh.EditorTools
         const string DataDir = "Assets/Data/Combat/SonTinh/";
         const string PlayerPrefab = "Assets/Prefabs/Player/Player_SonTinh_v2.prefab";
         const string Override = "Assets/Animations/Shared/AOC_SonTinh_v2.overrideController";
-        const string FontPath = "Assets/Art/Fonts/Roboto-Bold SDF.asset";
+        const string FontPath = "Assets/Art/Fonts/CrimsonPro/CrimsonPro-Bold SDF.asset";
 
         // file, clip name, first frame, last frame (0-based), body height baked into the pose
         static readonly (string file, string clip, int first, int last, bool bakeHeight)[] Cuts =

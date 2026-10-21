@@ -20,7 +20,7 @@ namespace SonTinhThuyTinh.EditorTools
         const string PlayerV1 = "Assets/Prefabs/Player/Player_ThuyTinh.prefab";
         const string SwordPrefab = "Assets/Prefabs/Weapons/Sword.prefab";
         const string SandboxScene = "Assets/Scenes/Sandbox_Combat.unity";
-        const string FontPath = "Assets/Art/Fonts/Roboto-Bold SDF.asset";
+        const string FontPath = "Assets/Art/Fonts/CrimsonPro/CrimsonPro-Bold SDF.asset";
 
         [MenuItem("Tools/Son Tinh Thuy Tinh/Build Thuy Tinh Combat")]
         public static void Build()
