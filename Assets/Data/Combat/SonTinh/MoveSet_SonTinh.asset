@@ -28,4 +28,4 @@ MonoBehaviour:
   hitHeavyDuration: 1.15
   staggerDamage: 25
   hitSplash: {fileID: 5814155843748786547, guid: 33648663b448a714d99c9cd207bc9da6, type: 3}
-  hudFont: {fileID: 11400000, guid: 8271b6aca9426b84180a405d69bc9448, type: 2}
+  hudFont: {fileID: 11400000, guid: b277da2b05c59fd4a8cc0159e2e74f59, type: 2}

@@ -18,7 +18,7 @@ namespace SonTinhThuyTinh.EditorTools
         const string WhitePath = "Assets/Art/UI/HUD/hud_white.png";
         const string EmblemPath = "Assets/Art/UI/HUD/hud_fire_bird_emblem.png";
         const string EmblemSourcePath = "ArtSource/Concept/hud_fire_bird_silhouette.png";   // black bird on white, relative to the project folder
-        const string FontPath = "Assets/Art/Fonts/Roboto-Bold SDF.asset";
+        const string FontPath = "Assets/Art/Fonts/CrimsonPro/CrimsonPro-Bold SDF.asset";
         const string NameMaterialPath = "Assets/Art/UI/HUD/HudName_Outline.mat";
 
         // Slant of the bar block: sideways shift per unit of height (about 35 degrees, as in the reference).

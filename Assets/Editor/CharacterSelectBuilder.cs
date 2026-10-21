@@ -20,7 +20,7 @@ namespace SonTinhThuyTinh.EditorTools
         const string RoundPath = "Assets/Art/UI/Dialogue/ui_round_corner.png";   // 9-slice, border 44 px
         const string CirclePath = Dir + "cs_circle.png";
         const string BackdropPath = Dir + "cs_backdrop.png";
-        const string FontPath = "Assets/Art/Fonts/Roboto-Bold SDF.asset";
+        const string FontPath = "Assets/Art/Fonts/CrimsonPro/CrimsonPro-Bold SDF.asset";
         const string NameMaterialPath = Dir + "SelectName_Outline.mat";
         const string TagMaterialPath = Dir + "SelectTag_Outline.mat";
 

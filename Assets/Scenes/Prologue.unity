@@ -331,8 +331,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "Truy\u1EC1n thuy\u1EBFt th\u1EDDi H\xF9ng V\u01B0\u01A1ng"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 4672e73d7a4799c46ab1e29397def11e, type: 2}
-  m_sharedMaterial: {fileID: -450409643308046262, guid: 4672e73d7a4799c46ab1e29397def11e, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 07a04a266ec75c6469027d93110b929a, type: 2}
+  m_sharedMaterial: {fileID: -1798404073134132073, guid: 07a04a266ec75c6469027d93110b929a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -468,8 +468,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "H\xF9ng V\u01B0\u01A1ng"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8271b6aca9426b84180a405d69bc9448, type: 2}
-  m_sharedMaterial: {fileID: 9208305053861272427, guid: 8271b6aca9426b84180a405d69bc9448, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b277da2b05c59fd4a8cc0159e2e74f59, type: 2}
+  m_sharedMaterial: {fileID: 4554783127044860477, guid: b277da2b05c59fd4a8cc0159e2e74f59, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -892,8 +892,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 68f6019303ee5f54eb99068d325b124d, type: 2}
-  m_sharedMaterial: {fileID: -5973029210365156232, guid: 68f6019303ee5f54eb99068d325b124d, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 4b3215e749481214d94a544f0d760d9a, type: 2}
+  m_sharedMaterial: {fileID: 6407694040483492418, guid: 4b3215e749481214d94a544f0d760d9a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1029,8 +1029,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "S\u01A0N TINH \u2013 TH\u1EE6Y TINH"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8271b6aca9426b84180a405d69bc9448, type: 2}
-  m_sharedMaterial: {fileID: 9208305053861272427, guid: 8271b6aca9426b84180a405d69bc9448, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: b277da2b05c59fd4a8cc0159e2e74f59, type: 2}
+  m_sharedMaterial: {fileID: 4554783127044860477, guid: b277da2b05c59fd4a8cc0159e2e74f59, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1257,8 +1257,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "Space / Click: ti\u1EBFp theo   \xB7   Esc: b\u1ECF qua"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 68f6019303ee5f54eb99068d325b124d, type: 2}
-  m_sharedMaterial: {fileID: -5973029210365156232, guid: 68f6019303ee5f54eb99068d325b124d, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 4b3215e749481214d94a544f0d760d9a, type: 2}
+  m_sharedMaterial: {fileID: 6407694040483492418, guid: 4b3215e749481214d94a544f0d760d9a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
