@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: Attack_WaterOrb_Right
   m_EditorClassIdentifier: Assembly-CSharp::SonTinhThuyTinh.Combat.ProjectileAttackData
   stateName: Attack2
-  animSpeed: 1.15
-  duration: 1.0434784
+  animSpeed: 1.35
+  duration: 0.8888889
   hitStart: 0
   hitEnd: 0
-  comboStart: 0.7095653
-  staminaCost: 8
-  damage: 18
+  comboStart: 0.60444444
+  staminaCost: 5
+  damage: 25
   heavy: 0
   superArmor: 0
   hitCenter: {x: 0, y: 1, z: 1.4}
@@ -36,7 +36,7 @@ MonoBehaviour:
   swingEffectTime: 0
   swingEffectScale: 1
   projectilePrefab: {fileID: 4988644356801275080, guid: d8b3309e03b9b4249a6871631921d14c, type: 3}
-  projectileTime: 0.50086963
+  projectileTime: 0.42666665
   projectileSpeed: 17
   projectileRange: 14
   projectileRadius: 0.7
