@@ -88,3 +88,6 @@ __pycache__/
 # Meshy downloads come as zips next to their unzipped copy: keep only the unzipped files (docs/progress.md 9.5)
 /ArtSource/Meshy/*.zip
 
+
+# trailer capture frames / renders (local only)
+Trailer_Output/

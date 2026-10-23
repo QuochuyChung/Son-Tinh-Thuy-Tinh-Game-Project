@@ -20,8 +20,8 @@ namespace SonTinhThuyTinh.EditorTools
         static readonly string[] CustomPaths = { LeftPath, RightPath, TwoHandPath, HeavyPath };
         static bool installing;
 
-        [InitializeOnLoadMethod]
-        static void ScheduleInstall() => EditorApplication.delayCall += Install;
+        // Menu only. It used to run by itself on every editor load (and after any of the clips was reimported), which put the
+        // forward-attack clips back on Thủy Tinh after they had been taken off (twisted arms on her ccdbbba body).
 
         [MenuItem("Tools/Son Tinh Thuy Tinh/Thuy Tinh: Install Forward Projectile Attacks")]
         public static void Install()
@@ -160,8 +160,7 @@ namespace SonTinhThuyTinh.EditorTools
             string[] movedAssets,
             string[] movedFromAssetPaths)
         {
-            if (importedAssets.Any(path => CustomPaths.Contains(path)))
-                EditorApplication.delayCall += Install;
+            // no automatic install (see Install)
         }
     }
 }
