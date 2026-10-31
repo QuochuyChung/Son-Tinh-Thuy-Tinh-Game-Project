@@ -84,6 +84,9 @@ __pycache__/
 /Assets/Idyllic Fantasy Nature.meta
 /Assets/Fantasy Forest Environment Free Sample/
 /Assets/Fantasy Forest Environment Free Sample.meta
+# "Unity URP Terrain | Terrain Sample Project" (4 GB): terrain layers, pines, rocks, grass, water and mountains of Map_HungVuong
+/Assets/TerrainDemoScene_URP/
+/Assets/TerrainDemoScene_URP.meta
 
 # Meshy downloads come as zips next to their unzipped copy: keep only the unzipped files (docs/progress.md 9.5)
 /ArtSource/Meshy/*.zip
